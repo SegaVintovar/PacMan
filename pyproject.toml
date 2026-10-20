@@ -1,0 +1,12 @@
+[project]
+name = "pac-man"
+version = "0.1.0"
+description = "renewed version of the arcade pac-man game"
+requires-python = ">=3.10"
+dependencies = [
+	"pydantic",
+	"pygame",
+	"python-dotenv",
+	"flake8",
+	"mypy"
+]
