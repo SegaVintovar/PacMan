@@ -167,7 +167,7 @@ class Map():
         self.create_map(self.input)
 
     def create_map(input: list[list[int]]) -> None:
-
+        ...
 
 def test():
     maze = MazeGenerator(exit_cell=(14, 14), seed=1)
