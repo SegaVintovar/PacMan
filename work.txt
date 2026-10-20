@@ -19,6 +19,7 @@ Final monsters are:
 
 Task list:
     Valentyn:
-        - 
+        - make the maze visible
     Bastiaan:
-        - 
+        - create blank map(no borders)
+        - create pacman and make it move with WASD or or arrows (pacman now looks like an 'O') 
