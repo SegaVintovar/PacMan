@@ -3,7 +3,7 @@ install:
 	@echo "installing packages and dependencies"
 	@uv venv .venv
 	@uv pip install -r pyproject.toml
-	@source .venv/bin/activate
+# 	@source .venv/bin/activate
 
 run:
 	@echo "running Pac Man"

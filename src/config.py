@@ -42,6 +42,7 @@ class GameConfig(BaseModel):
         if self.pacgum >= self.width * self.height:
             raise ValueError(
                 "pacgum count cannot exceed the number of grid cells")
+        return self
 
     @classmethod
     def load(cls: "GameConfig",

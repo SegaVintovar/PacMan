@@ -1,27 +1,49 @@
-
 import pygame
 import sys
 import json
 from typing import Any
 from .config import GameConfig
+from .map import Map
+
+class Game():
+    def __init__() -> None:
+        ...
 
 
 def __main__() -> None:
     try:
-        if not len(sys.argv) == 1:
+        if not len(sys.argv) == 2:
+            # print(sys.argv)
             raise EOFError("Only one argument is required")
         elif not sys.argv[1] == "config.json":
             raise NameError("'config.json' is expected")
-        
-        pygame.init()
 
-        screen: Any = pygame.display.set_mode((1280, 1480))
+        try:
+            with open(sys.argv[1], mode="r") as file:
+                cfg = json.loads(file.read())
+            our_config = GameConfig(**cfg)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Could not find file {sys.argv[1]}")
+        except PermissionError:
+            raise PermissionError(f"Could not open the file {sys.argv[1]}")
+        except json.JSONDecodeError as e:
+            raise json.JSONDecodeError(f"Broken JSON {str(e)}")
+
+
+        pygame.init()
+        screen: pygame.Surface = pygame.display.set_mode(
+            (our_config.width * 32, our_config.height * 32))
         pygame.display.set_caption("Hello Pygame for pac-man")
+        # one map per level???
+        ourMap = Map(config=cfg)
+
         running: bool = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+            screen.blit(ourMap.map_image, dest=(0, 0))
+            pygame.display.update()
         pygame.quit()
     except (EOFError, NameError) as err:
         print(f"couldn't run Pac-Man: {err}")

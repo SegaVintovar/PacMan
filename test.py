@@ -134,31 +134,6 @@ class Cell():
             ]
         ]
 
-    def open_wall(self, wall: str | None) -> None:
-        """
-        Set a specific wall to the open state.
-        """
-        if wall == "N":
-            self.n = False
-        if wall == "E":
-            self.e = False
-        if wall == "S":
-            self.s = False
-        if wall == "W":
-            self.w = False
-
-    def count_open_walls(self) -> int:
-        i = 0
-        if self.n is False:
-            i += 1
-        if self.e is False:
-            i += 1
-        if self.s is False:
-            i += 1
-        if self.w is False:
-            i += 1
-        return i
-
 
 class Map():
     def __init__(self, input: list[list[int]]) -> None:
@@ -170,7 +145,7 @@ class Map():
         ...
 
 def test():
-    maze = MazeGenerator(exit_cell=(14, 14), seed=1)
+    maze = MazeGenerator(exit_cell=(14, 14), seed=1).maze()
     for row in maze.maze:
         print([bin(cell) for cell in row])
     for row in maze.maze:
