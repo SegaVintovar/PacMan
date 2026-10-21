@@ -8,7 +8,7 @@ class Pacman:
         self.y: int = int(config["height"] / 2)
         self.lives: int = int(config["lives"])
         self.points: int = 0
-        self.direction: str = '0'
+        self.lastDirection: str = '0'
 
     def move(keyEvent: Any) -> None:
         ...

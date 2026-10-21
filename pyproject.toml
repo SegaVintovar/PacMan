@@ -7,6 +7,7 @@ dependencies = [
 	"pydantic",
 	"pygame",
 	"python-dotenv",
+	"mazegenerator",
 	"flake8",
 	"mypy"
 ]

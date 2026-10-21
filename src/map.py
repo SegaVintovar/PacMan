@@ -1,7 +1,6 @@
 
 from typing import Any
 
-
 class Map:
     def __init__(self, config: dict[str, Any]) -> None:
         self.pacgum: int = int(config["pacgum"])
