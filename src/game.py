@@ -11,12 +11,12 @@ class Menu(Enum):
     settings = 3,
     exit = 4
 
+
 class Game:
     def __init__(self, pacman: Pacman, config: GameConfig) -> None:
         self.pacman = pacman
         self.config = config
         self.gumsCollected: int = 0
-
         self.map: Maze = Maze(size=(int(config["width"]),int(config["height"])))
 
     def launch_game() -> None:

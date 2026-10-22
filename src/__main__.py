@@ -1,7 +1,6 @@
 import pygame
 import sys
 import json
-from typing import Any
 from .config import GameConfig
 from .map import Map
 from .pacman import Pacman
@@ -48,7 +47,7 @@ def __main__() -> None:
 
         pygame.init()
         # game.init(cfg)
-        
+
         screen: pygame.Surface = pygame.display.set_mode(
             (WINDOW_SIZE[0], WINDOW_SIZE[1]))
         # goes into the game
@@ -61,7 +60,16 @@ def __main__() -> None:
         running: bool = True
         while running:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_w:
+                        ourHero.update_direction('W')
+                    elif event.key == pygame.K_a:
+                        ourHero.update_direction('A')
+                    elif event.key == pygame.K_s:
+                        ourHero.update_direction('S')
+                    elif event.key == pygame.K_d:
+                        ourHero.update_direction('D')
+                elif event.type == pygame.QUIT:
                     running = False
             # game.run(screen)
             scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
