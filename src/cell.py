@@ -12,8 +12,6 @@ class Cell():
         position: Tuple (x, y) with the cell's coordinates in the grid.
         special: String marker shown in the cell's center during rendering.
         visited: True if generation algorithm has processed this cell.
-        path: True if this cell is part of the shortest path.
-        seed: Reserved flag for seed-related marking (currently unused).
     """
     def __init__(
             self,
