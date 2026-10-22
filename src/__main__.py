@@ -7,7 +7,7 @@ from .map import Map
 from .pacman import Pacman
 from pydantic_extra_types.coordinate import Coordinate
 from pydantic import ValidationError
-
+from .game import Game
 
 TILE_SIZE = 64
 WINDOW_SIZE = (1400, 1080)
@@ -19,40 +19,44 @@ class Gum():
         self.sprite = pygame.Rect(self.position[0], self.position[1], 5, 5)
 
 
-class Game():
+
+def validate_config() -> GameConfig:
+    if not len(sys.argv) == 2:
+        # print(sys.argv)
+        raise EOFError("Only one argument is required")
+    elif not sys.argv[1].endswith(".json"):
+        raise TypeError("'.json' file format is expected")
+
+    try:
+        with open(sys.argv[1], mode="r") as file:
+            cfg = json.loads(file.read())
+        our_config = GameConfig(**cfg)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Could not find file {sys.argv[1]}")
+    except PermissionError:
+        raise PermissionError(f"Could not open the file {sys.argv[1]}")
+    except ValidationError:
+        raise ValidationError("Config file is incorrect")
+    except json.JSONDecodeError:
+        raise json.JSONDecodeError(f"Broken JSON")
+    else:  
+        return our_config
+
+
+def load_the_game(our_config: GameConfig) -> Game:
     """
-    takes a Surface of the main screen and blits
-    1) Map once per lvl
-    2) gums 
+    made to init the game
     """
-    def __init__() -> None:
-        ...
+    new_game = Game(our_config)
+    ...
 
 
 def __main__() -> None:
     try:
         # validation
-        if not len(sys.argv) == 2:
-            # print(sys.argv)
-            raise EOFError("Only one argument is required")
-        elif not sys.argv[1].endswith(".json"):
-            raise TypeError("'.json' file format is expected")
-
-        try:
-            with open(sys.argv[1], mode="r") as file:
-                cfg = json.loads(file.read())
-            our_config = GameConfig(**cfg)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Could not find file {sys.argv[1]}")
-        except PermissionError:
-            raise PermissionError(f"Could not open the file {sys.argv[1]}")
-        except ValidationError:
-            raise ValidationError("Config file is incorrect")
-        except json.JSONDecodeError:
-            raise json.JSONDecodeError(f"Broken JSON")
-
+        our_config: GameConfig = validate_config()
+        load_the_game(our_config=our_config)
         pygame.init()
-        # game.init(cfg)
         
         screen: pygame.Surface = pygame.display.set_mode(
             (WINDOW_SIZE[0], WINDOW_SIZE[1]))
@@ -76,6 +80,9 @@ def __main__() -> None:
         pygame.quit()
     except (EOFError, NameError) as err:
         print(f"couldn't run Pac-Man: {err}")
+    finally:
+        print("Exited PacMan successfully")
+        sys.exit()
 
 
 if __name__ == "__main__":
