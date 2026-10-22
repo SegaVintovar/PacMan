@@ -7,7 +7,8 @@ from .map import Map
 _key_directions: dict[str, tuple[int, int]] = {
     'W': (-1, 0),
     'D': (0, 1),
-    'S': ()
+    'S': (1, 0),
+    'A': (0, -1)
 }
 
 
@@ -23,7 +24,6 @@ class Pacman:
             f"src/assets/sprites/pacman_{self.direction}_wide.png",
             ).convert_alpha()
         self.coords = self.measure_spawn(self.map)
-        self.destination: tuple[int, int] = None
 
     def spawn(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite, self.coords)
@@ -74,9 +74,9 @@ class Pacman:
             or cell.w and self.direction == "A"
             )
 
-
     def update_direction(self, char: str) -> None:
         self.direction = char
         self.sprite = pygame.image.load(
             f"src/assets/sprites/pacman_{self.direction}_wide.png"
             ).convert_alpha()
+        print(f"This is a potential bounce? {self._bounce()}")

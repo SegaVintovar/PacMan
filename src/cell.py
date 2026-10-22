@@ -16,7 +16,7 @@ class Cell():
     def __init__(
             self,
             n: bool, e: bool, s: bool, w: bool, position: tuple[int, int],
-            value: int, special: str = ""
+            value: int, row: int, col: int, special: str = ""
             ) -> None:
         self.n = n
         self.e = e
