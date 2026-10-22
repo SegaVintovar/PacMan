@@ -46,6 +46,7 @@ class GameConfig(BaseModel):
             raise ValueError("map width needs to be at least 15")
         if self.height < 15:
             raise ValueError("map height needs to be at least 15")
+        return self
 
     @classmethod
     def load(cls: "GameConfig",

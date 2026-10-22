@@ -5,11 +5,13 @@ from typing import Any
 from .cell import Cell
 from .map import Map
 
+
 class Controls(Enum):
     W = 0,
     D = 1,
     S = 2,
     A = 3
+
 
 class Pacman:
     def __init__(self, map: Map, config: dict[str, Any]) -> None:
@@ -21,6 +23,8 @@ class Pacman:
         self.lastDirection: Controls = 3
         self.sprite = pygame.image.load("src/assets/sprites/pacman_A_wide.png").convert_alpha()
         self.coords = self.measure_spawn(self.map)
+        self.rect: pygame.Rect = pygame.Rect(self.x, self.y, 44, 44)
+
 
     def spawn(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite, self.coords)
