@@ -7,16 +7,27 @@ from .map import Map
 
 
 TILE_SIZE = 64
-WINDOW_SIZE = (1280, 1080)
+WINDOW_SIZE = (1400, 1080)
+
+
+class Gum():
+    def __init__(self) -> None:
+        self.position
 
 
 class Game():
+    """
+    takes a Surface of the main screen and blits
+    1) Map once per lvl
+    2) gums 
+    """
     def __init__() -> None:
         ...
 
 
 def __main__() -> None:
     try:
+        # validation
         if not len(sys.argv) == 2:
             # print(sys.argv)
             raise EOFError("Only one argument is required")
@@ -34,21 +45,24 @@ def __main__() -> None:
         except json.JSONDecodeError as e:
             raise json.JSONDecodeError(f"Broken JSON {str(e)}")
 
-
         pygame.init()
+        # game.init(cfg)
+        
         screen: pygame.Surface = pygame.display.set_mode(
             (WINDOW_SIZE[0], WINDOW_SIZE[1]))
+        # goes into the game
         pygame.display.set_caption("Hello Pygame for pac-man")
         # one map per level???
-        ourMap = Map(config=cfg)
+        ourMap = Map(config=our_config)
 
         running: bool = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+            # game.run(screen)
             scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
-            screen.blit(ourMap.map_image, dest=(0, 0))
+            screen.blit(scaled_map, dest=(0, 0))
             pygame.display.update()
         pygame.quit()
     except (EOFError, NameError) as err:

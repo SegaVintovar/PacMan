@@ -5,6 +5,7 @@ from .cell import Cell
 from .assets.cells import *
 import pygame
 
+
 class Map:
     def __init__(self, config: dict[str, Any]) -> None:
         # error handling now or do try init Map
@@ -16,6 +17,7 @@ class Map:
         self._grid: list[list[int]] = []
         self.map: list[list[Cell]] = self._create_map()
         self.map_image: pygame.Surface = self._build_image()
+        self.tiles: list[pygame.Surface] = []
 
     def _create_map(self) -> list[list[Cell]]:
         maze_gen: MazeGenerator = MazeGenerator(
@@ -42,7 +44,8 @@ class Map:
         tiles = []
         for i in range(16):
             try:
-                image = pygame.image.load(f"src/assets/cells/tile_{i}.png").convert()
+                image = pygame.image.load(
+                    f"src/assets/cells/tile_{i}.png").convert()
             except Exception as e:
                 raise e
             tiles.append(image)
