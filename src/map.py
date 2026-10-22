@@ -32,7 +32,7 @@ class Map:
                 bool((c >> 1) & 1),     # East
                 bool((c >> 2) & 1),     # South
                 bool((c >> 3) & 1),     # West
-                ((x * 32), (y * 32)),   # position
+                ((x * 64), (y * 64)),   # position
                 c                       # value
                 ))
             iMap.append(tmp)
@@ -46,7 +46,7 @@ class Map:
             except Exception as e:
                 raise e
             tiles.append(image)
-        screen = pygame.Surface(size=((self.width * 32), (self.height * 32)))
+        screen = pygame.Surface(size=((self.width * 64), (self.height * 64)))
         for row in self.map:
             for c in row:
                 screen.blit(tiles[c.value], c.position)
