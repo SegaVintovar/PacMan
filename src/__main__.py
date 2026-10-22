@@ -5,6 +5,8 @@ from typing import Any
 from .config import GameConfig
 from .map import Map
 from .pacman import Pacman
+from pydantic_extra_types.coordinate import Coordinate
+from pydantic import ValidationError
 
 
 TILE_SIZE = 64
@@ -12,8 +14,9 @@ WINDOW_SIZE = (1400, 1080)
 
 
 class Gum():
-    def __init__(self) -> None:
-        self.position
+    def __init__(self, position: Coordinate) -> None:
+        self.position = position
+        self.sprite = pygame.Rect(self.position[0], self.position[1], 5, 5)
 
 
 class Game():
@@ -32,8 +35,8 @@ def __main__() -> None:
         if not len(sys.argv) == 2:
             # print(sys.argv)
             raise EOFError("Only one argument is required")
-        elif not sys.argv[1] == "config.json":
-            raise NameError("'config.json' is expected")
+        elif not sys.argv[1].endswith(".json"):
+            raise TypeError("'.json' file format is expected")
 
         try:
             with open(sys.argv[1], mode="r") as file:
@@ -43,8 +46,10 @@ def __main__() -> None:
             raise FileNotFoundError(f"Could not find file {sys.argv[1]}")
         except PermissionError:
             raise PermissionError(f"Could not open the file {sys.argv[1]}")
-        except json.JSONDecodeError as e:
-            raise json.JSONDecodeError(f"Broken JSON {str(e)}")
+        except ValidationError:
+            raise ValidationError("Config file is incorrect")
+        except json.JSONDecodeError:
+            raise json.JSONDecodeError(f"Broken JSON")
 
         pygame.init()
         # game.init(cfg)
