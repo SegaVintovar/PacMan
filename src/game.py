@@ -11,12 +11,6 @@ class Menu(Enum):
     settings = 3,
     exit = 4
 
-class Controls(Enum):
-    W = 0,
-    D = 1,
-    S = 2,
-    A = 3
-
 class Game:
     def __init__(self, pacman: Pacman, config: GameConfig) -> None:
         self.pacman = pacman

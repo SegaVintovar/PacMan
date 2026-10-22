@@ -4,6 +4,7 @@ import json
 from typing import Any
 from .config import GameConfig
 from .map import Map
+from .pacman import Pacman
 
 class Game():
     def __init__() -> None:
@@ -27,8 +28,8 @@ def __main__() -> None:
     screen: pygame.Surface = pygame.display.set_mode(
         (our_config.width * 32, our_config.height * 32))
     pygame.display.set_caption("Hello Pygame for pac-man")
-    # one map per level???
     ourMap = Map(config=cfg)
+    ourHero: Pacman = Pacman(ourMap, config=cfg)
 
     running: bool = True
     while running:
@@ -36,6 +37,7 @@ def __main__() -> None:
             if event.type == pygame.QUIT:
                 running = False
         screen.blit(ourMap.map_image, dest=(0, 0))
+        ourHero.spawn(screen)
         pygame.display.update()
     pygame.quit()
 
