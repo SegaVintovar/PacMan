@@ -38,37 +38,42 @@ class Cell():
 
     def render_walls(self) -> None:
         # cell_base = pygame.Surface(size=(TILE, TILE))
+        # closed Cell
         if self.value == 15:
-            self.surface.fill()
+            self.surface.fill((255, 255, 255))
         walls = []
         # cell_base.set_alpha()
         if self.n:
             walls.append(pygame.Rect((0, 0), (TILE, 4)))
         if self.e:
-            walls.append(pygame.Rect((TILE - 4, 0), (TILE, TILE)))
+            walls.append(pygame.Rect((TILE - 4, 0), (4, TILE)))
         if self.s:
-            walls.append(pygame.Rect((0, TILE - 4), (TILE, TILE)))
+            walls.append(pygame.Rect((0, TILE - 4), (TILE, 4)))
         if self.w:
             walls.append(pygame.Rect((0, 0), (4, TILE)))
         for w in walls:
-            pygame.draw.rect(self.surface, (255, 255, 255), w)
+            pygame.draw.rect(self.surface, (25, 25, 255), w)
 
 # pygame.Rect.collidelist()
 
 
 if __name__ == "__main__":
+    # testing rendering of the single Cell
     pygame.init()
-    screen: pygame.Surface = pygame.display.set_mode(
-        (WINDOW_SIZE[0], WINDOW_SIZE[1]))
+    # window = pygame.display.set_mode(WINDOW_SIZE)
+    screen: pygame.Surface = pygame.Surface((TILE, TILE))
     # pygame.display.set_caption("Hello Pygame for pac-man")
 
-    cell = Cell(0, 1, 0, 1, (0, 0), 6)
+    cell = Cell(1, 1, 1, 1, (0, 0), 15)
+
+    screen.blit(cell.surface, dest=(0, 0))
+    # window.blit(screen, dest=(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2))
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        screen.blit(cell.surface, dest=(0, 0))
+
         pygame.display.update()
 
     pygame.quit()

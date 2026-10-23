@@ -1,10 +1,12 @@
-
 from enum import Enum
 from . import Pacman, GameConfig
 from . import Maze
 from .creature import Creature
 from .map import Map
-from pygame import Surface
+import pygame
+
+
+WINDOW_SIZE = (1400, 1080)
 
 
 class Menu(Enum):
@@ -22,9 +24,16 @@ class Game:
         self.gumsCollected: int = 0
         self.creatures: list[Creature] = []
         self.maps: list[Map] = []
-        self.maze_gen: Maze = maze_gen
+        self.maze_gen: Maze = Maze
+        pygame.init()
+        # screen in the window of the app itself, main screen
+        screen = pygame.display.set_mode(WINDOW_SIZE)
+        self.screen: pygame.Surface = screen  # 1. window first
+        clock = pygame.time.Clock()
+        self.clock: pygame.time.Clock = clock
 
     def launch_game(self) -> None:
+        # open main window
         # upload all images
         # render all maps
         # open the menu
@@ -37,7 +46,6 @@ class Game:
         """init PacMan, Ghosts"""
         ...
 
-    
     def menu() -> None:
         """
         after launching a window frame,
