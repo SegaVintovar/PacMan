@@ -4,6 +4,7 @@ from . import Pacman, GameConfig
 from . import Maze
 from .creature import Creature
 from .map import Map
+from pygame import Surface
 
 
 class Menu(Enum):
@@ -15,16 +16,21 @@ class Menu(Enum):
 
 
 class Game:
-    def __init__(self, config: GameConfig) -> None:
+    def __init__(self, config: GameConfig, maze_gen: Maze) -> None:
         # self.pacman = pacman
         self.config = config
         self.gumsCollected: int = 0
         self.creatures: list[Creature] = []
+        self.maps: list[Map] = []
+        self.maze_gen: Maze = maze_gen
 
-        self.map: Maze = Maze(
-            size=(int(config["width"]), int(config["height"])))
+    def launch_game(self) -> None:
+        # upload all images
+        # render all maps
+        # open the menu
+        ...
 
-    def launch_game() -> None:
+    def start_lvl(self, level: int):
         ...
 
     def _init_creatures() -> None:

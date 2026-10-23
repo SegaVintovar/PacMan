@@ -1,3 +1,7 @@
+import pygame
+
+global TILE
+
 class Cell():
     """Represents a single cell in the maze grid.
 
@@ -25,5 +29,18 @@ class Cell():
         self.special = special
         self.position = position
         self.value = value
+        self.surface: pygame.Surface = self.render()
 
-
+    def render(self) -> pygame.Surface:
+        cell_base = pygame.Surface(size=(TILE, TILE))
+        cell_base.set_alpha()
+        if self.n:
+            cell_base.blit(pygame.Rect((0, 0), (TILE, 4)))
+        if self.e:
+            cell_base.blit(pygame.Rect((TILE - 4, 0), (TILE, TILE)))
+        if self.s:
+            cell_base.blit(pygame.Rect((0, TILE - 4), (TILE, TILE)))
+        if self.w:
+            cell_base.blit(pygame.Rect((0, 0), (4, TILE)))
+        return cell_base
+            

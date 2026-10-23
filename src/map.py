@@ -6,6 +6,7 @@ from .config import GameConfig
 from .assets.cells import *
 import pygame
 
+global TILE
 
 class Map:
     def __init__(self, config: GameConfig) -> None:
@@ -35,7 +36,7 @@ class Map:
                 bool((c >> 1) & 1),     # East
                 bool((c >> 2) & 1),     # South
                 bool((c >> 3) & 1),     # West
-                ((x * 64), (y * 64)),   # position
+                ((x * TILE), (y * TILE)),   # position
                 c                       # value
                 ))
             iMap.append(tmp)
@@ -50,7 +51,7 @@ class Map:
             except Exception as e:
                 raise e
             tiles.append(image)
-        screen = pygame.Surface(size=((self.width * 64), (self.height * 64)))
+        screen = pygame.Surface(size=((self.width * TILE), (self.height * TILE)))
         for row in self.map:
             for c in row:
                 screen.blit(tiles[c.value], c.position)
