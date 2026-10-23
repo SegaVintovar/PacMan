@@ -1,6 +1,7 @@
 import pygame
 
-global TILE
+TILE = 64
+WINDOW_SIZE = (1400, 1080)
 
 class Cell():
     """Represents a single cell in the maze grid.
@@ -15,7 +16,6 @@ class Cell():
         w: Boolean state of the west wall. True means wall is closed.
         position: Tuple (x, y) with the cell's coordinates in the grid.
         special: String marker shown in the cell's center during rendering.
-        visited: True if generation algorithm has processed this cell.
     """
     def __init__(
             self,
@@ -29,18 +29,46 @@ class Cell():
         self.special = special
         self.position = position
         self.value = value
-        self.surface: pygame.Surface = self.render()
+        self.surface: pygame.Surface | None = None
+        self.set_surface()
+        self.render_walls()
 
-    def render(self) -> pygame.Surface:
-        cell_base = pygame.Surface(size=(TILE, TILE))
-        cell_base.set_alpha()
+    def set_surface(self) -> None:
+        self.surface = pygame.display.set_mode((TILE, TILE))
+
+    def render_walls(self) -> None:
+        # cell_base = pygame.Surface(size=(TILE, TILE))
+        if self.value == 15:
+            self.surface.fill()
+        walls = []
+        # cell_base.set_alpha()
         if self.n:
-            cell_base.blit(pygame.Rect((0, 0), (TILE, 4)))
+            walls.append(pygame.Rect((0, 0), (TILE, 4)))
         if self.e:
-            cell_base.blit(pygame.Rect((TILE - 4, 0), (TILE, TILE)))
+            walls.append(pygame.Rect((TILE - 4, 0), (TILE, TILE)))
         if self.s:
-            cell_base.blit(pygame.Rect((0, TILE - 4), (TILE, TILE)))
+            walls.append(pygame.Rect((0, TILE - 4), (TILE, TILE)))
         if self.w:
-            cell_base.blit(pygame.Rect((0, 0), (4, TILE)))
-        return cell_base
-            
+            walls.append(pygame.Rect((0, 0), (4, TILE)))
+        for w in walls:
+            pygame.draw.rect(self.surface, (255, 255, 255), w)
+
+# pygame.Rect.collidelist()
+
+
+if __name__ == "__main__":
+    pygame.init()
+    screen: pygame.Surface = pygame.display.set_mode(
+        (WINDOW_SIZE[0], WINDOW_SIZE[1]))
+    # pygame.display.set_caption("Hello Pygame for pac-man")
+
+    cell = Cell(0, 1, 0, 1, (0, 0), 6)
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        screen.blit(cell.surface, dest=(0, 0))
+        pygame.display.update()
+
+    pygame.quit()

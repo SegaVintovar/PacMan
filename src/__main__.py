@@ -19,7 +19,6 @@ class Gum():
         self.sprite = pygame.Rect(self.position[0], self.position[1], 5, 5)
 
 
-
 def validate_config() -> GameConfig:
     if not len(sys.argv) == 2:
         # print(sys.argv)
@@ -39,7 +38,7 @@ def validate_config() -> GameConfig:
         raise ValidationError("Config file is incorrect")
     except json.JSONDecodeError:
         raise json.JSONDecodeError(f"Broken JSON")
-    else:  
+    else:
         return our_config
 
 
