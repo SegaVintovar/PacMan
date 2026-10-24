@@ -34,7 +34,7 @@ class Cell():
         self.render_walls()
 
     def set_surface(self) -> None:
-        self.surface = pygame.display.set_mode((TILE, TILE))
+        self.surface = pygame.Surface((TILE, TILE))
 
     def render_walls(self) -> None:
         # cell_base = pygame.Surface(size=(TILE, TILE))

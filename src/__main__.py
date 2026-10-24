@@ -7,12 +7,11 @@ from .map import Map
 from .pacman import Pacman
 from pydantic_extra_types.coordinate import Coordinate
 from pydantic import ValidationError
-from .game import Game
-from . import Maze
+from .game import Game, WINDOW_SIZE
+from . import MazeGenerator
 
 
 TILE_SIZE = 64
-WINDOW_SIZE = (1400, 1080)
 
 
 class Gum():
@@ -27,7 +26,7 @@ def validate_config() -> GameConfig:
         raise EOFError("Only one argument is required")
     elif not sys.argv[1].endswith(".json"):
         raise TypeError("'.json' file format is expected")
-    # here we should try to load config from argument list,
+    # here we should try to load config from argument of the pac-man.py,
     # but in case it is not possible we should run the game with default one
     # this is according to the subject!
     # NOT DONE YET!!!!
@@ -42,7 +41,7 @@ def validate_config() -> GameConfig:
     except json.JSONDecodeError:
         raise json.JSONDecodeError("Broken JSON")
     except ValidationError:
-        raise ValidationError("Config file is incorrect")
+        raise 
     else:
         return our_config
 
@@ -51,43 +50,58 @@ def load_the_game(our_config: GameConfig) -> Game:
     """
     made to init the game
     """
-    new_game = Game(our_config, Maze)
+    new_game = Game(our_config, MazeGenerator)
     
     ...
 
 
 def __main__() -> None:
-    try:
+    # try:
         # validation
         our_config: GameConfig = validate_config()
-        the_game = load_the_game(our_config=our_config)
-        pygame.init()
-
-        screen: pygame.Surface = pygame.display.set_mode(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1]))
+        print("config validated")
+        # the_game = load_the_game(our_config=our_config)
+        
+        # screen is being loading during Game init
+        # pygame init also happens during Game init
+        # pygame.init()
+        
+        # screen: pygame.Surface = pygame.display.set_mode(
+        #     (WINDOW_SIZE[0], WINDOW_SIZE[1]))
         # goes into the game
-        pygame.display.set_caption("Hello Pygame for pac-man")
+        # pygame.display.set_caption("Hello Pygame for pac-man")
         # one map per level???
-        ourMap = Map(config=our_config)
+        mygame = Game(our_config, MazeGenerator)
+        print("mygame has done init")
+        # screen = mygame.screen
+        # mygame.display_one_map()
 
-        ourHero: Pacman = Pacman(ourMap, config=cfg)
+        # ourHero: Pacman = Pacman(ourMap, config=cfg)
 
         running: bool = True
         while running:
+            # print("running")
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            # game.run(screen)
-            scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
+            map_i = mygame.maps[0].map_image
+            screen = mygame.screen
+            scaled_map = pygame.transform.scale(map_i, WINDOW_SIZE)
+            # scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
+            # screen.blit(scaled_map, dest=(0, 0))
+            # ourHero.spawn(screen)
+            # mygame.screen.fill("black")
+            # mygame.display_one_map()
             screen.blit(scaled_map, dest=(0, 0))
-            ourHero.spawn(screen)
-            pygame.display.update()
+            # print("after display one map")
+            pygame.display.flip()
+            mygame.clock.tick(60)
         pygame.quit()
-    except (EOFError, NameError) as err:
-        print(f"couldn't run Pac-Man: {err}")
-    finally:
-        print("Exited PacMan successfully")
-        sys.exit()
+    # except Exception as err:
+    #     print(f"couldn't run Pac-Man: {err}")
+    # finally:
+    #     print("Exited PacMan successfully")
+    #     sys.exit()
 
 
 if __name__ == "__main__":
