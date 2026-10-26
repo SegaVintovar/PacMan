@@ -2,6 +2,10 @@
 name = "pac-man"
 version = "0.1.0"
 description = "renewed version of the arcade pac-man game"
+authors = [
+    { name = "vsudak", email = "vsudak@student.codam.nl" },
+    { name = "brogaar", email = "brogaar@student.codam.nl" }
+]
 requires-python = ">=3.10"
 dependencies = [
 	"pydantic",

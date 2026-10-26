@@ -65,31 +65,22 @@ def __main__() -> None:
     mygame = Game(our_config, MazeGenerator)
     print("mygame has done init")
     screen = mygame.screen
-    mygame.display_one_map()
+    # mygame.display_one_map()
 
     # bastiaan version of the main
     running: bool = True
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    mygame.pacman.update_direction('W')
-                elif event.key == pygame.K_a:
-                    mygame.pacman.update_direction('A')
-                elif event.key == pygame.K_s:
-                    mygame.pacman.update_direction('S')
-                elif event.key == pygame.K_d:
-                    mygame.pacman.update_direction('D')
-            if event.type == pygame.QUIT:
-                running = False
-        map_i = mygame.maps[0].map_image
-        screen = mygame.screen
-        scaled_map = pygame.transform.scale(map_i,
-                                            (our_config.width * TILE,
-                                             our_config.height * TILE))
-        screen.blit(scaled_map, dest=(0, 0))
-        mygame.render_creatures()
-        pygame.display.flip()
+        # running = mygame.process(pygame.event.get())
+        
+        running = mygame.process(pygame.event.get())
+        # map_i = mygame.maps[0].map_image
+        # screen = mygame.screen
+        # scaled_map = pygame.transform.scale(map_i,
+        #                                     (our_config.width * TILE,
+        #                                      our_config.height * TILE))
+        # screen.blit(scaled_map, dest=(0, 100))
+        # mygame.render_creatures()
+        # pygame.display.flip()
         mygame.clock.tick(60)
         pygame.display.update()
     pygame.quit()
