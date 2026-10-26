@@ -16,16 +16,12 @@ class Gum():
         self.sprite = pygame.Rect(self.position[0], self.position[1], 5, 5)
 
 
-def validate_config() -> GameConfig:
-    if not len(sys.argv) == 2:
+def validate_config(argv: list[str]) -> GameConfig:
+    if not len(argv) == 2:
         # print(sys.argv)
         raise EOFError("Only one argument is required")
     elif not sys.argv[1].endswith(".json"):
         raise TypeError("'.json' file format is expected")
-    # here we should try to load config from argument of the pac-man.py,
-    # but in case it is not possible we should run the game with default one
-    # this is according to the subject!
-    # NOT DONE YET!!!!
     try:
         with open(sys.argv[1], mode="r") as file:
             cfg = json.loads(file.read())
@@ -36,89 +32,34 @@ def validate_config() -> GameConfig:
         raise PermissionError(f"Could not open the file {sys.argv[1]}")
     except json.JSONDecodeError:
         raise json.JSONDecodeError("Broken JSON")
-    except ValidationError:
-        raise
+    except ValidationError as e:
+        raise ValidationError(f"{str(e)}")
     else:
         return our_config
 
 
-def load_the_game(our_config: GameConfig) -> Game:
-    """
-    made to init the game
-    """
-    new_game = Game(our_config, MazeGenerator)
-    return new_game
-
-
 def __main__() -> None:
-    # try:
-    our_config: GameConfig = validate_config()
+    try:
+        our_config: GameConfig = validate_config(sys.argv)
+    except Exception as e:
+        print(f"Could not validate given configuration file: {str(e)}")
+        print("Recovering the start up with default config")
+        try:
+            with open("storage/config.json", mode="r") as file:
+                cfg = json.loads(file.read())
+            our_config = GameConfig(**cfg)
+        except Exception as e:
+            print(f"Could not open and validate default config: {str(e)}")
+            sys.exit(1)
     print("config validated")
 
-    # screen is being loading during Game init
-    # pygame init also happens during Game init
-    # screen: pygame.Surface = pygame.display.set_mode(
-    #     (WINDOW_SIZE[0], WINDOW_SIZE[1]))
-    # goes into the game
-    # pygame.display.set_caption("Hello Pygame for pac-man")
-    # one map per level???
     mygame = Game(our_config, MazeGenerator)
-    print("mygame has done init")
-    screen = mygame.screen
-    # mygame.display_one_map()
-
-    # bastiaan version of the main
     running: bool = True
-    while running:
-        # running = mygame.process(pygame.event.get())
-        
+    while running:        
         running = mygame.process(pygame.event.get())
-        # map_i = mygame.maps[0].map_image
-        # screen = mygame.screen
-        # scaled_map = pygame.transform.scale(map_i,
-        #                                     (our_config.width * TILE,
-        #                                      our_config.height * TILE))
-        # screen.blit(scaled_map, dest=(0, 100))
-        # mygame.render_creatures()
-        # pygame.display.flip()
         mygame.clock.tick(60)
         pygame.display.update()
     pygame.quit()
-
-    # Valentyn version of MAIN
-    # ourHero: Pacman = Pacman(mygame.maps[0], config=our_config)
-
-    # running: bool = True
-    # while running:
-    #     # print("running")
-    #     # should our game.process(pygame.event.get()) here ?
-    #     events = pygame.event.get()
-    #     for event in events:
-    #         if event.type == pygame.QUIT:
-    #             running = False
-    #     map_i = mygame.maps[0].map_image.copy()
-    #     screen = mygame.screen
-    #     ourHero.spawn(map_i)
-    #     scaled_map = pygame.transform.scale(map_i, WINDOW_SIZE)
-    #     # scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
-    #     # screen.blit(scaled_map, dest=(0, 0))
-        
-    #     # mygame.screen.fill("black")
-    #     # mygame.display_one_map()
-    #     screen.blit(scaled_map, dest=(0, 0))
-    #     # print("after display one map")
-    #     pygame.display.flip()
-    #     mygame.clock.tick(60)
-    # pygame.quit()
-
-
-
-    
-    # except Exception as err:
-    #     print(f"couldn't run Pac-Man: {err}")
-    # finally:
-    #     print("Exited PacMan successfully")
-    #     sys.exit()
 
 
 if __name__ == "__main__":

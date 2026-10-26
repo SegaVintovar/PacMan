@@ -135,7 +135,9 @@ class Game():
         clock = pygame.time.Clock()
         self.clock: pygame.time.Clock = clock
         self._prepare_maps()
+        self._prepare_creatures()
         self.pacman: Pacman = Pacman(self.maps[0], config)
+        self.creatures.append(self.pacman)
         header = Header(self.config, 1000)
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
@@ -177,6 +179,17 @@ class Game():
             one_more_map = Map(self.config)
             self.maps.append(one_more_map)
 
+    def _prepare_creatures(self) -> None:
+        # pacman
+        # self.pacman
+        # ghosts
+        ...
+
+
+    def place_gums(self) -> None:
+        # self.screen.blits()
+        ...
+
     def display_one_map(self) -> None:
         # self.screen.fill("black")
         self.screen.blit(self.maps[0].map_image, (0, 0))
@@ -203,6 +216,8 @@ class Game():
         ...
 
     def render_creatures(self) -> None:
+        for creature in self.creatures:
+            creature.spawn(self.screen)
         self.pacman.spawn(self.screen)
 
     def navigate(option: Menu) -> int:
