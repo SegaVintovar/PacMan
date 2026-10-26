@@ -9,5 +9,6 @@ dependencies = [
 	"python-dotenv",
 	"mazegenerator",
 	"flake8",
-	"mypy"
+	"mypy",
+	"pydantic-extra-types>=2.11.1",
 ]
