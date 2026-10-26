@@ -7,7 +7,7 @@ from .pacman import Pacman
 import pygame
 
 TILE = 64
-WINDOW_SIZE = (1400, 800)
+WINDOW_SIZE = (800, 600)
 
 
 class Main(Enum):
@@ -42,9 +42,20 @@ class Timer():
 
 
 class Menu():
-    def __init__(self):
-        ...
+    class Button():
+        def __init__(self, name: str) -> None:
+            self.image: pygame.Surface | None = None
 
+    def __init__(self):
+        self.image: pygame.Surface = pygame.Surface(WINDOW_SIZE)
+        self.buttons: list[self.Button] = []
+
+    def render_menu(self) -> None:
+        for btn in self.buttons:
+            self.image.blit()
+
+    def open_menu(self, screen: pygame.Surface) -> None:
+        screen.blit(self.image, (0, 0))
 
 # has timer and current score and highest score
 class Header():
@@ -164,6 +175,7 @@ class Game():
                 print("Quit")
                 return False
         # according to the state we are showing or game or menu or leadeboard
+        # do we need the map being scaled?
         scaled_map = pygame.transform.scale(self.maps[0].map_image,
                                             (self.config.width * TILE,
                                              self.config.height * TILE))
