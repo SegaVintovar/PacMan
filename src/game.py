@@ -6,7 +6,7 @@ from .map import Map
 import pygame
 
 
-WINDOW_SIZE = (1400, 800)
+WINDOW_SIZE = (950, 950)
 
 
 class Menu(Enum):

@@ -76,20 +76,23 @@ def __main__() -> None:
         # screen = mygame.screen
         # mygame.display_one_map()
 
-        # ourHero: Pacman = Pacman(ourMap, config=cfg)
+        ourHero: Pacman = Pacman(mygame.maps[0], config=our_config)
 
         running: bool = True
         while running:
             # print("running")
-            for event in pygame.event.get():
+            # should our game.process(pygame.event.get()) here ?
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     running = False
-            map_i = mygame.maps[0].map_image
+            map_i = mygame.maps[0].map_image.copy()
             screen = mygame.screen
+            ourHero.spawn(map_i)
             scaled_map = pygame.transform.scale(map_i, WINDOW_SIZE)
             # scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
             # screen.blit(scaled_map, dest=(0, 0))
-            # ourHero.spawn(screen)
+            
             # mygame.screen.fill("black")
             # mygame.display_one_map()
             screen.blit(scaled_map, dest=(0, 0))
