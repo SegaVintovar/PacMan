@@ -67,6 +67,7 @@ def __main__() -> None:
     screen = mygame.screen
     mygame.display_one_map()
 
+    # bastiaan version of the main
     running: bool = True
     while running:
         for event in pygame.event.get():
@@ -92,6 +93,36 @@ def __main__() -> None:
         mygame.clock.tick(60)
         pygame.display.update()
     pygame.quit()
+
+    # Valentyn version of MAIN
+    # ourHero: Pacman = Pacman(mygame.maps[0], config=our_config)
+
+    # running: bool = True
+    # while running:
+    #     # print("running")
+    #     # should our game.process(pygame.event.get()) here ?
+    #     events = pygame.event.get()
+    #     for event in events:
+    #         if event.type == pygame.QUIT:
+    #             running = False
+    #     map_i = mygame.maps[0].map_image.copy()
+    #     screen = mygame.screen
+    #     ourHero.spawn(map_i)
+    #     scaled_map = pygame.transform.scale(map_i, WINDOW_SIZE)
+    #     # scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
+    #     # screen.blit(scaled_map, dest=(0, 0))
+        
+    #     # mygame.screen.fill("black")
+    #     # mygame.display_one_map()
+    #     screen.blit(scaled_map, dest=(0, 0))
+    #     # print("after display one map")
+    #     pygame.display.flip()
+    #     mygame.clock.tick(60)
+    # pygame.quit()
+
+
+
+    
     # except Exception as err:
     #     print(f"couldn't run Pac-Man: {err}")
     # finally:

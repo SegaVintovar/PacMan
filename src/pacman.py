@@ -14,6 +14,7 @@ _key_directions: dict[str, tuple[int, int]] = {
     'A': (-1, 0)
 }
 
+TILE = 64
 
 class Pacman(Creature):
     def __init__(self, map: Map, config: GameConfig) -> None:
