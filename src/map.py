@@ -1,6 +1,4 @@
 
-from typing import Any
-# from maze_gen.mazegenerator import MazeGenerator
 from .cell import Cell
 from .config import GameConfig
 from .assets.cells import *

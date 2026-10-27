@@ -55,7 +55,7 @@ def __main__() -> None:
 
     mygame = Game(our_config, MazeGenerator)
     running: bool = True
-    while running:        
+    while running:
         running = mygame.process(pygame.event.get())
         mygame.clock.tick(60)
         pygame.display.update()

@@ -9,6 +9,7 @@ class Creature(ABC):
         self.name = name
         self.postion = position
         self.picture: Surface | None = None
+        self._destination: tuple[int, int] | None = None
 
     def move(self, map: Map) -> None:
         pass

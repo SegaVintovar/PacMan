@@ -55,6 +55,10 @@ class Cell():
         for w in walls:
             pygame.draw.rect(self.surface, (25, 25, 255), w)
 
+    def creature_destination(self) -> tuple[int, int]:
+        x, y = self.position
+        return (x + TILE // 2, y + TILE // 2)
+
 # pygame.Rect.collidelist()
 
 

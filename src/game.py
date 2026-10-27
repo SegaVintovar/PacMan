@@ -91,6 +91,7 @@ class Header():
         self.current_score_n_lvl()
         screen.blit(self.image, dest=(0, 0))
 
+
 # has lives and fruits
 class Footer():
     def __init__(self, config: GameConfig, lives: int) -> None:
@@ -169,8 +170,6 @@ class Game():
                 elif event.key == pygame.K_q:
                     print("q")
                     return False
-                # elif event.key == pygame.K_ESCAPE:
-                #     state["menu"] = True
             if event.type == pygame.QUIT:
                 print("Quit")
                 return False
