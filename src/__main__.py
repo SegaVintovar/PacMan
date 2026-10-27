@@ -33,7 +33,7 @@ def validate_config(argv: list[str]) -> GameConfig:
     except json.JSONDecodeError:
         raise json.JSONDecodeError("Broken JSON")
     except ValidationError as e:
-        raise ValidationError(f"{str(e)}")
+        raise e
     else:
         return our_config
 

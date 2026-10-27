@@ -4,6 +4,8 @@ from .config import GameConfig
 from .cell import Cell
 from .map import Map
 from .creature import Creature
+from pydantic_extra_types.coordinate import Coordinate
+
 
 TILE = 64
 
@@ -44,8 +46,25 @@ class Pacman(Creature):
        within the center unless the cell represents
        as a 42-grid."""
     def measure_spawn(self) -> None:
+        def get_aval_neighoburs(map: Map, pos: Coordinate) -> Cell:
+            """
+            Looking for available neighbours
+            """
+            result: list[Cell] = []
+            if (pos[1] + 1) < len(map.map) and map.map[pos[1] + 1][pos[0]].value != 15:
+                result.append(map.map[pos[1] + 1][pos[0]])
+            if (pos[0] + 1) < len(map.map[0]) and map.map[pos[1]][pos[0] + 1].value != 15:
+                result.append(map.map[pos[1]][pos[0] + 1])
+            if (pos[1] - 1) >= 0 and map.map[pos[1] - 1][pos[0]] != 15:
+                result.append(map.map[pos[1] - 1][pos[0]])
+            if (pos[0] - 1) >= 0 and map.map[pos[1]][pos[0] - 1] != 15:
+                result.append(map.map[pos[1]][pos[0] - 1])
+            return result[0]
+        
         row_mid: int = int(self.map.width / 2) - 1
         col_mid: int = int(self.map.height / 2) - 1
+        if self.map.map[col_mid][row_mid].value == 15:
+            col_mid, row_mid = get_aval_neighoburs(self.map, (col_mid, row_mid)).position
         self.rect.left += col_mid * TILE
         self.rect.bottom += row_mid * TILE
         print(f"row: {self.y}\ncol: {self.x}")
@@ -85,8 +104,8 @@ class Pacman(Creature):
         self.sprite = pygame.image.load(
             f"src/assets/sprites/pacman_{self._direction}_wide.png"
             ).convert_alpha()
-        if not self._out_bound() or not self._bounce():
+        if not self._out_bound():
             row, col = _key_directions[char]
             self.x += row
             self.y += col
-            self._move()
+        self._move()

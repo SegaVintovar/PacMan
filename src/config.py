@@ -42,9 +42,9 @@ class GameConfig(BaseModel):
         if self.pacgum >= self.width * self.height:
             raise ValueError(
                 "pacgum count cannot exceed the number of grid cells")
-        if self.width < 15:
+        if self.width < 10:
             raise ValueError("map width needs to be at least 15")
-        if self.height < 15:
+        if self.height < 10:
             raise ValueError("map height needs to be at least 15")
         return self
 
