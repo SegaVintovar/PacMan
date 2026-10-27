@@ -8,6 +8,8 @@ class Creature(ABC):
     def __init__(self, name: str, position: Coordinate) -> None:
         self.name = name
         self.postion = position
+        self.cell: Cell = map[position[1]][position[0]]
+        
         self.picture: Surface | None = None
 
     def move(self, map: Map) -> None:

@@ -5,9 +5,8 @@ from .cell import Cell
 from .map import Map
 from .creature import Creature
 from pydantic_extra_types.coordinate import Coordinate
+from .constants import TILE, KEY_DIRECTIONS
 
-
-TILE = 64
 
 _key_directions: dict[str, tuple[int, int]] = {
     'W': (0, -1),
@@ -16,7 +15,6 @@ _key_directions: dict[str, tuple[int, int]] = {
     'A': (-1, 0)
 }
 
-TILE = 64
 
 class Pacman(Creature):
     def __init__(self, map: Map, config: GameConfig) -> None:
@@ -60,11 +58,12 @@ class Pacman(Creature):
             if (pos[0] - 1) >= 0 and map.map[pos[1]][pos[0] - 1] != 15:
                 result.append(map.map[pos[1]][pos[0] - 1])
             return result[0]
-        
+
         row_mid: int = int(self.map.width / 2) - 1
         col_mid: int = int(self.map.height / 2) - 1
         if self.map.map[col_mid][row_mid].value == 15:
-            col_mid, row_mid = get_aval_neighoburs(self.map, (col_mid, row_mid)).position
+            col_mid, row_mid = get_aval_neighoburs(
+                self.map, (col_mid, row_mid)).position
         self.rect.left += col_mid * TILE
         self.rect.bottom += row_mid * TILE
         print(f"row: {self.y}\ncol: {self.x}")
@@ -105,7 +104,7 @@ class Pacman(Creature):
             f"src/assets/sprites/pacman_{self._direction}_wide.png"
             ).convert_alpha()
         if not self._out_bound():
-            row, col = _key_directions[char]
+            row, col = KEY_DIRECTIONS[char]
             self.x += row
             self.y += col
         self._move()
