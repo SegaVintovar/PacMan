@@ -48,7 +48,7 @@ class Menu():
 
     def __init__(self):
         self.image: pygame.Surface = pygame.Surface(WINDOW_SIZE)
-        self.buttons: list[self.Button] = []
+        self.buttons: list[Menu.Button] = []
 
     def render_menu(self) -> None:
         for btn in self.buttons:

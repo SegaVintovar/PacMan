@@ -85,8 +85,8 @@ class Pacman(Creature):
         self.sprite = pygame.image.load(
             f"src/assets/sprites/pacman_{self._direction}_wide.png"
             ).convert_alpha()
-        if not self._out_bound():
+        if not self._out_bound() or not self._bounce():
             row, col = _key_directions[char]
             self.x += row
             self.y += col
-        self._move()
+            self._move()
