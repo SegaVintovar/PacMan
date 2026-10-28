@@ -2,18 +2,9 @@ import pygame
 import sys
 import json
 from .config import GameConfig
-from pydantic_extra_types.coordinate import Coordinate
 from pydantic import ValidationError
 from .game import Game
 from . import MazeGenerator
-
-TILE = 64
-
-
-class Gum():
-    def __init__(self, position: Coordinate) -> None:
-        self.position = position
-        self.sprite = pygame.Rect(self.position[0], self.position[1], 5, 5)
 
 
 def validate_config(argv: list[str]) -> GameConfig:

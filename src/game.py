@@ -5,9 +5,7 @@ from .creature import Creature
 from .map import Map
 from .pacman import Pacman
 import pygame
-
-TILE = 64
-WINDOW_SIZE = (800, 600)
+from .constants import TILE, WINDOW_SIZE, HEADER_HEIGHT
 
 
 class Main(Enum):
@@ -64,7 +62,8 @@ class Header():
         self.config: GameConfig = config
         self.width = config.width
         self.highest_score: int = highest_score
-        self.image: pygame.Surface = pygame.Surface((TILE * self.width, 100))
+        self.image: pygame.Surface = pygame.Surface(
+            (WINDOW_SIZE[0], HEADER_HEIGHT))
         self.font: pygame.font.Font = pygame.font.SysFont("Arial", 50)
         self.level: int = 0
 
@@ -78,13 +77,13 @@ class Header():
             self.font.render(
                 f"Highest Score: {self.highest_score}", True, (255, 0, 0)
             ),
-            dest=(int((self.width / 2) * TILE - 200), 30)
+            dest=(int((WINDOW_SIZE[0] / 2) - 200), 30)
         )
         self.image.blit(
             self.font.render(
                 f"Level: {self.level}", True, (0, 255, 0)
             ),
-            dest=(int((self.width) * TILE - 200), 30)
+            dest=(int((WINDOW_SIZE[0]) - 200), 30)
         )
 
     def show_me(self, screen: pygame.Surface) -> None:
@@ -98,7 +97,8 @@ class Footer():
         self.config: GameConfig = config
         self.width: int = config.width
         self.lives: int = lives
-        self.image: pygame.Surface = pygame.Surface((TILE * self.width, 100))
+        self.image: pygame.Surface = pygame.Surface(
+            (WINDOW_SIZE[0], HEADER_HEIGHT))
         timer = Timer(config.level_max_time)
         self.timer: Timer = timer
         self.timer.start_timer()
@@ -116,18 +116,18 @@ class Footer():
                     self.timer.level_max_time - self.timer.time_since_start()
                     }", True, (255, 0, 0)
                 ),
-            dest=(int(self.width / 2) * TILE - 50, 30)
+            dest=(int(WINDOW_SIZE[0]) - 300, 30)
         )
 
     def show_me(self, screen: pygame.Surface) -> None:
         self.image.fill("black")
         self.current_lives_n_timer()
-        screen.blit(self.image, (0, (100 + self.config.height * TILE)))
+        screen.blit(self.image, (0, (WINDOW_SIZE[1] + 100)))
 
 
 # start the game
 # - open the window, prepare a map/maps?, images
-# - blit into the screen the menu
+# - blit into the screen the menu/map/scoreboard
 class Game():
     def __init__(self, config: GameConfig,
                  maze_gen: MazeGenerator = MazeGenerator) -> None:
@@ -142,7 +142,7 @@ class Game():
         pygame.init()
         # screen in the window of the app itself, main screen
         screen = pygame.display.set_mode(
-            (config.width * TILE, config.height * TILE + 200))
+            (WINDOW_SIZE[0], WINDOW_SIZE[1] + 200))
         self.screen: pygame.Surface = screen  # 1. window first
         clock = pygame.time.Clock()
         self.clock: pygame.time.Clock = clock
@@ -175,11 +175,10 @@ class Game():
                 return False
         # according to the state we are showing or game or menu or leadeboard
         # do we need the map being scaled?
-        scaled_map = pygame.transform.scale(self.maps[0].map_image,
-                                            (self.config.width * TILE,
-                                             self.config.height * TILE))
-        self.screen.blit(scaled_map, dest=(0, 100))
         self.render_creatures()
+        scaled_map = pygame.transform.scale(
+            self.maps[0].map_image, WINDOW_SIZE)
+        self.screen.blit(scaled_map, dest=(0, 100))
         self.header.show_me(self.screen)
         self.footer.show_me(self.screen)
         return True

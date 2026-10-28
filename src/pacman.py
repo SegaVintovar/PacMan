@@ -5,6 +5,7 @@ from .cell import Cell
 from .map import Map
 from .creature import Creature
 from pydantic_extra_types.coordinate import Coordinate
+from .constants import TILE, KEY_DIRECTIONS
 
 
 _key_directions: dict[str, tuple[int, int]] = {
@@ -14,7 +15,6 @@ _key_directions: dict[str, tuple[int, int]] = {
     'A': (-1, 0)
 }
 
-TILE = 64
 
 
 class Pacman(Creature):
