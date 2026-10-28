@@ -54,9 +54,9 @@ class Pacman(Creature):
                 result.append(map.map[pos[1] + 1][pos[0]])
             if (pos[0] + 1) < len(map.map[0]) and map.map[pos[1]][pos[0] + 1].value != 15:
                 result.append(map.map[pos[1]][pos[0] + 1])
-            if (pos[1] - 1) >= 0 and map.map[pos[1] - 1][pos[0]] != 15:
+            if (pos[1] - 1) >= 0 and map.map[pos[1] - 1][pos[0]].value != 15:
                 result.append(map.map[pos[1] - 1][pos[0]])
-            if (pos[0] - 1) >= 0 and map.map[pos[1]][pos[0] - 1] != 15:
+            if (pos[0] - 1) >= 0 and map.map[pos[1]][pos[0] - 1].value != 15:
                 result.append(map.map[pos[1]][pos[0] - 1])
             return result[0]
 

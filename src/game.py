@@ -175,9 +175,12 @@ class Game():
                 return False
         # according to the state we are showing or game or menu or leadeboard
         # do we need the map being scaled?
-        self.render_creatures()
+        # if state is play
+        map_image = self.maps[0].map_image.copy()
+        self.render_creatures(map_image)
+        # if state is menu
         scaled_map = pygame.transform.scale(
-            self.maps[0].map_image, WINDOW_SIZE)
+            map_image, WINDOW_SIZE)
         self.screen.blit(scaled_map, dest=(0, 100))
         self.header.show_me(self.screen)
         self.footer.show_me(self.screen)
@@ -225,10 +228,10 @@ class Game():
         """
         ...
 
-    def render_creatures(self) -> None:
+    def render_creatures(self, map: pygame.Surface) -> None:
         for creature in self.creatures:
             creature.spawn(self.screen)
-        self.pacman.spawn(self.screen)
+        self.pacman.spawn(map)
 
     def navigate(option: Menu) -> int:
         return 1
