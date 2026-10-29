@@ -3,7 +3,7 @@ import sys
 import json
 from .config import GameConfig
 from pydantic import ValidationError
-from .game import Game
+from .app import App
 from . import MazeGenerator
 
 
@@ -44,7 +44,7 @@ def __main__() -> None:
             sys.exit(1)
     print("config validated")
 
-    mygame = Game(our_config, MazeGenerator)
+    mygame = App(our_config)
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())

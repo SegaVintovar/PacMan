@@ -7,7 +7,7 @@ from .pacman import Pacman
 import pygame
 from .constants import TILE, WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
 from typing import Callable, Any
-from . import Menu
+# from . import Menu
 
 class Main(Enum):
     start_game = 0,
@@ -111,26 +111,15 @@ class Footer():
         screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
 
 
-class App():
-    """
-    Handles final output, by knowing current state
-    delegates input.
-    Two members Game and Menu.
 
-    """
-    def __init__(self, config: GameConfig) -> None:
-        self.config = config
-        self.game: Game = Game(config=self.config)
-        self.menu: Menu = Menu(self.game)
-        self.state: Game | Menu = self.menu
-
-    def process(self, evns: list[pygame.event.Event]) -> bool:
-        self.state = self.state.process(events=evns)
+            
 
 # start the game
 # - open the window, prepare a map/maps?, images
 # - blit into the screen the menu/map/scoreboard
 class Game():
+    # lets think about it if we are running the game for the first time
+    # or we continue playing after pause
     def __init__(self, config: GameConfig,
                  maze_gen: MazeGenerator = MazeGenerator) -> None:
         self.config = config
@@ -141,14 +130,14 @@ class Game():
         self.maze_gen: MazeGenerator = maze_gen
         self.timer: Timer = Timer(config.level_max_time)
         self.player: Player = Player(config.lives)
-        pygame.init()
-        # screen in the window of the app itself, main screen
-        screen = pygame.display.set_mode(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1] + 200))
-        self.screen: pygame.Surface = screen  # 1. window first
-        clock = pygame.time.Clock()
-        self.clock: pygame.time.Clock = clock
-        self.menu: Menu = Menu(self)
+        # pygame.init()
+        # # screen in the window of the app itself, main screen
+        # screen = pygame.display.set_mode(
+        #     (WINDOW_SIZE[0], WINDOW_SIZE[1] + 200))
+        # self.screen: pygame.Surface = screen  # 1. window first
+        # clock = pygame.time.Clock()
+        # self.clock: pygame.time.Clock = clock
+        # self.menu: Menu = Menu(self)
         self._prepare_maps()
         self._prepare_creatures()
         self.pacman: Pacman = Pacman(self.maps[0], config)
@@ -157,59 +146,36 @@ class Game():
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
         self.footer: Footer = footer
-        self.state: str = "menu"
+        # self.state: str = "menu"
     
     
     # self.module[self.state](events)
-    def process(self, events: list[pygame.event.Event]) -> bool:
+    # should return 0 , 1 , 2
+    def process(self, events: list[pygame.event.Event], screen: pygame.Surface) -> int:
         # static state: dict
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 if event.key == pygame.K_w:
-                    if self.state == "play":
-                        self.pacman.update_direction('W')
-                    if self.state == "menu":
-                        self.menu.process("W")
+                    self.pacman.update_direction('W')
                 elif event.key == pygame.K_a:
-                    if self.state == "play":
-                        self.pacman.update_direction('A')
+                    self.pacman.update_direction('A')
                 elif event.key == pygame.K_s:
-                    if self.state == "play":
-                        self.pacman.update_direction('S')
-                    if self.state == "menu":
-                        self.menu.process("S")
+                    self.pacman.update_direction('S')
                 elif event.key == pygame.K_d:
-                    if self.state == "play":
-                        self.pacman.update_direction('D')
-                elif event.key == pygame.K_RETURN:
-                    if self.state == "menu":
-                        print("RETURN")
-                        self.menu.process("RETURN")
-                elif event.key == pygame.K_q:
-                    print("q")
-                    return False
+                    self.pacman.update_direction('D')
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_q:
+                    return 3
             if event.type == pygame.QUIT:
-                print("Quit")
-                return False
-        # according to the state we are showing or game or menu or leadeboard
-        # do we need the map being scaled?
-        # if state is play - take map image and start/continue the game
-        # elif state == "menu" - take menu image
-        if self.state == "play":
-            map_image = self.maps[0].map_image.copy()
-            self.render_creatures(map_image)
-        # if state is menu
-            scaled_map = pygame.transform.scale(
-                map_image, WINDOW_SIZE)
-            current_image = scaled_map
-        elif self.state == "menu":
-            # self.menu.open_menu()
-            current_image = self.menu.image
-        self.screen.blit(current_image, dest=(0, HEADER_HEIGHT))
-        if self.state == "play":
-            self.header.show_me(self.screen)
-            self.footer.show_me(self.screen)
-        return True
+                exit()
+        map_image = self.maps[0].map_image.copy()
+        self.render_creatures(map_image)
+        # render gums, ghosts
+        scaled_map = pygame.transform.scale(
+            map_image, WINDOW_SIZE)
+        self.header.show_me(screen)
+        self.footer.show_me(screen)
+        screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
+        return 1
 
     def _prepare_maps(self) -> None:
         # for _ in range(len(self.config.level)):
@@ -246,20 +212,13 @@ class Game():
         """init PacMan, Ghosts"""
         ...
 
-    def menu() -> None:
-        """
-        after launching a window frame,
-        this must be representing as a landing page
-        """
-        ...
-
     def render_creatures(self, map: pygame.Surface) -> None:
         for creature in self.creatures:
             creature.spawn(self.screen)
         self.pacman.spawn(map)
 
-    def navigate(option: Menu) -> int:
-        return 1
+    # def navigate(option: Menu) -> int:
+    #     return 1
 
 
 if __name__ == "__main__":
