@@ -130,14 +130,6 @@ class Game():
         self.maze_gen: MazeGenerator = maze_gen
         self.timer: Timer = Timer(config.level_max_time)
         self.player: Player = Player(config.lives)
-        # pygame.init()
-        # # screen in the window of the app itself, main screen
-        # screen = pygame.display.set_mode(
-        #     (WINDOW_SIZE[0], WINDOW_SIZE[1] + 200))
-        # self.screen: pygame.Surface = screen  # 1. window first
-        # clock = pygame.time.Clock()
-        # self.clock: pygame.time.Clock = clock
-        # self.menu: Menu = Menu(self)
         self._prepare_maps()
         self._prepare_creatures()
         self.pacman: Pacman = Pacman(self.maps[0], config)
@@ -146,10 +138,8 @@ class Game():
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
         self.footer: Footer = footer
-        # self.state: str = "menu"
+
     
-    
-    # self.module[self.state](events)
     # should return 0 , 1 , 2
     def process(self, events: list[pygame.event.Event], screen: pygame.Surface) -> int:
         # static state: dict
@@ -163,10 +153,13 @@ class Game():
                     self.pacman.update_direction('S')
                 elif event.key == pygame.K_d:
                     self.pacman.update_direction('D')
-                elif event.key == pygame.K_SPACE or event.key == pygame.K_q:
-                    return 3
+                elif (event.key == pygame.K_SPACE or
+                      event.key == pygame.K_q or 
+                      event.key == pygame.K_ESCAPE):
+                    # timer needs to be paused here
+                    return 2
             if event.type == pygame.QUIT:
-                exit()
+                return 0
         map_image = self.maps[0].map_image.copy()
         self.render_creatures(map_image)
         # render gums, ghosts
@@ -178,7 +171,6 @@ class Game():
         return 1
 
     def _prepare_maps(self) -> None:
-        # for _ in range(len(self.config.level)):
         for _ in range(1):
             one_more_map = Map(self.config)
             self.maps.append(one_more_map)
@@ -213,8 +205,8 @@ class Game():
         ...
 
     def render_creatures(self, map: pygame.Surface) -> None:
-        for creature in self.creatures:
-            creature.spawn(self.screen)
+        # for creature in self.creatures:
+        #     creature.spawn(self.screen)
         self.pacman.spawn(map)
 
     # def navigate(option: Menu) -> int:

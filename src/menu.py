@@ -43,16 +43,14 @@ class Menu():
             self.buttons.append(Menu.Button(b[0], size, position))
 
     def _render_menu(self) -> None:
-        selected = self.buttons[self.seleceted_button % len(self.buttons)]
-        print(selected.text, len(self.buttons))
-        for btn in self.buttons:
-            if btn == selected:
-                
-                img = btn.image.copy()
-                img.set_colorkey((255, 0, 0))
+        selected = self.seleceted_button % len(self.buttons)
+        print(selected, len(self.buttons))
+        for i, btn in enumerate(self.buttons):
+            img = btn.image.copy()
+            if i == selected:
+                pygame.draw.rect(img, (255, 255, 0), img.get_rect(), width=4)
                 print("btn selected", type(img))
-            else:
-                img = btn.image
+
             
             self.image.blit(img, btn.rect)
 
@@ -70,10 +68,14 @@ class Menu():
                 if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                     return 0
                 if event.key == pygame.K_RETURN:
+                    print("return")
                     if self.buttons[
                         self.seleceted_button % len(self.buttons)
-                        ] == "Start":
+                        ].text == "Start":
+                        print("start")
                         return 1
+                    else:
+                        return 0
             if event.type == pygame.QUIT:
                 exit()
         # show the menu
