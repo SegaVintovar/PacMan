@@ -5,8 +5,9 @@ from .creature import Creature
 from .map import Map
 from .pacman import Pacman
 import pygame
-from .constants import TILE, WINDOW_SIZE, HEADER_HEIGHT
-
+from .constants import TILE, WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
+from typing import Callable, Any
+from . import Menu
 
 class Main(Enum):
     start_game = 0,
@@ -39,21 +40,6 @@ class Timer():
         return int((pygame.time.get_ticks() - self.start_time) / 1000)
 
 
-class Menu():
-    class Button():
-        def __init__(self, name: str) -> None:
-            self.image: pygame.Surface | None = None
-
-    def __init__(self):
-        self.image: pygame.Surface = pygame.Surface(WINDOW_SIZE)
-        self.buttons: list[Menu.Button] = []
-
-    def render_menu(self) -> None:
-        for btn in self.buttons:
-            self.image.blit()
-
-    def open_menu(self, screen: pygame.Surface) -> None:
-        screen.blit(self.image, (0, 0))
 
 # has timer and current score and highest score
 class Header():
@@ -64,7 +50,7 @@ class Header():
         self.highest_score: int = highest_score
         self.image: pygame.Surface = pygame.Surface(
             (WINDOW_SIZE[0], HEADER_HEIGHT))
-        self.font: pygame.font.Font = pygame.font.SysFont("Arial", 50)
+        self.font: pygame.font.Font = pygame.font.SysFont("Arial", FONT_SIZE)
         self.level: int = 0
 
     def current_score_n_lvl(self) -> None:
@@ -77,13 +63,13 @@ class Header():
             self.font.render(
                 f"Highest Score: {self.highest_score}", True, (255, 0, 0)
             ),
-            dest=(int((WINDOW_SIZE[0] / 2) - 200), 30)
+            dest=(int((WINDOW_SIZE[0] / 2) - FONT_SIZE * 4), 30)
         )
         self.image.blit(
             self.font.render(
                 f"Level: {self.level}", True, (0, 255, 0)
             ),
-            dest=(int((WINDOW_SIZE[0]) - 200), 30)
+            dest=(int((WINDOW_SIZE[0]) - FONT_SIZE * 4), 30)
         )
 
     def show_me(self, screen: pygame.Surface) -> None:
@@ -102,7 +88,7 @@ class Footer():
         timer = Timer(config.level_max_time)
         self.timer: Timer = timer
         self.timer.start_timer()
-        self.font: pygame.font.Font = pygame.font.SysFont("Arial", 50)
+        self.font: pygame.font.Font = pygame.font.SysFont("Arial", FONT_SIZE)
 
     def current_lives_n_timer(self) -> None:
         self.image.blit(
@@ -122,8 +108,24 @@ class Footer():
     def show_me(self, screen: pygame.Surface) -> None:
         self.image.fill("black")
         self.current_lives_n_timer()
-        screen.blit(self.image, (0, (WINDOW_SIZE[1] + 100)))
+        screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
 
+
+class App():
+    """
+    Handles final output, by knowing current state
+    delegates input.
+    Two members Game and Menu.
+
+    """
+    def __init__(self, config: GameConfig) -> None:
+        self.config = config
+        self.game: Game = Game(config=self.config)
+        self.menu: Menu = Menu(self.game)
+        self.state: Game | Menu = self.menu
+
+    def process(self, evns: list[pygame.event.Event]) -> bool:
+        self.state = self.state.process(events=evns)
 
 # start the game
 # - open the window, prepare a map/maps?, images
@@ -146,6 +148,7 @@ class Game():
         self.screen: pygame.Surface = screen  # 1. window first
         clock = pygame.time.Clock()
         self.clock: pygame.time.Clock = clock
+        self.menu: Menu = Menu(self)
         self._prepare_maps()
         self._prepare_creatures()
         self.pacman: Pacman = Pacman(self.maps[0], config)
@@ -154,19 +157,34 @@ class Game():
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
         self.footer: Footer = footer
-
+        self.state: str = "menu"
+    
+    
+    # self.module[self.state](events)
     def process(self, events: list[pygame.event.Event]) -> bool:
         # static state: dict
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 if event.key == pygame.K_w:
-                    self.pacman.update_direction('W')
+                    if self.state == "play":
+                        self.pacman.update_direction('W')
+                    if self.state == "menu":
+                        self.menu.process("W")
                 elif event.key == pygame.K_a:
-                    self.pacman.update_direction('A')
+                    if self.state == "play":
+                        self.pacman.update_direction('A')
                 elif event.key == pygame.K_s:
-                    self.pacman.update_direction('S')
+                    if self.state == "play":
+                        self.pacman.update_direction('S')
+                    if self.state == "menu":
+                        self.menu.process("S")
                 elif event.key == pygame.K_d:
-                    self.pacman.update_direction('D')
+                    if self.state == "play":
+                        self.pacman.update_direction('D')
+                elif event.key == pygame.K_RETURN:
+                    if self.state == "menu":
+                        print("RETURN")
+                        self.menu.process("RETURN")
                 elif event.key == pygame.K_q:
                     print("q")
                     return False
@@ -175,15 +193,22 @@ class Game():
                 return False
         # according to the state we are showing or game or menu or leadeboard
         # do we need the map being scaled?
-        # if state is play
-        map_image = self.maps[0].map_image.copy()
-        self.render_creatures(map_image)
+        # if state is play - take map image and start/continue the game
+        # elif state == "menu" - take menu image
+        if self.state == "play":
+            map_image = self.maps[0].map_image.copy()
+            self.render_creatures(map_image)
         # if state is menu
-        scaled_map = pygame.transform.scale(
-            map_image, WINDOW_SIZE)
-        self.screen.blit(scaled_map, dest=(0, 100))
-        self.header.show_me(self.screen)
-        self.footer.show_me(self.screen)
+            scaled_map = pygame.transform.scale(
+                map_image, WINDOW_SIZE)
+            current_image = scaled_map
+        elif self.state == "menu":
+            # self.menu.open_menu()
+            current_image = self.menu.image
+        self.screen.blit(current_image, dest=(0, HEADER_HEIGHT))
+        if self.state == "play":
+            self.header.show_me(self.screen)
+            self.footer.show_me(self.screen)
         return True
 
     def _prepare_maps(self) -> None:

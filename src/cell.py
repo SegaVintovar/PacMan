@@ -1,7 +1,7 @@
 import pygame
-
-TILE = 64
-WINDOW_SIZE = (1400, 1080)
+from .constants import TILE
+# TILE = 64
+# WINDOW_SIZE = (1400, 1080)
 
 
 class Cell():

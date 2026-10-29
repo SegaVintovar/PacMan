@@ -5,5 +5,6 @@ from .map import Map
 from .pacman import Pacman
 from .config import GameConfig
 from .game import Game
+from .menu import Menu
 
-[Map, Pacman, GameConfig, MazeGenerator, Cell, Game]
+[Menu, Map, Pacman, GameConfig, MazeGenerator, Cell, Game]
