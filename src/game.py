@@ -5,9 +5,8 @@ from .creature import Creature
 from .map import Map
 from .pacman import Pacman
 import pygame
-from .constants import TILE, WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
-from typing import Callable, Any
-# from . import Menu
+from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
+
 
 class Main(Enum):
     start_game = 0,
@@ -38,7 +37,6 @@ class Timer():
 
     def time_since_start(self) -> int:
         return int((pygame.time.get_ticks() - self.start_time) / 1000)
-
 
 
 # has timer and current score and highest score
@@ -111,9 +109,6 @@ class Footer():
         screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
 
 
-
-            
-
 # start the game
 # - open the window, prepare a map/maps?, images
 # - blit into the screen the menu/map/scoreboard
@@ -139,9 +134,9 @@ class Game():
         footer = Footer(self.config, self.config.lives)
         self.footer: Footer = footer
 
-    
     # should return 0 , 1 , 2
-    def process(self, events: list[pygame.event.Event], screen: pygame.Surface) -> int:
+    def process(self,
+                events: list[pygame.event.Event], screen: pygame.Surface) -> int:
         # static state: dict
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
@@ -180,7 +175,6 @@ class Game():
         # self.pacman
         # ghosts
         ...
-
 
     def place_gums(self) -> None:
         # self.screen.blits()

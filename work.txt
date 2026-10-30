@@ -25,6 +25,7 @@ Task list:
         - make mouse detection on the menu. idk how to do so yet
         - make ghosts and gums, make them to be rendered at their positions. make gums being collected
         - make ghosts move within the maze, respect the walls
+        - what about to make a loading screen??? like pacMan is eating Ghosts
     Bastiaan:
         - create blank map(no borders)
         - create pacman and make it move with WASD or or arrows (pacman now looks like an 'O') 

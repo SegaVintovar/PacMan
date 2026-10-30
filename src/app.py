@@ -1,6 +1,6 @@
 import pygame
 from .config import GameConfig
-from .constants import WINDOW_SIZE
+from .constants import WINDOW_SIZE, HEADER_HEIGHT
 from .game import Game
 from .menu import Menu
 
@@ -17,7 +17,7 @@ class App():
         self.config = config
         pygame.init()
         screen = pygame.display.set_mode(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1] + 200))
+            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
         self.screen: pygame.Surface = screen  # 1. window first
         clock = pygame.time.Clock()
         self.clock: pygame.time.Clock = clock

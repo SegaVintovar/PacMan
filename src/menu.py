@@ -1,8 +1,8 @@
 from . import Game
 from .constants import FONT_SIZE, FONT_PATH, WINDOW_SIZE, PINK, CYAN
 import pygame
-from typing import Any
-from typing import Callable
+# from typing import Any
+# from typing import Callable
 
 
 def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
@@ -14,16 +14,23 @@ def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
         int(a[2] + (b[2] - a[2]) * t),
     )
 
+
 class Menu():
     class Button():
-        def __init__(self, text: str, size: tuple[int, int], position: tuple[int, int]) -> None:
+        def __init__(self,
+                     text: str,
+                     size: tuple[int, int],
+                     position: tuple[int, int]
+                     ) -> None:
             self.text = text
             self.image: pygame.Surface = pygame.Surface(size, pygame.SRCALPHA)
             self.rect: pygame.Rect = pygame.rect.Rect(position, size)
             # self.action = action
             # self.highlighted: bool = True
-            self.font: pygame.font.Font = pygame.font.Font(FONT_PATH, FONT_SIZE)
-            # self.font: pygame.font.Font = pygame.font.SysFont("Arial", FONT_SIZE)
+            self.font: pygame.font.Font = pygame.font.Font(
+                FONT_PATH, FONT_SIZE)
+            # self.font: pygame.font.Font = pygame.font.SysFont(
+            # "Arial", FONT_SIZE)
             self.font_color: pygame.color.Color = CYAN
             self.image.blit(
                 self.font.render(self.text, True, self.font_color),
@@ -36,23 +43,24 @@ class Menu():
                 self.font.render(self.text, True, font_color),
                 dest=(0, 0)
                 )
-
         # def execute(self, *arg: Any) -> None:
         #     self.action(arg)
 
-
     def __init__(self, game: Game):
         # image is a background
-        self.image: pygame.Surface = self._make_gradient((WINDOW_SIZE[0], WINDOW_SIZE[1] + 200))
+        self.image: pygame.Surface = self._make_gradient(
+            (WINDOW_SIZE[0], WINDOW_SIZE[1] + 200))
         self.buttons: list[Menu.Button] = []
         self.game = game
-        # self.background: pygame.Surface = 
+        # self.background: pygame.Surface =
         self._create_buttons()
-        self.seleceted_button:int = 0
+        self.seleceted_button: int = 0
         self._render_menu()
 
     def _create_buttons(self) -> None:
-        size: tuple[int, int] = (int(WINDOW_SIZE[0] * 0.4), int(WINDOW_SIZE[1] * 0.1))
+        size: tuple[int, int] = (
+            int(WINDOW_SIZE[0] * 0.4), int(WINDOW_SIZE[1] * 0.4)
+            )
         start_position = size
         step = int(WINDOW_SIZE[1] * 0.2)
         start = ("Start", 0)
@@ -70,9 +78,9 @@ class Menu():
             img = btn.image.copy()
             if i == selected:
                 btn.rect = pygame.draw.rect(img, PINK, btn.rect, width=4)
-                
+
                 print("btn selected", type(img))
-            
+
             self.image.blit(img, btn.rect)
 
     def _make_gradient(self, size: tuple[int, int]) -> pygame.Surface:
@@ -83,9 +91,19 @@ class Menu():
         for y in range(size[1]):
             color = lerp_color(top, bottom, y / size[1])
             pygame.draw.line(surface, color, (0, y), (size[0], y))
+        logo_path = "src/assets/menu/FT_PacMan.png"
+        logo = pygame.image.load(logo_path).convert_alpha()
+        surface.blit(
+            pygame.transform.scale(logo,
+                                   (WINDOW_SIZE[0] * 0.4,
+                                    WINDOW_SIZE[1] * 0.4)),
+            (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.02)
+            )
         return surface
 
-    def process(self, ents: list[pygame.event.Event], screen: pygame.Surface) -> bool:
+    def process(
+            self, ents: list[pygame.event.Event], screen: pygame.Surface
+            ) -> bool:
         for event in ents:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
@@ -100,7 +118,7 @@ class Menu():
                     print("return")
                     if self.buttons[
                         self.seleceted_button % len(self.buttons)
-                        ].text == "Start":
+                    ].text == "Start":
                         print("start")
                         return 1
                     else:
@@ -110,8 +128,6 @@ class Menu():
         self._render_menu()
         screen.blit(self.image, dest=(0, 0))
         return 2
-
-        
 
     def open_menu(self, screen: pygame.Surface) -> None:
         screen.blit(self.image, (0, 0))

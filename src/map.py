@@ -1,7 +1,6 @@
 
 from .cell import Cell
 from .config import GameConfig
-from .assets.cells import *
 from . import MazeGenerator
 import pygame
 

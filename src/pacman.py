@@ -5,7 +5,7 @@ from .cell import Cell
 from .map import Map
 from .creature import Creature
 from pydantic_extra_types.coordinate import Coordinate
-from .constants import TILE, KEY_DIRECTIONS
+from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE
 
 
 _key_directions: dict[str, tuple[int, int]] = {
@@ -16,12 +16,16 @@ _key_directions: dict[str, tuple[int, int]] = {
 }
 
 
+# lets make it move not by cells but by pixels
+# by dividing coordinates in pixels by TILE
+# we will get Cell position in the grid
 
 class Pacman(Creature):
     def __init__(self, map: Map, config: GameConfig) -> None:
         # initially spawn column is as centralized as possible
         self.cell_x: int = -1
         self.cell_y: int = -1
+        self.postion: Coordinate
         self.map = map
         self.lives: int = config.lives
         self.points: int = 0
@@ -29,8 +33,8 @@ class Pacman(Creature):
         self.sprite = pygame.image.load(
             f"src/assets/sprites/pacman_{self._direction}_wide.png",
             ).convert_alpha()
-        # self.rect: pygame.Rect = pygame.Rect(self.cell_x, self.cell_y, 44, 44)
-        self.rect = self.sprite.get_rect(topleft=(10, 44))
+        coord = (TILE - SPRIE_SIZE) // 2
+        self.rect = self.sprite.get_rect(topleft=(coord, coord))
         self.measure_spawn()
 
     def spawn(self, screen: pygame.Surface) -> None:
@@ -60,8 +64,8 @@ class Pacman(Creature):
                 result.append(map.map[pos[1]][pos[0] - 1])
             return result[0]
 
-        row_mid: int = int(self.map.width / 2)
-        col_mid: int = int(self.map.height / 2)
+        col_mid: int = int(self.map.width / 2)
+        row_mid: int = int(self.map.height / 2)
         if self.map.map[col_mid][row_mid].value == 15:
             col_mid, row_mid = get_avail_neighbours(
                 self.map, (col_mid, row_mid)).position
