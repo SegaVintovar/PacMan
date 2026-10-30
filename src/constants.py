@@ -14,3 +14,11 @@ KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
 }
 
 FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
+
+# colors for the menu
+PINK = (255, 80, 180)
+CYAN = (0, 230, 255)
+WHITE = (235, 235, 235)
+BLACK = (0, 0, 0)
+
+FONT_PATH = "src/assets/fonts/Bungee-Regular.ttf"

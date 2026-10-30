@@ -19,7 +19,12 @@ Final monsters are:
 
 Task list:
     Valentyn:
-        - make the maze visible
+        - make the maze visible - done, but may need more thinking on sizing and pacman positioning
+        - make a menu - done, but needed a PacMan logo on top of the menu
+            timer has to stop during pausing and button start has to be continue
+        - make mouse detection on the menu. idk how to do so yet
+        - make ghosts and gums, make them to be rendered at their positions. make gums being collected
+        - make ghosts move within the maze, respect the walls
     Bastiaan:
         - create blank map(no borders)
         - create pacman and make it move with WASD or or arrows (pacman now looks like an 'O') 
