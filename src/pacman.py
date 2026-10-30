@@ -97,8 +97,8 @@ class Pacman(Creature):
     def update_direction(self, char: str) -> None:
         if self._bounce(char):
             return
-        elif not self._at_direction() and self.rect.x == 0 or self.rect.y == 0:
-            print("interselected during movement towards one direction") 
+        #elif not self._at_direction() and self.rect.x == 0 or self.rect.y == 0:
+        #    print("interselected during movement towards one direction") 
         dx, dy = KEY_DIRECTIONS[char]
         self._direction = char
         self.cell_x += dx
