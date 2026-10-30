@@ -8,6 +8,8 @@ class Creature(ABC):
     def __init__(self, name: str, position: Coordinate) -> None:
         self.name = name
         self.postion = position
+        self.cell_x: int = -1
+        self.cell_y: int = -1
         self.cell: Cell = map[position[1]][position[0]]
         
         self.picture: Surface | None = None
@@ -17,6 +19,9 @@ class Creature(ABC):
         pass
 
     def _out_bound(self, map: Map) -> bool:
+        pass
+
+    def _switchable(self, map: Map) -> bool:
         pass
 
 # tmp = Surface((5, 5))
