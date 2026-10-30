@@ -1,20 +1,11 @@
-
 import pygame
 from .config import GameConfig
 from .cell import Cell
 from .map import Map
 from .creature import Creature
 from pydantic_extra_types.coordinate import Coordinate
-from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE
-
-
-_key_directions: dict[str, tuple[int, int]] = {
-    'W': (0, -1),
-    'D': (1, 0),
-    'S': (0, 1),
-    'A': (-1, 0)
-}
-
+from .constants import TILE, KEY_DIRECTIONS
+from typing import Optional
 
 # lets make it move not by cells but by pixels
 # by dividing coordinates in pixels by TILE
@@ -23,9 +14,6 @@ _key_directions: dict[str, tuple[int, int]] = {
 class Pacman(Creature):
     def __init__(self, map: Map, config: GameConfig) -> None:
         # initially spawn column is as centralized as possible
-        self.cell_x: int = -1
-        self.cell_y: int = -1
-        self.postion: Coordinate
         self.map = map
         self.lives: int = config.lives
         self.points: int = 0
@@ -36,11 +24,10 @@ class Pacman(Creature):
         coord = (TILE - SPRIE_SIZE) // 2
         self.rect = self.sprite.get_rect(topleft=(coord, coord))
         self.measure_spawn()
+        self._destination: tuple[int, int] = self._cell_center()
+        self._interselected: str = None
 
-    def spawn(self, screen: pygame.Surface) -> None:
-        cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
-        if not (self.rect.x, self.rect.y) == cell.position:
-            self._move()
+    def spawn(self, screen: pygame.Surface) -> None:   # draw only
         screen.blit(self.sprite, self.rect)
 
     """Creating an escapable point for pac-man.
@@ -48,87 +35,78 @@ class Pacman(Creature):
        within the center unless the cell represents
        as a 42-grid."""
     def measure_spawn(self) -> None:
-        def get_avail_neighbours(map: Map, pos: Coordinate) -> Cell:
-            """
-            Looking for available neighbours
-            """
-            print("get available neighours")
-            result: list[Cell] = []
-            if (pos[1] + 1) < len(map.map) and \
-                    map.map[pos[1] + 1][pos[0]].value != 15:
-                result.append(map.map[pos[1] + 1][pos[0]])
-            if (pos[0] + 1) < len(map.map[0]) and \
-                    map.map[pos[1]][pos[0] + 1].value != 15:
-                result.append(map.map[pos[1]][pos[0] + 1])
-            if (pos[1] - 1) >= 0 and map.map[pos[1] - 1][pos[0]].value != 15:
-                result.append(map.map[pos[1] - 1][pos[0]])
-            if (pos[0] - 1) >= 0 and map.map[pos[1]][pos[0] - 1].value != 15:
-                result.append(map.map[pos[1]][pos[0] - 1])
-            return result[0]
+        row_mid: int = int(self.map.width / 2)
+        col_mid: int = int(self.map.height / 2)
+        self.cell_x, self.cell_y = col_mid, row_mid
+        self.rect.center = self._cell_center()
+        self._destination = self.rect.center
 
-        col_mid: int = int(self.map.width / 2)
-        row_mid: int = int(self.map.height / 2)
-        if self.map.map[col_mid][row_mid].value == 15:
-            col_mid, row_mid = get_avail_neighbours(
-                self.map, (col_mid, row_mid)).position
-        self.rect.left += col_mid * TILE
-        self.rect.bottom += row_mid * TILE
-        self.cell_x = col_mid
-        self.cell_y = row_mid
-
-    def check_spawn(self) -> bool:
-        obtained: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
-        if self._destination is None:
-            x, y = obtained.creature_destination()
-            current: tuple[int, int] = self.rect.x, self.rect.y
-            cx, cy = current
-            if not x == cx and y == cy:
-                self._move()
-                return False
-        return True
-
-    def _move(self) -> None:
-        cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
-        x, y = cell.position
-        direction: tuple[int, int] = _key_directions[self._direction]
-        if (not self._bounce()
-           and not self.rect.x == x and not self.rect.y == y):
-            self.rect.move_ip(direction)
-            # print(f"option {self._direction} is walled")
-
-    def _bounce(self) -> bool:
-        cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
-        print(f"Packy is here: ({self.cell_x}, {self.cell_y}):")
-        if cell.n and self._direction == 'W':
-            return True
-        elif cell.e and self._direction == "D":
-            return True
-        elif cell.s and self._direction == "S":
-            return True
-        elif cell.w and self._direction == "A":
-            return True
-        else:
+    def _try_next(self) -> bool:
+        if self._bounce(None):
             return False
+        self._set_destination()
+        return True       
 
-    def _out_bound(self) -> bool:
-        if self._direction == 'A' and self.cell_x == 0:
-            return True
-        if self._direction == 'W' and self.cell_y == 0:
-            return True
-        if self._direction == 'D' and self.cell_x == self.map.width - 1:
-            return True
-        if self._direction == 'S' and self.cell_y == self.map.height - 1:
-            return True
-        return False
+    def _set_destination(self) -> None:
+        col, row = KEY_DIRECTIONS[self._direction]
+        self.cell_y += row
+        self.cell_x += col
+        centered: tuple[int, int] = self._cell_center()
+        destx, desty = centered
+        self._destination = (destx, desty)
+
+    def check(self) -> None:        # call once per frame
+        if self._at_destination():
+            if not self._try_next():
+                return
+        cx, cy = self.rect.center
+        tx, ty = self._destination
+        step_x = max(-2, min(2, tx - cx))
+        step_y = max(-2, min(2, ty - cy))
+        self.rect.move_ip(step_x, step_y)
+
+    def _bounce(self, char: Optional[str]) -> bool:
+        cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
+        if not char is None:
+            if cell.n and char == 'W':
+                return True
+            elif cell.e and char == "D":
+                return True
+            elif cell.s and char == "S":
+                return True
+            elif cell.w and char == "A":
+                return True
+            else:
+                return False
+        else:
+            if cell.n and self._direction == 'W':
+                return True
+            elif cell.e and self._direction == "D":
+                return True
+            elif cell.s and self._direction == "S":
+                return True
+            elif cell.w and self._direction == "A":
+                return True
+            else:
+                return False
+
+
+    def _cell_center(self) -> tuple[int, int]:
+        return self.cell_x * TILE + TILE // 2, self.cell_y * TILE + TILE // 2
+
+    def _at_destination(self) -> bool:
+        return self.rect.center == self._destination
 
     def update_direction(self, char: str) -> None:
+        if self._bounce(char):
+            return
+        #elif not self._at_direction() and self.rect.x == 0 or self.rect.y == 0:
+        #    print("interselected during movement towards one direction") 
+        dx, dy = KEY_DIRECTIONS[char]
         self._direction = char
-        if not self._bounce():
-            self.sprite = pygame.image.load(
-                f"src/assets/sprites/pacman_{self._direction}_wide.png"
-                ).convert_alpha()
-            print(f"we can go there{char}")
-            row, col = _key_directions[char]
-            self.cell_x += row
-            self.cell_y += col
-        self._move()
+        self.cell_x += dx
+        self.cell_y += dy
+        self._destination = self._cell_center()
+        self.sprite = pygame.image.load(
+            f"src/assets/sprites/pacman_{char}_wide.png"
+        ).convert_alpha()
