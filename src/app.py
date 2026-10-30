@@ -33,12 +33,12 @@ class App():
         state = self.state.process(evns, self.screen)
         if state == 1:
             self.state = self.game
-            self.game.process(evns, self.screen)
+            # self.game.process(evns, self.screen)
             # self.screen.blit(self.game.image, dest=(0, 0))
             return True
         if state == 2:
             self.state = self.menu
-            self.screen.blit(self.menu.image, dest=(0, 0))
+            # self.screen.blit(self.menu.image, dest=(0, 0))
             return True
         if state == 0:
             return False

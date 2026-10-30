@@ -54,9 +54,11 @@ class Pacman(Creature):
             """
             print("get available neighours")
             result: list[Cell] = []
-            if (pos[1] + 1) < len(map.map) and map.map[pos[1] + 1][pos[0]].value != 15:
+            if (pos[1] + 1) < len(map.map) and \
+                    map.map[pos[1] + 1][pos[0]].value != 15:
                 result.append(map.map[pos[1] + 1][pos[0]])
-            if (pos[0] + 1) < len(map.map[0]) and map.map[pos[1]][pos[0] + 1].value != 15:
+            if (pos[0] + 1) < len(map.map[0]) and \
+                    map.map[pos[1]][pos[0] + 1].value != 15:
                 result.append(map.map[pos[1]][pos[0] + 1])
             if (pos[1] - 1) >= 0 and map.map[pos[1] - 1][pos[0]].value != 15:
                 result.append(map.map[pos[1] - 1][pos[0]])
@@ -96,7 +98,7 @@ class Pacman(Creature):
 
     def _bounce(self) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
-        print(f"options stats ({self.cell_x}, {self.cell_y}):")
+        print(f"Packy is here: ({self.cell_x}, {self.cell_y}):")
         if cell.n and self._direction == 'W':
             return True
         elif cell.e and self._direction == "D":

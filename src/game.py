@@ -30,13 +30,23 @@ class Player():
 class Timer():
     def __init__(self, level_max_time: int) -> None:
         self.level_max_time = level_max_time
-        self.start_time = 0
+        self.start_time: int = 0
+        # when we started a pause
+        self.paused_time: int = 0
 
     def start_timer(self) -> None:
         self.start_time = pygame.time.get_ticks()
 
     def time_since_start(self) -> int:
         return int((pygame.time.get_ticks() - self.start_time) / 1000)
+
+    def pause(self) -> None:
+        self.paused_time = pygame.time.get_ticks()
+
+    def resume(self) -> None:
+        now = pygame.time.get_ticks()
+        self.start_time += now - self.paused_time
+        # self.start_time += self.paused_time
 
 
 # has timer and current score and highest score
@@ -136,7 +146,9 @@ class Game():
 
     # should return 0 , 1 , 2
     def process(self,
-                events: list[pygame.event.Event], screen: pygame.Surface) -> int:
+                events: list[pygame.event.Event],
+                screen: pygame.Surface
+                ) -> int:
         # static state: dict
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
@@ -152,6 +164,7 @@ class Game():
                       event.key == pygame.K_q or 
                       event.key == pygame.K_ESCAPE):
                     # timer needs to be paused here
+                    self.footer.timer.pause()
                     return 2
             if event.type == pygame.QUIT:
                 return 0

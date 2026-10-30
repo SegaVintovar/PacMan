@@ -1,4 +1,4 @@
-WINDOW_SIZE = (1600, 1200)
+WINDOW_SIZE = (1400, 1200)
 
 TILE = 64  # cell size
 

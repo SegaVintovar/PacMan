@@ -1,5 +1,5 @@
 import pygame
-from .constants import TILE
+from .constants import TILE, PINK
 # TILE = 64
 # WINDOW_SIZE = (1400, 1080)
 
@@ -41,7 +41,7 @@ class Cell():
         # cell_base = pygame.Surface(size=(TILE, TILE))
         # closed Cell
         if self.value == 15:
-            self.surface.fill((255, 255, 255))
+            self.surface.fill("darkorchid1")
         walls = []
         # cell_base.set_alpha()
         if self.n:
@@ -53,7 +53,7 @@ class Cell():
         if self.w:
             walls.append(pygame.Rect((0, 0), (4, TILE)))
         for w in walls:
-            pygame.draw.rect(self.surface, (25, 25, 255), w)
+            pygame.draw.rect(self.surface, "darkorchid1", w)
 
     def creature_destination(self) -> tuple[int, int]:
         x, y = self.position
