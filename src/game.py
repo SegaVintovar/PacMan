@@ -119,6 +119,7 @@ class Footer():
         screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
 
 
+
 # start the game
 # - open the window, prepare a map/maps?, images
 # - blit into the screen the menu/map/scoreboard
@@ -143,6 +144,8 @@ class Game():
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
         self.footer: Footer = footer
+        self.done = False
+        self.paused = False
 
     # should return 0 , 1 , 2
     def process(self,
@@ -165,6 +168,7 @@ class Game():
                       event.key == pygame.K_ESCAPE):
                     # timer needs to be paused here
                     self.footer.timer.pause()
+                    self.paused = True
                     return 2
             if event.type == pygame.QUIT:
                 return 0

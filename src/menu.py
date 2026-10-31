@@ -4,7 +4,6 @@ from .constants import FONT_SIZE, FONT_PATH, WINDOW_SIZE, PINK, CYAN, \
 import pygame
 
 
-
 def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
                t: float) -> tuple[int, int, int]:
     """Blend colour a into colour b. t=0 gives a, t=1 gives b."""
@@ -31,17 +30,17 @@ class Menu():
                 FONT_PATH, FONT_SIZE)
             # self.font: pygame.font.Font = pygame.font.SysFont(
             # "Arial", FONT_SIZE)
-            self.font_color: pygame.color.Color = CYAN
+            self.font_color: pygame.color.Color = PINK
             self.image.blit(
                 self.font.render(self.text, True, self.font_color),
-                dest=(0, 0)
+                dest=(FONT_SIZE * 3, FONT_SIZE // 2)
                 )
 
         def update_button_image(self, selected: bool) -> None:
-            font_color = self.font_color if not selected else PINK
+            font_color = self.font_color if not selected else CYAN
             self.image.blit(
                 self.font.render(self.text, True, font_color),
-                dest=(0, 0)
+                dest=(FONT_SIZE * 3, FONT_SIZE // 2)
                 )
             # if selected:
             #     pygame.draw.rect(self.image, PINK, self.rect, width=4)
@@ -55,7 +54,6 @@ class Menu():
         self.image: pygame.Surface = self.background.copy()
         self.buttons: list[Menu.Button] = []
         self.game = game # no need?
-        # self.background: pygame.Surface =
         self._create_buttons()
         self.seleceted_button: int = 0
         self._render_menu()
@@ -64,7 +62,7 @@ class Menu():
         size: tuple[int, int] = (
             int(WINDOW_SIZE[0] * 0.4), int(WINDOW_SIZE[1] * 0.1)
             )
-        start_position = (size[0], int(WINDOW_SIZE[1] * 0.4))
+        start_position = (size[0] * 0.7, int(WINDOW_SIZE[1] * 0.4))
         # start_position[1] = WINDOW_SIZE[1] * 0.2
         step = int(WINDOW_SIZE[1] * 0.2)
         start = ("Start", 0)
@@ -80,14 +78,12 @@ class Menu():
         # print(selected, len(self.buttons))
         for i, btn in enumerate(self.buttons):
             btn.update_button_image(selected=(i == selected))
-            btn.rect.inflate(8, 8)
+            # btn.rect.inflate(8, 8)
             img = btn.image.copy()
             if i == selected:
                 frame = img.get_rect()
+                # frame = frame.inflate(8, 8)
                 pygame.draw.rect(img, PINK, frame, width=4)
-
-                # print("btn selected", type(img))
-
             base.blit(img, btn.rect)
         self.image = base
 
@@ -123,6 +119,9 @@ class Menu():
                         if b.text == "Exit":
                             return 0
                         if b.text == "Start":
+                            if self.game.paused:
+                                self.game.footer.timer.resume()
+                                self.game.timer
                             # print("")
                             return 1
 
@@ -140,6 +139,9 @@ class Menu():
                     if self.buttons[
                         self.seleceted_button % len(self.buttons)
                     ].text == "Start":
+                        if self.game.paused:
+                            self.game.footer.timer.resume()
+                            self.game.timer
                         print("start")
                         return 1
                     else:
