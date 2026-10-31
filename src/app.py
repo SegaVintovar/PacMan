@@ -2,8 +2,8 @@ import pygame
 from .config import GameConfig
 from .constants import WINDOW_SIZE, HEADER_HEIGHT
 from .game import Game
-from .menu import Menu
-
+from .menu import Menu, ScoreBoard
+import json
 
 class App():
     """
@@ -23,11 +23,16 @@ class App():
         self.clock: pygame.time.Clock = clock
         self.game: Game = Game(config=self.config)
         self.menu: Menu = Menu(self.game)
+        self.scoreboard: dict = {}
+        self.scores: dict = {}
+        self.scoreboard_file = "scores.json"
+
         self.state: Game | Menu = self.menu
 
-    # if  state returns some value we are checking it and making some desicions
+    # if  state returns some value we are checking it and making some decisions
     # if 1 then  self.state = self.game
     # if 2 then self.state = self.menu
+    # if 3 then self.state = self.scoreboard
     # if 0 then exit()
     def process(self, evns: list[pygame.event.Event]) -> bool:
         state = self.state.process(evns, self.screen)
@@ -40,5 +45,21 @@ class App():
             self.state = self.menu
             # self.screen.blit(self.menu.image, dest=(0, 0))
             return True
+        if state == 3:
+            self.state = self.scoreboard
         if state == 0:
             return False
+
+    def _open_scoreboard_file(self) -> dict:
+        """
+        Open, read and save it to the self.scoreboard
+        """
+        with open(self.scoreboard_file, "r") as file:
+            self.scores = json.load(file.read())
+        with open(self.scoreboard_file, "w") as file:
+            self.scoreboard = json.load(file.read())
+
+    def _save_results(self) -> None:
+        with open(self.scoreboard_file, "w+") as file:
+            file.write(json.dumps(str(self.scores)))
+            print("File scores.json was updated")

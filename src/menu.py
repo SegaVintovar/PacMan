@@ -2,6 +2,7 @@ from . import Game
 from .constants import FONT_SIZE, FONT_PATH, WINDOW_SIZE, PINK, CYAN, \
     HEADER_HEIGHT
 import pygame
+from pydantic import BaseModel, Field
 
 
 def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
@@ -13,6 +14,28 @@ def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
         int(a[2] + (b[2] - a[2]) * t),
     )
 
+class Score(BaseModel):
+        player_name: str = Field(default="Player")
+        score: int = Field(ge=0, default=0)
+        date: int = Field(ge=0, default=0)
+    
+class ScoreBoard():
+    def __init__(self, background: pygame.Surface) -> None:
+        self.scores: list[Score] = []
+        self.image: pygame.Surface = pygame.Surface(
+            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
+        self.smth
+
+    def get_scores(self) -> None:
+        # here we are openning a file or creating if is not existing.
+        # 
+        with open("high_scores.json", mode="") as file:
+            ...
+
+    def process(self, events: list[pygame.event.Event]) -> int:
+        for event in events:
+            if event.type == pygame.
+        ...
 
 class Menu():
     class Button():
@@ -24,12 +47,8 @@ class Menu():
             self.text = text
             self.image: pygame.Surface = pygame.Surface(size, pygame.SRCALPHA)
             self.rect: pygame.Rect = pygame.rect.Rect(position, size)
-            # self.action = action
-            # self.highlighted: bool = True
             self.font: pygame.font.Font = pygame.font.Font(
                 FONT_PATH, FONT_SIZE)
-            # self.font: pygame.font.Font = pygame.font.SysFont(
-            # "Arial", FONT_SIZE)
             self.font_color: pygame.color.Color = PINK
             self.image.blit(
                 self.font.render(self.text, True, self.font_color),
@@ -42,10 +61,6 @@ class Menu():
                 self.font.render(self.text, True, font_color),
                 dest=(FONT_SIZE * 3, FONT_SIZE // 2)
                 )
-            # if selected:
-            #     pygame.draw.rect(self.image, PINK, self.rect, width=4)
-        # def execute(self, *arg: Any) -> None:
-        #     self.action(arg)
 
     def __init__(self, game: Game):
         # image is a background
@@ -63,9 +78,10 @@ class Menu():
             int(WINDOW_SIZE[0] * 0.4), int(WINDOW_SIZE[1] * 0.1)
             )
         start_position = (size[0] * 0.7, int(WINDOW_SIZE[1] * 0.4))
-        # start_position[1] = WINDOW_SIZE[1] * 0.2
         step = int(WINDOW_SIZE[1] * 0.2)
-        start = ("Start", 0)
+        start = ("Start", 1)
+        cntinue = ("Conttinue", 1)
+        score_board = ("Top scores", 0)
         quit = ("Exit", exit)
         buttons = [start, quit]
         for i, b in enumerate(buttons):
@@ -109,11 +125,11 @@ class Menu():
             self, ents: list[pygame.event.Event], screen: pygame.Surface
             ) -> bool:
         for event in ents:
+            # mouse events handling
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 # mouse = pygame.Rect((x, y), (5, 5))
                 for b in self.buttons:
-                    print(b.text, )
                     if b.rect.collidepoint(x, y):
                         print("Mouse button", b.text, x, y)
                         if b.text == "Exit":
@@ -124,7 +140,9 @@ class Menu():
                                 self.game.timer
                             # print("")
                             return 1
-
+                        if b.text == "Scoreboard":
+                            # return 3
+                            ...
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     # rotate selected button up

@@ -153,6 +153,11 @@ class Game():
                 screen: pygame.Surface
                 ) -> int:
         # static state: dict
+        if game.done:
+            # open the page to enter the name of the player
+            # so it will add this score to the file
+            ...
+            return 2
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 if event.key == pygame.K_w:
