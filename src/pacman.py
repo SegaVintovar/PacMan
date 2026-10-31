@@ -4,7 +4,7 @@ from .cell import Cell
 from .map import Map
 from .creature import Creature
 from pydantic_extra_types.coordinate import Coordinate
-from .constants import TILE, KEY_DIRECTIONS
+from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE
 from typing import Optional
 
 # lets make it move not by cells but by pixels

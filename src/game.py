@@ -212,8 +212,8 @@ class Game():
         ...
 
     def render_creatures(self, map: pygame.Surface) -> None:
-        for creature in self.creatures:
-            creature.spawn(self.screen)
+        # for creature in self.creatures:
+        #     creature.spawn(self.screen)
         self.pacman.check()
         self.pacman.spawn(map)
 
