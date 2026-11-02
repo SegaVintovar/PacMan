@@ -24,3 +24,5 @@ BLACK = (0, 0, 0)
 FONT_PATH = "src/assets/fonts/Bungee-Regular.ttf"
 
 MAX_SCORES = 10
+
+WALL_COLOR = "darkorchid1"

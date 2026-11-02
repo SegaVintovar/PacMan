@@ -29,3 +29,25 @@ Task list:
     Bastiaan:
         - create blank map(no borders)
         - create pacman and make it move with WASD or or arrows (pacman now looks like an 'O') 
+
+to follow the subject we need to do:
+    to do:
+        - Instructions page in the menu
+        - level by level game
+        - process the game.done == True, so in case of Win/Loss user enters his name and result is being saved
+    
+
+    done:
+        - structure where we can switch between screens Menu, Game, ScoreBoard
+            - idea is that all of these modules have method process() that manages input and blits the image on the main screen
+        - maze is visible - we have two options(Cells are uploaded as pictures or as it is now, Cells are generated within the pygame)
+        - pacman moves within the walls(small bugs are there, but its fine for now)
+
+
+Extras - our ideas that we want to implement
+    - to do:
+        - start screen with animation
+    - maybe:
+        - multiplayer
+    - done:
+        - mouse detection in the menu

@@ -1,5 +1,6 @@
 import pygame
-from .constants import TILE, PINK
+from .constants import TILE, PINK, WALL_COLOR
+from .gum import Gum
 # TILE = 64
 # WINDOW_SIZE = (1400, 1080)
 
@@ -33,6 +34,7 @@ class Cell():
         self.surface: pygame.Surface | None = None
         self.set_surface()
         self.render_walls()
+        self.gum: Gum | None = None
 
     def set_surface(self) -> None:
         self.surface = pygame.Surface((TILE, TILE))
@@ -41,7 +43,7 @@ class Cell():
         # cell_base = pygame.Surface(size=(TILE, TILE))
         # closed Cell
         if self.value == 15:
-            self.surface.fill("darkorchid1")
+            self.surface.fill(WALL_COLOR)
         walls = []
         # cell_base.set_alpha()
         if self.n:
@@ -53,7 +55,7 @@ class Cell():
         if self.w:
             walls.append(pygame.Rect((0, 0), (4, TILE)))
         for w in walls:
-            pygame.draw.rect(self.surface, "darkorchid1", w)
+            pygame.draw.rect(self.surface, WALL_COLOR, w)
 
     def creature_destination(self) -> tuple[int, int]:
         x, y = self.position
