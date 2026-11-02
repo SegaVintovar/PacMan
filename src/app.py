@@ -5,6 +5,31 @@ from .game import Game
 from .menu import Menu
 import json
 from .scoreboard import ScoreBoard
+from .gradient import make_gradient
+from typing import Any
+
+
+# controls
+# rules from the cofig: points per pacgum/supergum/ghost
+# 
+class Instructions():
+    def __init__(self, config: GameConfig) -> None:
+        self.image: pygame.Surface = make_gradient(
+            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
+        self.config = config
+
+    def process(self,
+                events: list[pygame.event.Event], screen: pygame.Surface
+                ) -> tuple[int, Any]:
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
+                    return (2, None)
+        self._show_me(screen=screen)
+        return (4, None)
+
+    def _show_me(self, screen: pygame.Surface) -> None:
+        screen.blit(self.image, dest=(0, 0))
 
 
 class App():

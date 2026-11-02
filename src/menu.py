@@ -63,8 +63,9 @@ class Menu():
         start = "Start"
         # cntinue = "Continue"
         score_board = "ScoreBoard"
+        instructions = "Instructions"
         quit = "Exit"
-        buttons = [start, score_board, quit]
+        buttons = [start, score_board, instructions, quit]
         for i, b in enumerate(buttons):
             position = (start_position[0], (start_position[1] + i * step))
             self.buttons.append(Menu.Button(b, size, position))
@@ -151,6 +152,10 @@ class Menu():
                         self.seleceted_button % len(self.buttons)
                     ].text == "ScoreBoard":
                         return (3, None)
+                    elif self.buttons[
+                        self.seleceted_button % len(self.buttons)
+                    ].text == "Instructions":
+                        return (4, None)
                     else:
                         return (0, None)
             if event.type == pygame.QUIT:

@@ -106,7 +106,7 @@ class ScoreBoard():
     def add_score(self, score: Score) -> None:
         self.scores.append(score)
         self.scores.sort(key=lambda s: s.score, reverse=True)
-        self.scores = self.scores[:10]
+        self.scores = self.scores[:MAX_SCORES]
         self._fill_image()
 
     # def add_score(self, name: str, time: int, score: int) -> None:
