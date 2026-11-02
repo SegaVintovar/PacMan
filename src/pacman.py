@@ -45,7 +45,7 @@ class Pacman(Creature):
         if self._bounce(None):
             return False
         self._set_destination()
-        return True       
+        return True
 
     def _set_destination(self) -> None:
         col, row = KEY_DIRECTIONS[self._direction]
@@ -100,7 +100,7 @@ class Pacman(Creature):
     def update_direction(self, char: str) -> None:
         if self._bounce(char):
             return
-        #elif not self._at_direction() and self.rect.x == 0 or self.rect.y == 0:
+        #  elif not self._at_direction() and self.rect.x == 0 or self.rect.y == 0:
         #    print("interselected during movement towards one direction") 
         dx, dy = KEY_DIRECTIONS[char]
         self._direction = char

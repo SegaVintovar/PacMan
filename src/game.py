@@ -7,6 +7,7 @@ from .pacman import Pacman
 import pygame
 from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
 from typing import Any
+# from .game_state import GameState
 
 
 class Main(Enum):
@@ -16,6 +17,7 @@ class Main(Enum):
     settings = 3,
     exit = 4
 
+# we need some class for state returns
 
 
 class Player():
@@ -96,7 +98,7 @@ class Footer():
         self.timer.start_timer()
         self.font: pygame.font.Font = pygame.font.SysFont("Arial", FONT_SIZE)
 
-    def current_lives_n_timer(self) -> None:
+    def _current_lives_n_timer(self) -> None:
         self.image.blit(
             self.font.render(f"Lives left: {self.lives}", True, (255, 0, 0)
                              ),
@@ -113,9 +115,8 @@ class Footer():
 
     def show_me(self, screen: pygame.Surface) -> None:
         self.image.fill("black")
-        self.current_lives_n_timer()
+        self._current_lives_n_timer()
         screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
-
 
 
 # start the game
@@ -154,20 +155,30 @@ class Game():
         if self.done:
             # open the page to enter the name of the player
             # so it will add this score to the file
-            return (2, ("enter your name", self.player))  # game is done WIN/LOOSE, so we need to store the result
+            return (2, (self.player.name, self.player.score))  # game is done WIN/LOOSE, so we need to store the result
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
-                if event.key == pygame.K_w:
-                    self.pacman.update_direction('W')
-                elif event.key == pygame.K_a:
-                    self.pacman.update_direction('A')
-                elif event.key == pygame.K_s:
-                    self.pacman.update_direction('S')
-                elif event.key == pygame.K_d:
-                    self.pacman.update_direction('D')
+                # if event.key == pygame.K_w:
+                #     self.pacman.update_direction('W')
+                # elif event.key == pygame.K_a:
+                #     self.pacman.update_direction('A')
+                # elif event.key == pygame.K_s:
+                #     self.pacman.update_direction('S')
+                # elif event.key == pygame.K_d:
+                #     self.pacman.update_direction('D')
+                # elif (event.key == pygame.K_SPACE or
+                #       event.key == pygame.K_q or
+                #       event.key == pygame.K_ESCAPE):
+                #     # timer needs to be paused here
+                #     self.footer.timer.pause()
+                #     self.paused = True
+                #     return (2, None)
+                ch: str = event.unicode
+                if ch in "wasd":
+                    self.pacman.update_direction(ch.upper())
                 elif (event.key == pygame.K_SPACE or
-                      event.key == pygame.K_q or 
-                      event.key == pygame.K_ESCAPE):
+                        event.key == pygame.K_q or
+                        event.key == pygame.K_ESCAPE):
                     # timer needs to be paused here
                     self.footer.timer.pause()
                     self.paused = True

@@ -44,13 +44,12 @@ class App():
                 self.scoreboard.add_score(extra)
                 self.scoreboard.save_scores()
             self.state = self.menu
-            # print("menu")
             return True
         if state == 3:
             self.state = self.scoreboard
-            print("scoreboard")
             return True
         if state == 0:
+            self.scoreboard.save_scores()
             return False
 
     # def _open_scoreboard_file(self) -> dict:

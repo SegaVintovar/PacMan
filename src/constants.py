@@ -22,3 +22,5 @@ WHITE = (235, 235, 235)
 BLACK = (0, 0, 0)
 
 FONT_PATH = "src/assets/fonts/Bungee-Regular.ttf"
+
+MAX_SCORES = 10

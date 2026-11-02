@@ -4,6 +4,7 @@ from .constants import FONT_SIZE, FONT_PATH, WINDOW_SIZE, PINK, CYAN, \
 import pygame
 from typing import Any
 # from .scoreboard import ScoreBoard
+from .gradient import make_gradient
 
 
 def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
@@ -43,8 +44,9 @@ class Menu():
 
     def __init__(self, game: Game):
         # image is a background
-        self.background = self._make_gradient(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
+        self.background = make_gradient(
+            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2),
+            True)
         self.image: pygame.Surface = self.background.copy()
         self.buttons: list[Menu.Button] = []
         self.game = game
@@ -86,23 +88,23 @@ class Menu():
             base.blit(img, btn.rect)
         self.image = base
 
-    def _make_gradient(self, size: tuple[int, int]) -> pygame.Surface:
-        """Sunset gradient: dark purple at the top, pink at the bottom."""
-        surface = pygame.Surface(size)
-        top = (25, 5, 60)
-        bottom = (255, 90, 140)
-        for y in range(size[1]):
-            color = lerp_color(top, bottom, y / size[1])
-            pygame.draw.line(surface, color, (0, y), (size[0], y))
-        logo_path = "src/assets/menu/FT_PacMan.png"
-        logo = pygame.image.load(logo_path).convert_alpha()
-        surface.blit(
-            pygame.transform.scale(logo,
-                                   (WINDOW_SIZE[0] * 0.4,
-                                    WINDOW_SIZE[1] * 0.4)),
-            (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.02)
-            )
-        return surface
+    # def _make_gradient(self, size: tuple[int, int]) -> pygame.Surface:
+    #     """Sunset gradient: dark purple at the top, pink at the bottom."""
+    #     surface = pygame.Surface(size)
+    #     top = (25, 5, 60)
+    #     bottom = (255, 90, 140)
+    #     for y in range(size[1]):
+    #         color = lerp_color(top, bottom, y / size[1])
+    #         pygame.draw.line(surface, color, (0, y), (size[0], y))
+    #     logo_path = "src/assets/menu/FT_PacMan.png"
+    #     logo = pygame.image.load(logo_path).convert_alpha()
+    #     surface.blit(
+    #         pygame.transform.scale(logo,
+    #                                (WINDOW_SIZE[0] * 0.4,
+    #                                 WINDOW_SIZE[1] * 0.4)),
+    #         (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.02)
+    #         )
+    #     return surface
 
     def process(
             self, ents: list[pygame.event.Event], screen: pygame.Surface
@@ -142,7 +144,7 @@ class Menu():
                     ].text == "Start":
                         if self.game.paused:
                             self.game.footer.timer.resume()
-                            self.game.timer
+                            # self.game.timer
                         print("start")
                         return (1, None)
                     elif self.buttons[
