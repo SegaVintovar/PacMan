@@ -2,8 +2,13 @@ import pygame
 from .config import GameConfig
 from .constants import WINDOW_SIZE, HEADER_HEIGHT
 from .game import Game
+<<<<<<< HEAD
 from .menu import Menu, ScoreBoard
 import json
+=======
+from .menu import Menu
+from .scoreboard import ScoreBoard
+>>>>>>> b368ed0 (started with scoreboard)
 
 class App():
     """
@@ -23,16 +28,13 @@ class App():
         self.clock: pygame.time.Clock = clock
         self.game: Game = Game(config=self.config)
         self.menu: Menu = Menu(self.game)
-        self.scoreboard: dict = {}
-        self.scores: dict = {}
-        self.scoreboard_file = "scores.json"
-
-        self.state: Game | Menu = self.menu
+        self.scoreboard: ScoreBoard = ScoreBoard()
+        self.state: Game | Menu | ScoreBoard = self.menu
 
     # if  state returns some value we are checking it and making some decisions
     # if 1 then  self.state = self.game
     # if 2 then self.state = self.menu
-    # if 3 then self.state = self.scoreboard
+    # if 3 then game over - save the result
     # if 0 then exit()
     def process(self, evns: list[pygame.event.Event]) -> bool:
         state = self.state.process(evns, self.screen)

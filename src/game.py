@@ -16,9 +16,6 @@ class Main(Enum):
     exit = 4
 
 
-class ScoreBoard():
-    ...
-
 
 class Player():
     def __init__(self, lives: int) -> None:
