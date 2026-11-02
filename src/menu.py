@@ -2,7 +2,8 @@ from . import Game
 from .constants import FONT_SIZE, FONT_PATH, WINDOW_SIZE, PINK, CYAN, \
     HEADER_HEIGHT
 import pygame
-from pydantic import BaseModel, Field
+from typing import Any
+# from .scoreboard import ScoreBoard
 
 
 def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
@@ -14,28 +15,6 @@ def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
         int(a[2] + (b[2] - a[2]) * t),
     )
 
-class Score(BaseModel):
-        player_name: str = Field(default="Player")
-        score: int = Field(ge=0, default=0)
-        date: int = Field(ge=0, default=0)
-    
-class ScoreBoard():
-    def __init__(self, background: pygame.Surface) -> None:
-        self.scores: list[Score] = []
-        self.image: pygame.Surface = pygame.Surface(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
-        self.smth
-
-    def get_scores(self) -> None:
-        # here we are openning a file or creating if is not existing.
-        # 
-        with open("high_scores.json", mode="") as file:
-            ...
-
-    def process(self, events: list[pygame.event.Event]) -> int:
-        for event in events:
-            if event.type == pygame.
-        ...
 
 class Menu():
     class Button():
@@ -68,7 +47,7 @@ class Menu():
             (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
         self.image: pygame.Surface = self.background.copy()
         self.buttons: list[Menu.Button] = []
-        self.game = game # no need?
+        self.game = game
         self._create_buttons()
         self.seleceted_button: int = 0
         self._render_menu()
@@ -79,20 +58,24 @@ class Menu():
             )
         start_position = (size[0] * 0.7, int(WINDOW_SIZE[1] * 0.4))
         step = int(WINDOW_SIZE[1] * 0.2)
-        start = ("Start", 1)
-        cntinue = ("Conttinue", 1)
-        score_board = ("Top scores", 0)
-        quit = ("Exit", exit)
-        buttons = [start, quit]
+        start = "Start"
+        # cntinue = "Continue"
+        score_board = "ScoreBoard"
+        quit = "Exit"
+        buttons = [start, score_board, quit]
         for i, b in enumerate(buttons):
             position = (start_position[0], (start_position[1] + i * step))
-            self.buttons.append(Menu.Button(b[0], size, position))
+            self.buttons.append(Menu.Button(b, size, position))
 
     def _render_menu(self) -> None:
         selected = self.seleceted_button % len(self.buttons)
         base = self.background.copy()
         # print(selected, len(self.buttons))
         for i, btn in enumerate(self.buttons):
+            # if self.game.paused and btn.text == "Start":
+            #     btn.text = "Continue"
+            # if not self.game.paused and btn.text == "Continue":
+            #     btn.text = "Start"
             btn.update_button_image(selected=(i == selected))
             # btn.rect.inflate(8, 8)
             img = btn.image.copy()
@@ -123,7 +106,7 @@ class Menu():
 
     def process(
             self, ents: list[pygame.event.Event], screen: pygame.Surface
-            ) -> bool:
+            ) -> tuple[int, Any]:
         for event in ents:
             # mouse events handling
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -133,25 +116,25 @@ class Menu():
                     if b.rect.collidepoint(x, y):
                         print("Mouse button", b.text, x, y)
                         if b.text == "Exit":
-                            return 0
+                            return (0, None)
                         if b.text == "Start":
                             if self.game.paused:
                                 self.game.footer.timer.resume()
                                 self.game.timer
-                            # print("")
-                            return 1
-                        if b.text == "Scoreboard":
-                            # return 3
+                            return (1, None)
+                        if b.text == "ScoreBoard":
+                            return (3, None)
                             ...
+            # keyboard events handling
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     # rotate selected button up
-                    self.seleceted_button += 1
+                    self.seleceted_button -= 1
                 if event.key == pygame.K_s:
                     # rotate selected button down
-                    self.seleceted_button -= 1
+                    self.seleceted_button += 1
                 if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
-                    return 0
+                    return (0, None)
                 if event.key == pygame.K_RETURN:
                     print("return")
                     if self.buttons[
@@ -161,14 +144,18 @@ class Menu():
                             self.game.footer.timer.resume()
                             self.game.timer
                         print("start")
-                        return 1
+                        return (1, None)
+                    elif self.buttons[
+                        self.seleceted_button % len(self.buttons)
+                    ].text == "ScoreBoard":
+                        return (3, None)
                     else:
-                        return 0
+                        return (0, None)
             if event.type == pygame.QUIT:
                 exit()
         self._render_menu()
         screen.blit(self.image, dest=(0, 0))
-        return 2
+        return (2, None)
 
     # def open_menu(self, screen: pygame.Surface) -> None:
     #     screen.blit(self.image, (0, 0))

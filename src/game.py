@@ -6,6 +6,7 @@ from .map import Map
 from .pacman import Pacman
 import pygame
 from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
+from typing import Any
 
 
 class Main(Enum):
@@ -131,7 +132,7 @@ class Game():
         self.creatures: list[Creature] = []
         self.maps: list[Map] = []
         self.maze_gen: MazeGenerator = maze_gen
-        self.timer: Timer = Timer(config.level_max_time)
+        # self.timer: Timer = Timer(config.level_max_time)
         self.player: Player = Player(config.lives)
         self._prepare_maps()
         self._prepare_creatures()
@@ -148,13 +149,12 @@ class Game():
     def process(self,
                 events: list[pygame.event.Event],
                 screen: pygame.Surface
-                ) -> int:
+                ) -> tuple[int, Any]:
         # static state: dict
-        if game.done:
+        if self.done:
             # open the page to enter the name of the player
             # so it will add this score to the file
-            ...
-            return 2
+            return (2, ("enter your name", self.player))  # game is done WIN/LOOSE, so we need to store the result
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 if event.key == pygame.K_w:
@@ -171,9 +171,9 @@ class Game():
                     # timer needs to be paused here
                     self.footer.timer.pause()
                     self.paused = True
-                    return 2
+                    return (2, None)
             if event.type == pygame.QUIT:
-                return 0
+                return (0, None)
         map_image = self.maps[0].map_image.copy()
         self.render_creatures(map_image)
         # render gums, ghosts
@@ -182,7 +182,7 @@ class Game():
         self.header.show_me(screen)
         self.footer.show_me(screen)
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
-        return 1
+        return (1, None)
 
     def _prepare_maps(self) -> None:
         for _ in range(1):

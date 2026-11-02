@@ -34,29 +34,33 @@ class App():
     # if 3 then game over - save the result
     # if 0 then exit()
     def process(self, evns: list[pygame.event.Event]) -> bool:
-        state = self.state.process(evns, self.screen)
+        state, extra = self.state.process(evns, self.screen)
         if state == 1:
             self.state = self.game
-            # self.game.process(evns, self.screen)
-            # self.screen.blit(self.game.image, dest=(0, 0))
+            # print("Game")
             return True
         if state == 2:
+            if extra:
+                self.scoreboard.add_score(extra)
+                self.scoreboard.save_scores()
             self.state = self.menu
-            # self.screen.blit(self.menu.image, dest=(0, 0))
+            # print("menu")
             return True
         if state == 3:
             self.state = self.scoreboard
+            print("scoreboard")
+            return True
         if state == 0:
             return False
 
-    def _open_scoreboard_file(self) -> dict:
-        """
-        Open, read and save it to the self.scoreboard
-        """
-        with open(self.scoreboard_file, "r") as file:
-            self.scores = json.load(file.read())
-        with open(self.scoreboard_file, "w") as file:
-            self.scoreboard = json.load(file.read())
+    # def _open_scoreboard_file(self) -> dict:
+    #     """
+    #     Open, read and save it to the self.scoreboard
+    #     """
+    #     with open(self.scoreboard_file, "r") as file:
+    #         self.scores = json.load(file.read())
+    #     with open(self.scoreboard_file, "w") as file:
+    #         self.scoreboard = json.load(file.read())
 
     def _save_results(self) -> None:
         with open(self.scoreboard_file, "w+") as file:

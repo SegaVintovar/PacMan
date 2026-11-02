@@ -1,6 +1,7 @@
 .gitignore
 __pycache__
 .venv
-config/config.json
 uv.lock
 *.zip
+scores.json
+.gitignore
