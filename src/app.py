@@ -3,7 +3,9 @@ from .config import GameConfig
 from .constants import WINDOW_SIZE, HEADER_HEIGHT
 from .game import Game
 from .menu import Menu
+import json
 from .scoreboard import ScoreBoard
+
 
 class App():
     """
@@ -26,7 +28,7 @@ class App():
         self.scoreboard: ScoreBoard = ScoreBoard()
         self.state: Game | Menu | ScoreBoard = self.menu
 
-    # if  state returns some value we are checking it and making some desicions
+    # if  state returns some value we are checking it and making some decisions
     # if 1 then  self.state = self.game
     # if 2 then self.state = self.menu
     # if 3 then game over - save the result
@@ -42,5 +44,21 @@ class App():
             self.state = self.menu
             # self.screen.blit(self.menu.image, dest=(0, 0))
             return True
+        if state == 3:
+            self.state = self.scoreboard
         if state == 0:
             return False
+
+    def _open_scoreboard_file(self) -> dict:
+        """
+        Open, read and save it to the self.scoreboard
+        """
+        with open(self.scoreboard_file, "r") as file:
+            self.scores = json.load(file.read())
+        with open(self.scoreboard_file, "w") as file:
+            self.scoreboard = json.load(file.read())
+
+    def _save_results(self) -> None:
+        with open(self.scoreboard_file, "w+") as file:
+            file.write(json.dumps(str(self.scores)))
+            print("File scores.json was updated")
