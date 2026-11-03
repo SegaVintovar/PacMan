@@ -1,6 +1,11 @@
 import pygame
+<<<<<<< HEAD
 from .constants import PINK, TILE
 from .gum import Gum
+=======
+from .constants import TILE, PINK, WALL_COLOR
+# from .gum import Gum
+>>>>>>> main
 # TILE = 64
 # WINDOW_SIZE = (1400, 1080)
 
@@ -16,7 +21,8 @@ class Cell():
         e: Boolean state of the east wall. True means wall is closed.
         s: Boolean state of the south wall. True means wall is closed.
         w: Boolean state of the west wall. True means wall is closed.
-        position: Tuple (x, y) with the cell's coordinates in the grid.
+        position: Tuple (x, y) with the cell's coordinates in the grid or
+          pixels?
         special: String marker shown in the cell's center during rendering.
     """
     def __init__(
@@ -35,7 +41,7 @@ class Cell():
         self.gum: Gum | None
         self.set_surface()
         self.render_walls()
-        self.gum: Gum | None = None
+        # self.gum: Gum | None = None
 
     def set_surface(self) -> None:
         self.surface = pygame.Surface((TILE, TILE))
