@@ -9,14 +9,23 @@ class Ghost(Creature):
         self.id = id
         self.image: pygame.Surface = self._upload_pic()
         self.rect: pygame.Rect = self._create_rect()
+        self.name: str = "Clyde" | "Blinky" | "Pinky" | "Inky"
 
     def _upload_pic(self) -> pygame.Surface:
-        return pygame.image.load(
-            "src/assets/sprites/ghost_orange_left.png",
-            ).convert_alpha()
+        match self.name:
+            case "Clyde":
+                return pygame.image.load(
+                    "src/assets/sprites/ghost_blue_left.png",
+                    ).convert_alpha()
 
     def _create_rect(self) -> pygame.Rect:
         return pygame.Rect((0, 0), (44, 44))
+
+    def _pick_random_dest() -> None:
+        ...
+
+    def retreat_spawn_point() -> None:
+        ...
 
     def move(self, map: Map) -> None:
         ...

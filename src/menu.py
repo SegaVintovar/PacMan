@@ -127,6 +127,8 @@ class Menu():
                             return (1, None)
                         if b.text == "ScoreBoard":
                             return (3, None)
+                        if b.text == "Instructions":
+                            return (4, None)
                             ...
             # keyboard events handling
             if event.type == pygame.KEYDOWN:

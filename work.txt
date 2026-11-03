@@ -35,6 +35,7 @@ to follow the subject we need to do:
         - Instructions page in the menu
         - level by level game
         - process the game.done == True, so in case of Win/Loss user enters his name and result is being saved
+        - make different screen being child classes of ABC with process method - made GameState
     
 
     done:

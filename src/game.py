@@ -8,6 +8,7 @@ import pygame
 from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
 from typing import Any
 # from .game_state import GameState
+from .gum import Gum
 
 
 class Main(Enum):
@@ -17,7 +18,14 @@ class Main(Enum):
     settings = 3,
     exit = 4
 
+
 # we need some class for state returns
+class Level():
+    def __init__(self, id: int, name: str) -> None:
+        self.id = id
+        self.name = name
+        self.map: Map
+        self.gums: list[Gum]
 
 
 class Player():
@@ -60,6 +68,9 @@ class Header():
             (WINDOW_SIZE[0], HEADER_HEIGHT))
         self.font: pygame.font.Font = pygame.font.SysFont("Arial", FONT_SIZE)
         self.level: int = 0
+
+    def update_score(self, add: int) -> None:
+        ...
 
     def current_score_n_lvl(self) -> None:
         self.image.blit(
@@ -104,10 +115,13 @@ class Footer():
                              ),
             dest=(10, 30)
         )
+        time = self.timer.level_max_time - self.timer.time_since_start()
+        if time < 0:
+            return 
         self.image.blit(
             self.font.render(
                 f"Time left: {
-                    self.timer.level_max_time - self.timer.time_since_start()
+                    time
                     }", True, (255, 0, 0)
                 ),
             dest=(int(WINDOW_SIZE[0]) - 300, 30)
@@ -144,9 +158,39 @@ class Game():
         footer = Footer(self.config, self.config.lives)
         self.footer: Footer = footer
         self.done = False
+        self.running = False
         self.paused = False
+        self.gums: list[Gum] = []
+        self._gen_gums()
+        # if we are done with a lvl - then we poping it away
+        self.levels: list[Level] = []
+        self.points: int = 0
+
+    def _gen_gums(self) -> None:
+        # amount = self.config.pacgum
+        corner_cells = (
+            self.maps[0].map[0][0],
+            self.maps[0].map[0][self.config.height - 1],
+            self.maps[0].map[self.config.width - 1][0],
+            self.maps[0].map[self.config.width - 1][self.config.height - 1]
+        )
+        for row in self.maps[0].map:
+            for c in row:
+                if c.value not in (15, 1):
+                    self.gums.append(
+                            Gum(
+                                c.position,
+                                t="super" if c in corner_cells else ""
+                            )
+                    )
+
+    def show_gums(self, screen: pygame.Surface) -> None:
+        # print("we are showing gums")
+        for g in self.gums:
+            screen.blit(g.image, dest=g.rect)
 
     # should return 0 , 1 , 2
+    # or GameState that will store
     def process(self,
                 events: list[pygame.event.Event],
                 screen: pygame.Surface
@@ -156,25 +200,18 @@ class Game():
             # open the page to enter the name of the player
             # so it will add this score to the file
             return (2, (self.player.name, self.player.score))  # game is done WIN/LOOSE, so we need to store the result
+        if not self.running:
+            self.running = True
         for event in events:
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
-                # if event.key == pygame.K_w:
-                #     self.pacman.update_direction('W')
-                # elif event.key == pygame.K_a:
-                #     self.pacman.update_direction('A')
-                # elif event.key == pygame.K_s:
-                #     self.pacman.update_direction('S')
-                # elif event.key == pygame.K_d:
-                #     self.pacman.update_direction('D')
-                # elif (event.key == pygame.K_SPACE or
-                #       event.key == pygame.K_q or
-                #       event.key == pygame.K_ESCAPE):
-                #     # timer needs to be paused here
-                #     self.footer.timer.pause()
-                #     self.paused = True
-                #     return (2, None)
                 ch: str = event.unicode
                 if ch in "wasd":
+                    # position: tuple[int, int] = (self.pacman.rect.x, self.pacman.rect.y)
+                    # gap: tuple[int, int] = self.pacman.get_direction_destination(ch)
+                    # x, y = position
+                    # dest_x, dest_y = gap                    
+                    # if (dest_x - x <= 25 and dest_x - x >= -25 or
+                    #     dest_y - y <= 25 and dest_y - y >= -25):
                     self.pacman.update_direction(ch.upper())
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
@@ -187,17 +224,27 @@ class Game():
                 return (0, None)
         map_image = self.maps[0].map_image.copy()
         self.render_creatures(map_image)
+        self.show_gums(map_image)
         # render gums, ghosts
         scaled_map = pygame.transform.scale(
             map_image, WINDOW_SIZE)
         self.header.show_me(screen)
         self.footer.show_me(screen)
+        # if not self.footer.show_me(screen):
+        #     return (2, self.)
+        
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
+        
         return (1, None)
 
     def _prepare_maps(self) -> None:
         for _ in range(1):
             one_more_map = Map(self.config)
+            self.maps.append(one_more_map)
+
+    def _prepare_lvl(self) -> None:
+        for i in range((self.config.level)):
+            one_more_map = Level(i, self.config.level[i])
             self.maps.append(one_more_map)
 
     def _prepare_creatures(self) -> None:
