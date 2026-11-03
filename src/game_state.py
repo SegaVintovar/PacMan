@@ -1,6 +1,6 @@
 # from .config import GameConfig
 from enum import Enum, auto
-from .screen import Screen
+# from .screen import Screen
 import pygame
 
 class GameState():

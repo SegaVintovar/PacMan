@@ -28,6 +28,7 @@ class Score(BaseModel):
             dest=(WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.05)
             )
         print("post validation of the score is done")
+        return self
 
 
 class ScoreBoard():
