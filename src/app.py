@@ -7,7 +7,7 @@ import json
 from .scoreboard import ScoreBoard
 from .gradient import make_gradient
 from typing import Any
-
+from .game_state import GameState
 
 # controls
 # rules from the cofig: points per pacgum/supergum/ghost
@@ -52,6 +52,7 @@ class App():
         self.menu: Menu = Menu(self.game)
         self.scoreboard: ScoreBoard = ScoreBoard()
         self.state: Game | Menu | ScoreBoard = self.menu
+        self.game_state: GameState
 
     # if  state returns some value we are checking it and making some decisions
     # if 1 then  self.state = self.game
