@@ -11,6 +11,7 @@ from typing import Optional
 # by dividing coordinates in pixels by TILE
 # we will get Cell position in the grid
 
+
 class Pacman(Creature):
     def __init__(self, map: Map, config: GameConfig) -> None:
         # initially spawn column is as centralized as possible
@@ -26,7 +27,7 @@ class Pacman(Creature):
         self.measure_spawn()
         self._destination: tuple[int, int] = self._cell_center(None)
         self._origin: tuple[int, int] = self.rect
-        self._interselected: str = None
+        self._pixel_moved: int = 0
 
     def spawn(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite, self.rect)
@@ -50,11 +51,19 @@ class Pacman(Creature):
 
     def get_direction_destination(self, chr: str | None) -> tuple[int, int]:
         print(f"the chosen direction: {chr}")
-        direction: tuple[int, int] = KEY_DIRECTIONS[self._direction if chr == None else chr.capitalize()]
+        direction: tuple[int, int] = KEY_DIRECTIONS[self._direction
+                                                    if chr is None
+                                                    else chr.capitalize()]
         x, y = direction
         diff: tuple[int, int] = (self.cell_x + x, self.cell_y + y)
         coords: tuple[int, int] = self._cell_center(diff)
         return coords
+
+    def _pass_pixel(self) -> None:
+        if self._pixel_moved >= TILE:
+            self._pixel_moved = 3
+        else:
+            self._pixel_moved += 3
 
     def _set_destination(self) -> None:
         col, row = KEY_DIRECTIONS[self._direction]
@@ -69,17 +78,30 @@ class Pacman(Creature):
             self._origin = (self.rect.x, self.rect.y)
             if not self._try_next():
                 return
-        else:
-            ...
         cx, cy = self.rect.center
         tx, ty = self._destination
-        step_x = max(-2, min(2, tx - cx))
-        step_y = max(-2, min(2, ty - cy))
+        self._pass_pixel()
+        if (self._pixel_moved > (TILE * 0.45) and
+           self._pixel_moved < (TILE * 0.55)):
+            self.sprite = pygame.image.load(
+                f"src/assets/sprites/pacman_{self._direction}_closed.png"
+                ).convert_alpha()
+        elif (self._pixel_moved > (TILE * 0.2) and
+              self._pixel_moved < (TILE * 0.8)):
+            self.sprite = pygame.image.load(
+                f"src/assets/sprites/pacman_{self._direction}_narrow.png"
+                ).convert_alpha()
+        else:
+            self.sprite = pygame.image.load(
+                f"src/assets/sprites/pacman_{self._direction}_wide.png"
+                ).convert_alpha()
+        step_x = max(-3, min(3, tx - cx))
+        step_y = max(-3, min(3, ty - cy))
         self.rect.move_ip(step_x, step_y)
 
     def _bounce(self, char: Optional[str]) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
-        if not char is None:
+        if char is not None:
             if cell.n and char == 'W':
                 return True
             elif cell.e and char == "D":
@@ -102,13 +124,6 @@ class Pacman(Creature):
             else:
                 return False
 
-
-    def _cell_center(self, coords: tuple[int, int] | None) -> tuple[int, int]:
-        if coords is None:
-            return self.cell_x * TILE + TILE // 2, self.cell_y * TILE + TILE // 2
-        x, y = coords
-        return x * TILE + TILE // 2, y * TILE + TILE // 2
-
     def _at_destination(self) -> bool:
         return self.rect.center == self._destination
 
@@ -117,9 +132,10 @@ class Pacman(Creature):
             return
         dx, dy = KEY_DIRECTIONS[char]
         self._direction = char
-        self.cell_x += dx
-        self.cell_y += dy
-        self._destination = self._cell_center(None)
+        if self._at_destination():
+            self.cell_x += dx
+            self.cell_y += dy
+            self._destination = self._cell_center(None)
         self.sprite = pygame.image.load(
             f"src/assets/sprites/pacman_{char}_wide.png"
         ).convert_alpha()

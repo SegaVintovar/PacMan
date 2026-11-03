@@ -1,6 +1,7 @@
 from .map import Map
 from pydantic_extra_types.coordinate import Coordinate
 from abc import ABC
+from .constants import TILE
 from pygame import Surface
 
 
@@ -10,7 +11,6 @@ class Creature(ABC):
         self.postion = position
         self.cell_x: int = -1
         self.cell_y: int = -1
-        self.cell: Cell = map[position[1]][position[0]]
         self.picture: Surface | None = None
         self._destination: tuple[int, int] | None = None
 
@@ -19,6 +19,13 @@ class Creature(ABC):
 
     def get_direction_destination(direction: str) -> tuple[int, int]:
         pass
+
+    def _cell_center(self, coords: tuple[int, int] | None) -> tuple[int, int]:
+        if coords is None:
+            return (self.cell_x * TILE + TILE // 2,
+                    self.cell_y * TILE + TILE // 2)
+        x, y = coords
+        return x * TILE + TILE // 2, y * TILE + TILE // 2
 
     def _out_bound(self, map: Map) -> bool:
         pass

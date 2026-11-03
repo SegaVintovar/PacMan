@@ -160,13 +160,13 @@ class Game():
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 ch: str = event.unicode
                 if ch in "wasd":
-                    position: tuple[int, int] = (self.pacman.rect.x, self.pacman.rect.y)
-                    gap: tuple[int, int] = self.pacman.get_direction_destination(ch)
-                    x, y = position
-                    dest_x, dest_y = gap                    
-                    if (dest_x - x <= 25 and dest_x - x >= -25 or
-                        dest_y - y <= 25 and dest_y - y >= -25):
-                        self.pacman.update_direction(ch.upper())
+                    # position: tuple[int, int] = (self.pacman.rect.x, self.pacman.rect.y)
+                    # gap: tuple[int, int] = self.pacman.get_direction_destination(ch)
+                    # x, y = position
+                    # dest_x, dest_y = gap                    
+                    # if (dest_x - x <= 25 and dest_x - x >= -25 or
+                    #     dest_y - y <= 25 and dest_y - y >= -25):
+                    self.pacman.update_direction(ch.upper())
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
                         event.key == pygame.K_ESCAPE):

@@ -1,5 +1,6 @@
 import pygame
 from .constants import TILE, PINK
+from .gum import Gum
 # TILE = 64
 # WINDOW_SIZE = (1400, 1080)
 
@@ -31,6 +32,7 @@ class Cell():
         self.position = position
         self.value = value
         self.surface: pygame.Surface | None = None
+        self.gum: Gum | None
         self.set_surface()
         self.render_walls()
 
