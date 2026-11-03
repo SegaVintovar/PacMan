@@ -1,8 +1,10 @@
 from .creature import Creature
 import pygame
+from .constants import GHOSTS
 from .map import Map
 
 src = "src/assets/sprites/ghost_orange_left.png"
+
 
 class Ghost(Creature):
     def __init__(self, id: int) -> None:
@@ -12,11 +14,11 @@ class Ghost(Creature):
         self.name: str = "Clyde" | "Blinky" | "Pinky" | "Inky"
 
     def _upload_pic(self) -> pygame.Surface:
-        match self.name:
-            case "Clyde":
-                return pygame.image.load(
-                    "src/assets/sprites/ghost_blue_left.png",
-                    ).convert_alpha()
+        return pygame.image.load(
+            f"src/assets/sprites/ghost_{GHOSTS[self.name]}_left.png",
+            ).convert_alpha()
+
+    def 
 
     def _create_rect(self) -> pygame.Rect:
         return pygame.Rect((0, 0), (44, 44))

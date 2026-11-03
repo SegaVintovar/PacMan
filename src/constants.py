@@ -13,11 +13,11 @@ KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
     'A': (-1, 0)
 }
 
-GHOSTS: dict[str, str] = {
-    "Clyde": "orange",
-    "Inky": "cyan",
-    "Blinky": "red",
-    "Pinky": "pink"
+GHOSTS: dict[str, tuple[str, tuple[int, int]]] = {
+    "Clyde": ("orange", ()),
+    "Inky": ("cyan", ()),
+    "Blinky": ("red", ()),
+    "Pinky": ("pink", ())
 }
 
 SPEED: int = 3

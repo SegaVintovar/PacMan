@@ -33,6 +33,9 @@ class Creature(ABC):
     def _switchable(self, map: Map) -> bool:
         pass
 
+    def spawn(self, screen: Surface) -> None:
+        screen.blit(self.sprite, self.rect)
+
 # tmp = Surface((5, 5))
 # obj = draw.rect(tmp, (137, 137, 137), (4, 4))
 # obj.move()

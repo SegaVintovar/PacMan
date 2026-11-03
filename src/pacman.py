@@ -3,7 +3,6 @@ from .config import GameConfig
 from .cell import Cell
 from .map import Map
 from .creature import Creature
-from pydantic_extra_types.coordinate import Coordinate
 from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE, SPEED
 from typing import Optional
 
@@ -28,9 +27,6 @@ class Pacman(Creature):
         self._destination: tuple[int, int] = self._cell_center(None)
         self._origin: tuple[int, int] = self.rect
         self._pixel_moved: int = 0
-
-    def spawn(self, screen: pygame.Surface) -> None:
-        screen.blit(self.sprite, self.rect)
 
     """Creating an escapable point for pac-man.
        in case of an odd amount it is a right spawn
