@@ -13,6 +13,15 @@ KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
     'A': (-1, 0)
 }
 
+GHOSTS: dict[str, str] = {
+    "Clyde": "orange",
+    "Inky": "cyan",
+    "Blinky": "red",
+    "Pinky": "pink"
+}
+
+SPEED: int = 3
+
 FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
 FONT_SIZE = 50
 # colors for the menu

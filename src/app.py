@@ -101,6 +101,13 @@ class App():
     # if 0 then exit()
     def process(self, evns: list[pygame.event.Event]) -> bool:
         state, extra = self.state.process(evns, self.screen)
+        match state:
+            case 1:
+                ...
+            case 2:
+                ...
+            case 3:
+                ...
         if state == 1:
             self.state = self.game
             # print("Game")

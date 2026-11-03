@@ -22,5 +22,3 @@ class Gum():
                 self.position[1] + TILE // 2 + self.size[1] // 2,
             )
         )
-
-
