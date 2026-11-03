@@ -4,7 +4,7 @@ from .cell import Cell
 from .map import Map
 from .creature import Creature
 from pydantic_extra_types.coordinate import Coordinate
-from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE
+from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE, SPEED
 from typing import Optional
 
 # lets make it move not by cells but by pixels
@@ -61,9 +61,9 @@ class Pacman(Creature):
 
     def _pass_pixel(self) -> None:
         if self._pixel_moved >= TILE:
-            self._pixel_moved = 3
+            self._pixel_moved = SPEED
         else:
-            self._pixel_moved += 3
+            self._pixel_moved += SPEED
 
     def _set_destination(self) -> None:
         col, row = KEY_DIRECTIONS[self._direction]
@@ -95,8 +95,8 @@ class Pacman(Creature):
             self.sprite = pygame.image.load(
                 f"src/assets/sprites/pacman_{self._direction}_wide.png"
                 ).convert_alpha()
-        step_x = max(-3, min(3, tx - cx))
-        step_y = max(-3, min(3, ty - cy))
+        step_x = max(-SPEED, min(SPEED, tx - cx))
+        step_y = max(-SPEED, min(SPEED, ty - cy))
         self.rect.move_ip(step_x, step_y)
 
     def _bounce(self, char: Optional[str]) -> bool:
