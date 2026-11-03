@@ -18,6 +18,12 @@ class Ghost(Creature):
     def _create_rect(self) -> pygame.Rect:
         return pygame.Rect((0, 0), (44, 44))
 
+    def _pick_random_dest() -> None:
+        ...
+
+    def retreat_spawn_point() -> None:
+        ...
+
     def move(self, map: Map) -> None:
         ...
 

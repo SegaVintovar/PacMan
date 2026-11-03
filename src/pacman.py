@@ -24,10 +24,11 @@ class Pacman(Creature):
         coord = (TILE - SPRIE_SIZE) // 2
         self.rect = self.sprite.get_rect(topleft=(coord, coord))
         self.measure_spawn()
-        self._destination: tuple[int, int] = self._cell_center()
+        self._destination: tuple[int, int] = self._cell_center(None)
+        self._origin: tuple[int, int] = self.rect
         self._interselected: str = None
 
-    def spawn(self, screen: pygame.Surface) -> None:   # draw only
+    def spawn(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite, self.rect)
 
     """Creating an escapable point for pac-man.
@@ -38,7 +39,7 @@ class Pacman(Creature):
         row_mid: int = int(self.map.width / 2)
         col_mid: int = int(self.map.height / 2)
         self.cell_x, self.cell_y = col_mid, row_mid
-        self.rect.center = self._cell_center()
+        self.rect.center = self._cell_center(None)
         self._destination = self.rect.center
 
     def _try_next(self) -> bool:
@@ -47,18 +48,29 @@ class Pacman(Creature):
         self._set_destination()
         return True
 
+    def get_direction_destination(self, chr: str | None) -> tuple[int, int]:
+        print(f"the chosen direction: {chr}")
+        direction: tuple[int, int] = KEY_DIRECTIONS[self._direction if chr == None else chr.capitalize()]
+        x, y = direction
+        diff: tuple[int, int] = (self.cell_x + x, self.cell_y + y)
+        coords: tuple[int, int] = self._cell_center(diff)
+        return coords
+
     def _set_destination(self) -> None:
         col, row = KEY_DIRECTIONS[self._direction]
         self.cell_y += row
         self.cell_x += col
-        centered: tuple[int, int] = self._cell_center()
+        centered: tuple[int, int] = self._cell_center(None)
         destx, desty = centered
         self._destination = (destx, desty)
 
-    def check(self) -> None:        # call once per frame
+    def check(self) -> None:
         if self._at_destination():
+            self._origin = (self.rect.x, self.rect.y)
             if not self._try_next():
                 return
+        else:
+            ...
         cx, cy = self.rect.center
         tx, ty = self._destination
         step_x = max(-2, min(2, tx - cx))
@@ -91,8 +103,11 @@ class Pacman(Creature):
                 return False
 
 
-    def _cell_center(self) -> tuple[int, int]:
-        return self.cell_x * TILE + TILE // 2, self.cell_y * TILE + TILE // 2
+    def _cell_center(self, coords: tuple[int, int] | None) -> tuple[int, int]:
+        if coords is None:
+            return self.cell_x * TILE + TILE // 2, self.cell_y * TILE + TILE // 2
+        x, y = coords
+        return x * TILE + TILE // 2, y * TILE + TILE // 2
 
     def _at_destination(self) -> bool:
         return self.rect.center == self._destination
@@ -100,13 +115,11 @@ class Pacman(Creature):
     def update_direction(self, char: str) -> None:
         if self._bounce(char):
             return
-        #  elif not self._at_direction() and self.rect.x == 0 or self.rect.y == 0:
-        #    print("interselected during movement towards one direction") 
         dx, dy = KEY_DIRECTIONS[char]
         self._direction = char
         self.cell_x += dx
         self.cell_y += dy
-        self._destination = self._cell_center()
+        self._destination = self._cell_center(None)
         self.sprite = pygame.image.load(
             f"src/assets/sprites/pacman_{char}_wide.png"
         ).convert_alpha()

@@ -11,11 +11,13 @@ class Creature(ABC):
         self.cell_x: int = -1
         self.cell_y: int = -1
         self.cell: Cell = map[position[1]][position[0]]
-        
         self.picture: Surface | None = None
         self._destination: tuple[int, int] | None = None
 
     def move(self, map: Map) -> None:
+        pass
+
+    def get_direction_destination(direction: str) -> tuple[int, int]:
         pass
 
     def _out_bound(self, map: Map) -> bool:
