@@ -7,8 +7,7 @@ src = "src/assets/sprites/ghost_orange_left.png"
 
 
 class Ghost(Creature):
-    def __init__(self, id: int) -> None:
-        self.id = id
+    def __init__(self, name: str) -> None:
         self.image: pygame.Surface = self._upload_pic()
         self.rect: pygame.Rect = self._create_rect()
         self.name: str = "Clyde" | "Blinky" | "Pinky" | "Inky"
@@ -18,10 +17,16 @@ class Ghost(Creature):
             f"src/assets/sprites/ghost_{GHOSTS[self.name]}_left.png",
             ).convert_alpha()
 
-    def 
-
     def _create_rect(self) -> pygame.Rect:
-        return pygame.Rect((0, 0), (44, 44))
+        match self.name:
+            case "Blinky":
+                return pygame.Rect((0, 0), (44, 44))
+            case "Clyde":
+                return pygame.Rect((1356, 0), (44, 44))
+            case "Pinky":
+                return pygame.Rect((0, 1156), (44, 44))
+            case "Inky":
+                return pygame.Rect((1356, 1156), (44, 44))
 
     def _pick_random_dest() -> None:
         ...

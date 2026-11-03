@@ -1,13 +1,6 @@
 import pygame
-<<<<<<< HEAD
-from .constants import PINK, TILE
+from .constants import PINK, TILE, WALL_COLOR
 from .gum import Gum
-=======
-from .constants import TILE, PINK, WALL_COLOR
-# from .gum import Gum
->>>>>>> main
-# TILE = 64
-# WINDOW_SIZE = (1400, 1080)
 
 
 class Cell():
@@ -62,7 +55,7 @@ class Cell():
         if self.w:
             walls.append(pygame.Rect((0, 0), (4, TILE)))
         for w in walls:
-            pygame.draw.rect(self.surface, PINK, w)
+            pygame.draw.rect(self.surface, WALL_COLOR, w)
 
     def creature_destination(self) -> tuple[int, int]:
         x, y = self.position

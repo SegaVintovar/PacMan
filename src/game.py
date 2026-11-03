@@ -5,7 +5,7 @@ from .creature import Creature
 from .map import Map
 from .pacman import Pacman
 import pygame
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE
+from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, TILE, GHOSTS
 from typing import Any
 # from .game_state import GameState
 from .gum import Gum
@@ -117,7 +117,7 @@ class Footer():
         )
         time = self.timer.level_max_time - self.timer.time_since_start()
         if time < 0:
-            return 
+            return
         self.image.blit(
             self.font.render(
                 f"Time left: {
@@ -177,17 +177,23 @@ class Game():
         for row in self.maps[0].map:
             for c in row:
                 if c.value not in (15, 1):
+                    px, py = c.position
                     self.gums.append(
                             Gum(
-                                c.position,
+                                (px, py),
                                 t="super" if c in corner_cells else ""
                             )
                     )
 
     def show_gums(self, screen: pygame.Surface) -> None:
-        # print("we are showing gums")
         for g in self.gums:
-            screen.blit(g.image, dest=g.rect)
+            if self.pacman.rect.center == g.rect.center:
+                self.header.score += (self.config.points_per_pacgum
+                                      if not g.type else
+                                      self.config.points_per_super_pacgum)
+                self.gums.remove(g)
+            else:
+                screen.blit(g.image, dest=g.rect)
 
     # should return 0 , 1 , 2
     # or GameState that will store
@@ -206,12 +212,6 @@ class Game():
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 ch: str = event.unicode
                 if ch in "wasd":
-                    # position: tuple[int, int] = (self.pacman.rect.x, self.pacman.rect.y)
-                    # gap: tuple[int, int] = self.pacman.get_direction_destination(ch)
-                    # x, y = position
-                    # dest_x, dest_y = gap                    
-                    # if (dest_x - x <= 25 and dest_x - x >= -25 or
-                    #     dest_y - y <= 25 and dest_y - y >= -25):
                     self.pacman.update_direction(ch.upper())
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
@@ -232,9 +232,7 @@ class Game():
         self.footer.show_me(screen)
         # if not self.footer.show_me(screen):
         #     return (2, self.)
-        
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
-        
         return (1, None)
 
     def _prepare_maps(self) -> None:
@@ -247,11 +245,9 @@ class Game():
             one_more_map = Level(i, self.config.level[i])
             self.maps.append(one_more_map)
 
-    def _prepare_creatures(self) -> None:
-        # pacman
-        # self.pacman
-        # ghosts
-        ...
+    def _awake_ghosts(self) -> None:
+        for name in GHOSTS:
+            d: dict[str, Any] = GHOSTS[name]
 
     def place_gums(self) -> None:
         # self.screen.blits()
@@ -276,8 +272,8 @@ class Game():
         ...
 
     def render_creatures(self, map: pygame.Surface) -> None:
-        # for creature in self.creatures:
-        #     creature.spawn(self.screen)
+        for creature in self.creatures:
+            creature.spawn(self.screen)
         self.pacman.check()
         self.pacman.spawn(map)
 
