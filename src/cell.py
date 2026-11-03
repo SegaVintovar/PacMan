@@ -16,7 +16,8 @@ class Cell():
         e: Boolean state of the east wall. True means wall is closed.
         s: Boolean state of the south wall. True means wall is closed.
         w: Boolean state of the west wall. True means wall is closed.
-        position: Tuple (x, y) with the cell's coordinates in the grid.
+        position: Tuple (x, y) with the cell's coordinates in the grid or
+          pixels?
         special: String marker shown in the cell's center during rendering.
     """
     def __init__(

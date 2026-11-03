@@ -14,13 +14,13 @@ class Gum():
         self.image.fill("white")
         self.rect = pygame.Rect(
             (
-                self.cell.position[0] + TILE // 2 - self.size[0] // 2,
-                self.cell.position[1] + TILE // 2 - self.size[1] // 2
+                self.position[0] + TILE // 2 - self.size[0] // 2,
+                self.position[1] + TILE // 2 - self.size[1] // 2
             ),
             (
-                self.cell.position[0] + TILE // 2 + self.size[0] // 2,
-                self.cell.position[1] + TILE // 2 + self.size[1] // 2,
+                self.position[0] + TILE // 2 + self.size[0] // 2,
+                self.position[1] + TILE // 2 + self.size[1] // 2,
             )
         )
 
-        
+
