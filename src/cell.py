@@ -1,5 +1,5 @@
 import pygame
-from .constants import TILE
+from .constants import TILE, WALL_COLOR
 from .gum import Gum
 # TILE = 64
 # WINDOW_SIZE = (1400, 1080)
