@@ -147,6 +147,7 @@ class Game():
         self.paused = False
 
     # should return 0 , 1 , 2
+    # or GameState that will store
     def process(self,
                 events: list[pygame.event.Event],
                 screen: pygame.Surface
