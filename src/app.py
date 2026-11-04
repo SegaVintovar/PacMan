@@ -15,17 +15,17 @@ from .game_state import GameState
 class Instructions():
     rules = ["The game consists of multiple levels (at least 10).",
              "• Each level has a time limit (e.g., 90 seconds).\n",
-             "• If the time limit is reached, you can decide what happens \
-(e.g., restart the level, end the game, etc.).\n",
+             "• If the time limit is reached, you can decide what happens ",
+             "(e.g., restart the level, end the game, etc.).\n",
              "• If the player completes a level, they move to the next level.",
-             "• The player keeps their score and \
-remaining lives between levels.\n",
-             "• The game ends when all levels are completed or \
-when the player loses all lives.\n",
+             "• The player keeps their score and",
+             "remaining lives between levels.\n",
+             "• The game ends when all levels are completed or ",
+             "when the player loses all lives.\n",
              "• During the game, the player can pause and resume the game.\n",
-             "• When the game ends (win or lose), \
-the final score is displayed, and the player can \
-enter their name to save the highscore.\n",
+             "• When the game ends (win or lose),",
+             "the final score is displayed, and the player can ",
+             "enter their name to save the highscore.\n",
              "• After the game ends, the player is returned to the main menu."
              ]
 
@@ -45,7 +45,7 @@ enter their name to save the highscore.\n",
         self._prep_rules()
 
     def _prep_rules(self) -> None:
-        start_pos = (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.2)
+        start_pos = (WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.2)
         step = (FONT_SIZE - 15) * 2 
         for i, rule in enumerate(self.rules):
             position = (start_pos[0], start_pos[1] + i * step)

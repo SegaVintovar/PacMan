@@ -1,12 +1,17 @@
 # from .config import GameConfig
-from enum import Enum, auto
-# from .screen import Screen
+# from enum import Enum, auto
+from .module import Module
 import pygame
 
+
 class GameState():
-    next_screen: int
-    main_screen: pygame.Surface
-    extra: str
+    def __init__(self,
+                 next_module: Module,
+                 main_window: pygame.Surface,
+                 extra: str) -> None:
+        self.next_module = next_module
+        self.main_window = main_window  # not sure
+        self.extra = extra
 
     def __repr__(self):
         return (self.next_screen, self.screen, self.extra)

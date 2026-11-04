@@ -5,10 +5,10 @@ from .creature import Creature
 from .map import Map
 from .pacman import Pacman
 import pygame
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, TILE, GHOSTS
+from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, GHOSTS
 from typing import Any
-# from .game_state import GameState
 from .gum import Gum
+from .level import Level
 
 
 class Main(Enum):
@@ -17,15 +17,6 @@ class Main(Enum):
     instructions = 2,
     settings = 3,
     exit = 4
-
-
-# we need some class for state returns
-class Level():
-    def __init__(self, id: int, name: str) -> None:
-        self.id = id
-        self.name = name
-        self.map: Map
-        self.gums: list[Gum]
 
 
 class Player():
@@ -135,6 +126,7 @@ class Footer():
 
 # start the game
 # - open the window, prepare a map/maps?, images
+# - load levels
 # - blit into the screen the menu/map/scoreboard
 class Game():
     # lets think about it if we are running the game for the first time
@@ -150,7 +142,8 @@ class Game():
         # self.timer: Timer = Timer(config.level_max_time)
         self.player: Player = Player(config.lives)
         self._prepare_maps()
-        self._prepare_creatures()
+        # prepare levels
+        # self._prepare_creatures()
         self.pacman: Pacman = Pacman(self.maps[0], config)
         self.creatures.append(self.pacman)
         header = Header(self.config, 1000)
@@ -273,7 +266,7 @@ class Game():
 
     def render_creatures(self, map: pygame.Surface) -> None:
         for creature in self.creatures:
-            creature.spawn(self.screen)
+            creature.spawn(map)
         self.pacman.check()
         self.pacman.spawn(map)
 

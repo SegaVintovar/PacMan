@@ -8,6 +8,7 @@ from .gradient import make_gradient
 
 
 class Score(BaseModel):
+    # model config is to make pydantic work with pygame object types
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     name: str = Field(min_length=3)
@@ -34,9 +35,6 @@ class Score(BaseModel):
 class ScoreBoard():
     def __init__(self) -> None:
         self.scores: list[Score] = []
-        # self.image: pygame.Surface = pygame.Surface(
-        #     (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2),
-        #     pygame.SRCALPHA)
         self.image = make_gradient(
             (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
         self.font: pygame.font.Font = pygame.font.Font(
@@ -45,13 +43,11 @@ class ScoreBoard():
             self._upload_scores()
         except Exception as e:
             print(str(e))
-        print(len(self.scores))
         self._fill_image()
 
     def _upload_scores(self) -> None:
         with open("scores.json", mode="r") as file:
             scores: list[dict] = json.loads(file.read())
-        print(scores)
         scores.sort(key=lambda s: s["score"], reverse=True)
         # lets assume that scores is a list of dicts
         for score in scores:
@@ -62,7 +58,7 @@ class ScoreBoard():
                     score=scr,
                     font=self.font
                     ))
-        print(len(self.scores))
+        # print(len(self.scores))
 
     def process(self,
                 events: list[pygame.event.Event],

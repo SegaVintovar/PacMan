@@ -32,14 +32,14 @@ class Menu():
             self.font_color: pygame.color.Color = PINK
             self.image.blit(
                 self.font.render(self.text, True, self.font_color),
-                dest=(FONT_SIZE * 3, FONT_SIZE // 2)
+                dest=(FONT_SIZE * 2, FONT_SIZE // 2)
                 )
 
         def update_button_image(self, selected: bool) -> None:
             font_color = self.font_color if not selected else CYAN
             self.image.blit(
                 self.font.render(self.text, True, font_color),
-                dest=(FONT_SIZE * 3, FONT_SIZE // 2)
+                dest=(FONT_SIZE * 2, FONT_SIZE // 2)
                 )
 
     def __init__(self, game: Game):
@@ -85,6 +85,7 @@ class Menu():
             if i == selected:
                 frame = img.get_rect()
                 # frame = frame.inflate(8, 8)
+                # frame.move_ip(20, 0)
                 pygame.draw.rect(img, PINK, frame, width=4)
             base.blit(img, btn.rect)
         self.image = base

@@ -1,5 +1,5 @@
 import pygame
-from .constants import PINK, TILE, WALL_COLOR
+from .constants import TILE, WALL_COLOR
 from .gum import Gum
 
 
@@ -43,7 +43,7 @@ class Cell():
         # cell_base = pygame.Surface(size=(TILE, TILE))
         # closed Cell
         if self.value == 15:
-            self.surface.fill(PINK)
+            self.surface.fill(WALL_COLOR)
         walls = []
         # cell_base.set_alpha()
         if self.n:
