@@ -2,6 +2,7 @@ from enum import Enum
 from . import GameConfig
 from . import MazeGenerator
 from .creature import Creature
+from .ghost import Ghost
 from .map import Map
 from .pacman import Pacman
 import pygame
@@ -150,9 +151,9 @@ class Game():
         # self.timer: Timer = Timer(config.level_max_time)
         self.player: Player = Player(config.lives)
         self._prepare_maps()
-        self._prepare_creatures()
         self.pacman: Pacman = Pacman(self.maps[0], config)
         self.creatures.append(self.pacman)
+        self._awake_ghosts()
         header = Header(self.config, 1000)
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
@@ -188,7 +189,7 @@ class Game():
     def show_gums(self, screen: pygame.Surface) -> None:
         for g in self.gums:
             if self.pacman.rect.center == g.rect.center:
-                self.header.score += (self.config.points_per_pacgum
+                self.header.update_score(self.config.points_per_pacgum
                                       if not g.type else
                                       self.config.points_per_super_pacgum)
                 self.gums.remove(g)
@@ -247,7 +248,13 @@ class Game():
 
     def _awake_ghosts(self) -> None:
         for name in GHOSTS:
-            d: dict[str, Any] = GHOSTS[name]
+            d: dict[str, tuple[int, int]] = GHOSTS[name]
+            print(d[1])
+            ghost: Creature = Ghost(
+                name=name,
+                start=d[1]
+            )
+            self.creatures.append(ghost)
 
     def place_gums(self) -> None:
         # self.screen.blits()
@@ -273,7 +280,7 @@ class Game():
 
     def render_creatures(self, map: pygame.Surface) -> None:
         for creature in self.creatures:
-            creature.spawn(self.screen)
+            creature.spawn(map)
         self.pacman.check()
         self.pacman.spawn(map)
 

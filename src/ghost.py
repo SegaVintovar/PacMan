@@ -7,26 +7,21 @@ src = "src/assets/sprites/ghost_orange_left.png"
 
 
 class Ghost(Creature):
-    def __init__(self, name: str) -> None:
-        self.image: pygame.Surface = self._upload_pic()
+    def __init__(self, name: str, start: tuple[int, int]) -> None:
+        self.name: str = name
+        self.start: tuple[int, int] = start
         self.rect: pygame.Rect = self._create_rect()
-        self.name: str = "Clyde" | "Blinky" | "Pinky" | "Inky"
+        self.sprite: pygame.Surface = self._upload_pic()
+        self.pussy_mod: bool = False
 
     def _upload_pic(self) -> pygame.Surface:
         return pygame.image.load(
-            f"src/assets/sprites/ghost_{GHOSTS[self.name]}_left.png",
+            f"src/assets/sprites/ghost_{GHOSTS[self.name][0]}_left.png",
             ).convert_alpha()
 
     def _create_rect(self) -> pygame.Rect:
-        match self.name:
-            case "Blinky":
-                return pygame.Rect((0, 0), (44, 44))
-            case "Clyde":
-                return pygame.Rect((1356, 0), (44, 44))
-            case "Pinky":
-                return pygame.Rect((0, 1156), (44, 44))
-            case "Inky":
-                return pygame.Rect((1356, 1156), (44, 44))
+        startx, starty = self.start
+        return pygame.Rect((startx, starty), (44, 44))
 
     def _pick_random_dest() -> None:
         ...

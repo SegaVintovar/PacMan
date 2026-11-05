@@ -77,13 +77,13 @@ class Pacman(Creature):
         cx, cy = self.rect.center
         tx, ty = self._destination
         self._pass_pixel()
-        if (self._pixel_moved > (TILE * 0.45) and
-           self._pixel_moved < (TILE * 0.55)):
+        if (self._pixel_moved > TILE * 0.5 and
+           self._pixel_moved <= TILE * 0.75):
             self.sprite = pygame.image.load(
                 f"src/assets/sprites/pacman_{self._direction}_closed.png"
                 ).convert_alpha()
-        elif (self._pixel_moved > (TILE * 0.2) and
-              self._pixel_moved < (TILE * 0.8)):
+        elif ((self._pixel_moved <= TILE * 0.5 and
+              self._pixel_moved > TILE * 0.25) or (self._pixel_moved > TILE * 0.75)):
             self.sprite = pygame.image.load(
                 f"src/assets/sprites/pacman_{self._direction}_narrow.png"
                 ).convert_alpha()

@@ -2,7 +2,7 @@ from .map import Map
 from pydantic_extra_types.coordinate import Coordinate
 from abc import ABC
 from .constants import TILE
-from pygame import Surface
+import pygame
 
 
 class Creature(ABC):
@@ -11,7 +11,7 @@ class Creature(ABC):
         self.postion = position
         self.cell_x: int = -1
         self.cell_y: int = -1
-        self.picture: Surface | None = None
+        self.sprite: pygame.Surface | None = None
         self._destination: tuple[int, int] | None = None
 
     def move(self, map: Map) -> None:
@@ -33,7 +33,7 @@ class Creature(ABC):
     def _switchable(self, map: Map) -> bool:
         pass
 
-    def spawn(self, screen: Surface) -> None:
+    def spawn(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite, self.rect)
 
 # tmp = Surface((5, 5))

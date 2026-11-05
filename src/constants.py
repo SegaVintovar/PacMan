@@ -14,10 +14,10 @@ KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
 }
 
 GHOSTS: dict[str, tuple[str, tuple[int, int]]] = {
-    "Clyde": ("orange", ()),
-    "Inky": ("cyan", ()),
-    "Blinky": ("red", ()),
-    "Pinky": ("pink", ())
+    "Clyde": ("orange", (WINDOW_SIZE[0] - TILE // 2, TILE // 2)),
+    "Inky": ("cyan", (TILE // 2, WINDOW_SIZE[1] - TILE // 2)),
+    "Blinky": ("red", (TILE // 2, TILE // 2)),
+    "Pinky": ("pink", (WINDOW_SIZE[0] - TILE // 2, WINDOW_SIZE[1] - TILE // 2))
 }
 
 SPEED: int = 3
