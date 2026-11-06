@@ -39,6 +39,8 @@ class Creature(ABC):
         screen.blit(self.sprite, self.rect)
 
     def _set_destination(self) -> None:
+        if self._direction not in KEY_DIRECTIONS:
+            return
         col, row = KEY_DIRECTIONS[self._direction]
         self.cell_y += row
         self.cell_x += col

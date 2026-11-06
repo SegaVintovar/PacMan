@@ -2,7 +2,7 @@ from .creature import Creature
 import pygame
 import random
 from .cell import Cell
-from .constants import GHOSTS, SPEED, KEY_DIRECTIONS
+from .constants import GHOSTS, SPEED
 from .config import GameConfig
 from .map import Map
 from enum import Enum
@@ -50,12 +50,15 @@ class Ghost(Creature):
         }
         picked: int = random.randrange(0, 3)
         self._direction = directions[picked]
+        print(f"{self.name} is going {self._direction}")
         if not self._bounce():
             self._set_destination()
+        else:
+            print(f"boink by {self.name}")
 
     def _bounce(self) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
-        if self._direction == "top" and cell.n:
+        if self._direction == "up" and cell.n:
             return True
         if self._direction == "right" and cell.e:
             return True
@@ -69,7 +72,7 @@ class Ghost(Creature):
         ...
 
     def check(self) -> None:
-        if self._at_destination():
+        if self._at_destination() or self._destination is None:
             self._pick_random_dest()
             if self._bounce():
                 return
