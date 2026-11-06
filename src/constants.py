@@ -7,17 +7,17 @@ SPRIE_SIZE = 44
 HEADER_HEIGHT = int(WINDOW_SIZE[1] * 0.1)
 
 KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
-    'W': (0, -1),
-    'D': (1, 0),
-    'S': (0, 1),
-    'A': (-1, 0)
+    'W' or 'up': (0, -1),
+    'D' or 'right': (1, 0),
+    'S' or 'down': (0, 1),
+    'A' or 'left': (-1, 0)
 }
 
-GHOSTS: dict[str, tuple[str, tuple[int, int]]] = {
-    "Clyde": ("orange", (WINDOW_SIZE[0] - TILE // 2, TILE // 2)),
-    "Inky": ("cyan", (TILE // 2, WINDOW_SIZE[1] - TILE // 2)),
-    "Blinky": ("red", (TILE // 2, TILE // 2)),
-    "Pinky": ("pink", (WINDOW_SIZE[0] - TILE // 2, WINDOW_SIZE[1] - TILE // 2))
+GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {
+    "Clyde": ("orange", ('right', 'top')),
+    "Inky": ("cyan", ('left', 'bottom')),
+    "Blinky": ("red", ('left', 'top')),
+    "Pinky": ("pink", ('right', 'bottom'))
 }
 
 SPEED: int = 3

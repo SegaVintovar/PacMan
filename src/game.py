@@ -6,7 +6,7 @@ from .ghost import Ghost
 from .map import Map
 from .pacman import Pacman
 import pygame
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, TILE, GHOSTS
+from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, GHOSTS
 from typing import Any
 # from .game_state import GameState
 from .gum import Gum
@@ -190,8 +190,8 @@ class Game():
         for g in self.gums:
             if self.pacman.rect.center == g.rect.center:
                 self.header.update_score(self.config.points_per_pacgum
-                                      if not g.type else
-                                      self.config.points_per_super_pacgum)
+                                         if not g.type else
+                                         self.config.points_per_super_pacgum)
                 self.gums.remove(g)
             else:
                 screen.blit(g.image, dest=g.rect)
@@ -206,7 +206,8 @@ class Game():
         if self.done:
             # open the page to enter the name of the player
             # so it will add this score to the file
-            return (2, (self.player.name, self.player.score))  # game is done WIN/LOOSE, so we need to store the result
+            # game is done WIN/LOOSE, so we need to store the result
+            return (2, (self.player.name, self.player.score))
         if not self.running:
             self.running = True
         for event in events:
@@ -248,11 +249,10 @@ class Game():
 
     def _awake_ghosts(self) -> None:
         for name in GHOSTS:
-            d: dict[str, tuple[int, int]] = GHOSTS[name]
-            print(d[1])
             ghost: Creature = Ghost(
                 name=name,
-                start=d[1]
+                map=self.maps[0],
+                config=self.config
             )
             self.creatures.append(ghost)
 
@@ -280,6 +280,7 @@ class Game():
 
     def render_creatures(self, map: pygame.Surface) -> None:
         for creature in self.creatures:
+            creature.check()
             creature.spawn(map)
         self.pacman.check()
         self.pacman.spawn(map)

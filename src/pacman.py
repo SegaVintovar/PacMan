@@ -17,7 +17,8 @@ class Pacman(Creature):
         self.map = map
         self.lives: int = config.lives
         self.points: int = 0
-        self._direction: str = 'A'
+        self._direction = 'A'
+        self._next_direction: str = ''
         self.sprite = pygame.image.load(
             f"src/assets/sprites/pacman_{self._direction}_wide.png",
             ).convert_alpha()
@@ -46,7 +47,6 @@ class Pacman(Creature):
         return True
 
     def get_direction_destination(self, chr: str | None) -> tuple[int, int]:
-        print(f"the chosen direction: {chr}")
         direction: tuple[int, int] = KEY_DIRECTIONS[self._direction
                                                     if chr is None
                                                     else chr.capitalize()]
@@ -61,16 +61,10 @@ class Pacman(Creature):
         else:
             self._pixel_moved += SPEED
 
-    def _set_destination(self) -> None:
-        col, row = KEY_DIRECTIONS[self._direction]
-        self.cell_y += row
-        self.cell_x += col
-        centered: tuple[int, int] = self._cell_center(None)
-        destx, desty = centered
-        self._destination = (destx, desty)
-
     def check(self) -> None:
         if self._at_destination():
+            if not self._next_direction == '':
+                self._change_direction()
             self._origin = (self.rect.x, self.rect.y)
             if not self._try_next():
                 return
@@ -91,8 +85,8 @@ class Pacman(Creature):
             self.sprite = pygame.image.load(
                 f"src/assets/sprites/pacman_{self._direction}_wide.png"
                 ).convert_alpha()
-        step_x = max(-SPEED, min(SPEED, tx - cx))
-        step_y = max(-SPEED, min(SPEED, ty - cy))
+        step_x = max(-2, min(2, tx - cx))
+        step_y = max(-2, min(2, ty - cy))
         self.rect.move_ip(step_x, step_y)
 
     def _bounce(self, char: Optional[str]) -> bool:
@@ -120,18 +114,23 @@ class Pacman(Creature):
             else:
                 return False
 
-    def _at_destination(self) -> bool:
-        return self.rect.center == self._destination
+    def _change_direction(self) -> None:
+        dx, dy = KEY_DIRECTIONS[self._next_direction]
+        self._direction = self._next_direction
+        self._next_direction = ''
+        self.cell_x += dx
+        self.cell_y += dy
+        self._destination = self._cell_center(None)
 
     def update_direction(self, char: str) -> None:
         if self._bounce(char):
             return
-        dx, dy = KEY_DIRECTIONS[char]
-        self._direction = char
         if self._at_destination():
-            self.cell_x += dx
-            self.cell_y += dy
-            self._destination = self._cell_center(None)
+            if self._next_direction == '':
+                self._next_direction = char
+            self._change_direction()
+        else:
+            self._next_direction = char
         self.sprite = pygame.image.load(
-            f"src/assets/sprites/pacman_{char}_wide.png"
+            f"src/assets/sprites/pacman_{self._direction}_wide.png"
         ).convert_alpha()
