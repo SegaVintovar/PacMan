@@ -1,6 +1,7 @@
 # from .game_state import GameState
 from abc import ABC, abstractmethod
-
+from pygame.event import Event
+from pygame import Surface
 
 class GameState():
     pass
@@ -12,5 +13,9 @@ class Module(ABC):
 
     # what if i ll put all data into the GameState
     @abstractmethod
-    def process(self, game_state: GameState) -> GameState:
+    def process(self,
+                events: list[Event],
+                game_state: GameState,
+                screen: Surface
+                ) -> GameState:
         pass

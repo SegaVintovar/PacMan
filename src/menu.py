@@ -5,50 +5,17 @@ import pygame
 from typing import Any
 # from .scoreboard import ScoreBoard
 from .gradient import make_gradient
-
-
-def lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
-               t: float) -> tuple[int, int, int]:
-    """Blend colour a into colour b. t=0 gives a, t=1 gives b."""
-    return (
-        int(a[0] + (b[0] - a[0]) * t),
-        int(a[1] + (b[1] - a[1]) * t),
-        int(a[2] + (b[2] - a[2]) * t),
-    )
+from .button import Button
 
 
 class Menu():
-    class Button():
-        def __init__(self,
-                     text: str,
-                     size: tuple[int, int],
-                     position: tuple[int, int]
-                     ) -> None:
-            self.text = text
-            self.image: pygame.Surface = pygame.Surface(size, pygame.SRCALPHA)
-            self.rect: pygame.Rect = pygame.rect.Rect(position, size)
-            self.font: pygame.font.Font = pygame.font.Font(
-                FONT_PATH, FONT_SIZE)
-            self.font_color: pygame.color.Color = PINK
-            self.image.blit(
-                self.font.render(self.text, True, self.font_color),
-                dest=(FONT_SIZE * 2, FONT_SIZE // 2)
-                )
-
-        def update_button_image(self, selected: bool) -> None:
-            font_color = self.font_color if not selected else CYAN
-            self.image.blit(
-                self.font.render(self.text, True, font_color),
-                dest=(FONT_SIZE * 2, FONT_SIZE // 2)
-                )
-
     def __init__(self, game: Game):
         # image is a background
         self.background = make_gradient(
             (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2),
             True)
         self.image: pygame.Surface = self.background.copy()
-        self.buttons: list[Menu.Button] = []
+        self.buttons: list[Button] = []
         self.game = game
         self._create_buttons()
         self.seleceted_button: int = 0
@@ -56,10 +23,10 @@ class Menu():
 
     def _create_buttons(self) -> None:
         size: tuple[int, int] = (
-            int(WINDOW_SIZE[0] * 0.4), int(WINDOW_SIZE[1] * 0.1)
+            int(WINDOW_SIZE[0] * 0.4), int(WINDOW_SIZE[1] * 0.05)
             )
         start_position = (size[0] * 0.7, int(WINDOW_SIZE[1] * 0.4))
-        step = int(WINDOW_SIZE[1] * 0.2)
+        step = int(WINDOW_SIZE[1] * 0.1)
         start = "Start"
         # cntinue = "Continue"
         score_board = "ScoreBoard"
@@ -68,7 +35,7 @@ class Menu():
         buttons = [start, score_board, instructions, quit]
         for i, b in enumerate(buttons):
             position = (start_position[0], (start_position[1] + i * step))
-            self.buttons.append(Menu.Button(b, size, position))
+            self.buttons.append(Button(b, size, position))
 
     def _render_menu(self) -> None:
         selected = self.seleceted_button % len(self.buttons)
@@ -108,6 +75,8 @@ class Menu():
     #         )
     #     return surface
 
+    # now i want every module.process() return GameState
+
     def process(
             self, ents: list[pygame.event.Event], screen: pygame.Surface
             ) -> tuple[int, Any]:
@@ -122,15 +91,14 @@ class Menu():
                         if b.text == "Exit":
                             return (0, None)
                         if b.text == "Start":
-                            if self.game.paused:
-                                self.game.footer.timer.resume()
-                                self.game.timer
+                            # if self.game.paused:
+                            #     self.game.footer.timer.resume()
+                            #     self.game.timer
                             return (1, None)
                         if b.text == "ScoreBoard":
                             return (3, None)
                         if b.text == "Instructions":
                             return (4, None)
-                            ...
             # keyboard events handling
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:

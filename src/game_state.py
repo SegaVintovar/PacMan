@@ -1,20 +1,21 @@
 # from .config import GameConfig
 # from enum import Enum, auto
-from .module import Module
+# from .module import Module
 import pygame
 
 
 class GameState():
     def __init__(self,
-                 next_module: Module,
-                 main_window: pygame.Surface,
+                 next_module: int,
+                 running: bool,
                  extra: str) -> None:
+        # for now extra is a string, but it maybe changed
         self.next_module = next_module
-        self.main_window = main_window  # not sure
+        self.running = running
         self.extra = extra
 
-    def __repr__(self):
-        return (self.next_screen, self.screen, self.extra)
+    def __repr__(self) -> tuple[int, bool, str]:
+        return (self.next_module, self.running, self.extra)
 
 
 # class GameState(Enum):

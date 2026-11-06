@@ -1,3 +1,12 @@
+import pygame
+
+
+# pygame.init()
+
+# info = pygame.display.Info()
+
+# WINDOW_SIZE = (info.current_w, info.current_h)
+
 WINDOW_SIZE = (1400, 1200)
 
 TILE = 64  # cell size
@@ -22,8 +31,8 @@ GHOSTS: dict[str, tuple[str, tuple[int, int]]] = {
 
 SPEED: int = 3
 
-FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
-FONT_SIZE = 50
+# FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
+FONT_SIZE = 30
 # colors for the menu
 PINK = (255, 80, 180)
 CYAN = (0, 230, 255)

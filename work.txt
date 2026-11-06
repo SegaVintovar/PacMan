@@ -36,7 +36,8 @@ to follow the subject we need to do:
         - level by level game
         - process the game.done == True, so in case of Win/Loss user enters his name and result is being saved
         - make different screen being child classes of ABC with process method - made GameState
-    
+        - handle # comments
+        
 
     done:
         - structure where we can switch between screens Menu, Game, ScoreBoard

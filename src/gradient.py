@@ -1,5 +1,5 @@
 import pygame
-from .constants import WINDOW_SIZE
+from .constants import WINDOW_SIZE, HEADER_HEIGHT
 
 
 def _lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
@@ -13,8 +13,10 @@ def _lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
 
 
 def make_gradient(
-        size: tuple[int, int], extra: bool = False) -> pygame.Surface:
+        size: tuple[int, int] | None = None, extra: bool = False) -> pygame.Surface:
     """Sunset gradient: dark purple at the top, pink at the bottom."""
+    if not size:
+        size = (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2)
     surface = pygame.Surface(size)
     top = (25, 5, 60)
     bottom = (255, 90, 140)
