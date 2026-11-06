@@ -8,7 +8,7 @@ from .scoreboard import ScoreBoard
 from .gradient import make_gradient
 from typing import Any
 from .game_state import GameState
-
+from .module import Module
 
 # controls
 # rules from the cofig: points per pacgum/supergum/ghost
@@ -92,6 +92,9 @@ class App():
         self.intructions: Instructions = Instructions(config=config)
         self.state: Game | Menu | ScoreBoard | Instructions = self.menu
         self.game_state: GameState
+        self.modules: list[Module]
+        # store modules in the dict and make them return next_module_str, running(bool), and extra(arg for the next module.process())
+        self.dict_modules: dict[str, Module]
 
     # if  state returns some value we are checking it and making some decisions
     # if 1 then  self.state = self.game
@@ -100,7 +103,8 @@ class App():
     # if 4 then instructions
     # if 0 then exit()
     def process(self, evns: list[pygame.event.Event]) -> bool:
-        state, extra = self.state.process(evns, self.screen)
+        state, running, extra = self.state.process(evns, self.screen)
+        self.state = self.dict_modules[state]
         match state:
             case 1:
                 ...
