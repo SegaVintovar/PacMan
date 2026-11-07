@@ -5,6 +5,7 @@ import pygame
 import json
 from typing import Any
 from .gradient import make_gradient
+from .game_state import GameState
 
 
 class Score(BaseModel):
@@ -33,10 +34,10 @@ class Score(BaseModel):
 
 
 class ScoreBoard():
-    def __init__(self) -> None:
+    def __init__(self, bg: pygame.Surface) -> None:
         self.scores: list[Score] = []
-        self.image = make_gradient(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
+        self.background = bg
+        self.image = self.background.copy()
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
         try:
@@ -62,17 +63,21 @@ class ScoreBoard():
 
     def process(self,
                 events: list[pygame.event.Event],
+                game_state: GameState,
                 screen: pygame.Surface
                 ) -> tuple[int, Any]:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or\
                   event.key == pygame.K_q:
-                    return (2, None)
-            if event.type == pygame.QUIT:
-                return (0, None)
+                    game_state.next_module = 2
+                    return game_state
+            elif event.type == pygame.QUIT:
+                game_state.next_module = 0
+                game_state.running = False
+                return game_state
         self.show_me(screen=screen)
-        return (3, None)
+        return game_state
 
     def _fill_image(self) -> None:
         if self.scores:

@@ -6,7 +6,7 @@ from .menu import Menu
 import json
 from .scoreboard import ScoreBoard
 from .gradient import make_gradient
-from typing import Any
+# from typing import Any
 from .game_state import GameState
 from .module import Module
 from .instructions import Instructions
@@ -39,14 +39,17 @@ class App():
         self.app_state = GameState(2, True, "")
         # then initializing all modules of the app
         self.game: Game = Game(config=self.config)
-        self.menu: Menu = Menu(self.game)
-        self.scoreboard: ScoreBoard = ScoreBoard()
-        self.intructions: Instructions = Instructions(config=config)
+        self.menu: Menu = Menu(self.background.copy())
+        self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy())
+        self.intructions: Instructions = Instructions(
+            self.background.copy(),
+            config=config)
         self.pause = Pause(self.background.copy())
         self.win = Win(self.background.copy())
         self.loose = Loose(self.background.copy())
+        # do i need this list? dict feels better
         self.modules: list[Module]
-        self.dict_modules: dict[int, Any[Module]] = {
+        self.dict_modules: dict[int, Module] = {
             1: self.game,
             2: self.menu,
             3: self.scoreboard,

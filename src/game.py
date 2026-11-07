@@ -122,7 +122,7 @@ class Game():
         self.current_lvl: Level = self.levels[0]
         # prepare levels
         # self._prepare_creatures()
-        self.pacman: Pacman = Pacman(self.maps[0], config)
+        # self.pacman: Pacman = Pacman(self.map, config)
         header = Header(self.config, 1000)
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
@@ -131,7 +131,7 @@ class Game():
         self.running = False
         self.paused = False
         self.gums: list[Gum] = []
-        self._gen_gums()
+        # self._gen_gums()
         # if we are done with a lvl - then we poping it away
         self.points: int = 0
 
@@ -191,9 +191,12 @@ class Game():
                     # timer needs to be paused here
                     self.footer.timer.pause()
                     self.paused = True
-                    return (2, None)
+                    game_state.next_module = 2
+                    return game_state
             if event.type == pygame.QUIT:
-                return (0, None)
+                game_state.next_module = 0
+                game_state.running = False
+                return game_state
         map_image = self.maps[0].map_image.copy()
         self.render_creatures(map_image)
         self.show_gums(map_image)
@@ -205,14 +208,14 @@ class Game():
         # if not self.footer.show_me(screen):
         #     return (2, self.)
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
-        return (1, None)
+        return game_state
 
     def _prepare_levels(self) -> list[Level]:
         for i in range(len(self.config.level)):
             self.levels.append(Level(
                 int(self.config.level[i]),
                 self.config.level[i],
-                self.config + i,
+                self.config.seed + i,
                 config=self.config
             ))
         print(f"Game: {len(self.config.level)} levels prepared")

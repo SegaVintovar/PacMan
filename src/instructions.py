@@ -3,6 +3,8 @@ import pygame
 from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_PATH, FONT_SIZE
 from typing import Any
 from .gradient import make_gradient
+from .game_state import GameState
+from .button import Button
 
 
 class Instructions():
@@ -22,19 +24,14 @@ class Instructions():
              "• After the game ends, the player is returned to the main menu."
              ]
 
-    def __init__(self, config: GameConfig) -> None:
-        self.background: pygame.Surface = make_gradient(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
+    def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
+        self.background= bg
         self.font = pygame.font.Font(FONT_PATH, FONT_SIZE - 25)
-        # self.text = self.font.render(self.rules, True, "white")
-        # self.image_with_txt = pygame.Surface(
-        #     self.font.size(self.rules), masks=pygame.SRCALPHA)
-        # self.image_with_txt.blit(self.text, dest=(0, 0))
-        # self.background.blit(
-        #     self.image_with_txt,
-        #     dest=(WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.2)
-        #     )
         self.config = config
+        self.go_back: Button = Button(
+            "Back to menu",
+            ((WINDOW_SIZE[0] * 0.5), (WINDOW_SIZE[1] * 0.1)),
+            ((WINDOW_SIZE[0] * 0.2), (WINDOW_SIZE[1] * 0.9)))
         self._prep_rules()
 
     def _prep_rules(self) -> None:
@@ -46,18 +43,33 @@ class Instructions():
                 self.font.render(rule, True, "white"),
                 dest=(position)
             )
+        self.background.blit(self.go_back.image, self.go_back.rect)
 
+    # need to change return type to GameState
     def process(self,
-                events: list[pygame.event.Event], screen: pygame.Surface
+                events: list[pygame.event.Event],
+                game_state: GameState,
+                screen: pygame.Surface
                 ) -> tuple[int, Any]:
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
-                    return (2, None)
+                if event.key == pygame.K_q or\
+                      event.key == pygame.K_ESCAPE or\
+                        event.key == pygame.K_RETURN:
+                    game_state.next_module = 2
+                    # return (2, None)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if self.go_back.rect.collidepoint(x, y):
+                    game_state.next_module = 2
+                    # return (2, None)
             if event.type == pygame.QUIT:
-                return (0, None)
+                game_state.running = False
+                game_state.next_module = 0
+                return game_state
         self._show_me(screen=screen)
-        return (4, None)
+        # return (4, None)
+        return game_state
 
     def _show_me(self, screen: pygame.Surface) -> None:
         screen.blit(self.background, dest=(0, 0))

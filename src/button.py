@@ -9,7 +9,8 @@ class Button():
                  position: tuple[int, int]
                  ) -> None:
         self.text = text
-        self.image: pygame.Surface = pygame.Surface(size, pygame.SRCALPHA)
+        self.image: pygame.Surface = pygame.Surface(
+            size, pygame.SRCALPHA)
         self.rect: pygame.Rect = pygame.rect.Rect(position, size)
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
