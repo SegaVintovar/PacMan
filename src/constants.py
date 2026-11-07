@@ -7,10 +7,17 @@ SPRIE_SIZE = 44
 HEADER_HEIGHT = int(WINDOW_SIZE[1] * 0.1)
 
 KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
-    'W' or 'up': (0, -1),
-    'D' or 'right': (1, 0),
-    'S' or 'down': (0, 1),
-    'A' or 'left': (-1, 0)
+    'W': (0, -1),
+    'D': (1, 0),
+    'S': (0, 1),
+    'A': (-1, 0)
+}
+
+GHOST_DIRECTIONS: dict[str, tuple[int, int]] = {
+    'up': (0, -1),
+    'right': (1, 0),
+    'down': (0, 1),
+    'left': (-1, 0)
 }
 
 GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {

@@ -122,6 +122,17 @@ class Pacman(Creature):
         self.cell_y += dy
         self._destination = self._cell_center(None)
 
+    def _set_destination(self) -> None:
+        if self._direction not in KEY_DIRECTIONS:
+            print(f"skipping '{self._direction}'")
+            return
+        col, row = KEY_DIRECTIONS[self._direction]
+        self.cell_y += row
+        self.cell_x += col
+        centered: tuple[int, int] = self._cell_center(None)
+        destx, desty = centered
+        self._destination = (destx, desty)
+
     def update_direction(self, char: str) -> None:
         if self._bounce(char):
             return

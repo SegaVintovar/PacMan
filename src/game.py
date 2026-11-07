@@ -192,6 +192,8 @@ class Game():
                 self.header.update_score(self.config.points_per_pacgum
                                          if not g.type else
                                          self.config.points_per_super_pacgum)
+                if g.type == "super":
+                    print("all the ghosts should be pussies")
                 self.gums.remove(g)
             else:
                 screen.blit(g.image, dest=g.rect)

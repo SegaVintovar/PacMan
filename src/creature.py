@@ -1,7 +1,7 @@
 from .map import Map
 from pydantic_extra_types.coordinate import Coordinate
 from abc import ABC
-from .constants import TILE, KEY_DIRECTIONS
+from .constants import TILE
 import pygame
 from typing import Optional
 
@@ -39,14 +39,7 @@ class Creature(ABC):
         screen.blit(self.sprite, self.rect)
 
     def _set_destination(self) -> None:
-        if self._direction not in KEY_DIRECTIONS:
-            return
-        col, row = KEY_DIRECTIONS[self._direction]
-        self.cell_y += row
-        self.cell_x += col
-        centered: tuple[int, int] = self._cell_center(None)
-        destx, desty = centered
-        self._destination = (destx, desty)
+        pass
 
     def _at_destination(self) -> bool:
         return self.rect.center == self._destination
