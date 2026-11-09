@@ -25,13 +25,14 @@ class Instructions():
              ]
 
     def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
-        self.background= bg
+        self.background = bg
         self.font = pygame.font.Font(FONT_PATH, FONT_SIZE - 25)
         self.config = config
         self.go_back: Button = Button(
             "Back to menu",
             ((WINDOW_SIZE[0] * 0.5), (WINDOW_SIZE[1] * 0.1)),
-            ((WINDOW_SIZE[0] * 0.2), (WINDOW_SIZE[1] * 0.9)))
+            ((WINDOW_SIZE[0] * 0.2), (WINDOW_SIZE[1] * 0.9)),
+            2)
         self._prep_rules()
 
     def _prep_rules(self) -> None:

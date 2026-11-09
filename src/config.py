@@ -21,7 +21,7 @@ class GameConfig(BaseModel):
     @staticmethod
     def default_settings() -> dict[str, Any]:
         return {
-            "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
             "lives": "3",
             "pacgum": "42",
             "points_per_pacgum": "10",

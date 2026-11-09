@@ -35,8 +35,7 @@ class App():
         self.screen: pygame.Surface = screen
         clock = pygame.time.Clock()
         self.clock: pygame.time.Clock = clock
-        # init game state with the menu at the start
-        self.app_state = GameState(2, True, "")
+        self.app_state = GameState(2, True)
         # then initializing all modules of the app
         self.game: Game = Game(config=self.config)
         self.menu: Menu = Menu(self.background.copy())
@@ -45,7 +44,7 @@ class App():
             self.background.copy(),
             config=config)
         self.pause = Pause(self.background.copy())
-        self.win = WinLoose(self.background.copy())
+        self.win_loose = WinLoose(self.background.copy())
         # self.loose = Loose(self.background.copy())
         # do i need this list? dict feels better
         self.modules: list[Module]
@@ -54,43 +53,34 @@ class App():
             2: self.menu,
             3: self.scoreboard,
             4: self.intructions,
-            # add score
             5: self.pause,
             6: self.win_loose,
-            7: self.loose,
             0: None
         }
         self.state: Module = self.dict_modules[self.app_state.next_module]
 
     # if  state returns some value we are checking it and making some decisions
-    # if 1 then  self.state = self.game
-    # if 2 then self.state = self.menu
+    # if 1 then self.game
+    # if 2 then self.menu
     # if 3 then self.scoreboard
-    # if 4 then instructions
+    # if 4 then self.instructions
     # if 5 then self.pause
-    # if 6 then self.win
-    # if 7 then self.loose
+    # if 6 then self.win_loose
     # if 0 then exit()
-    # for the module process we need:
+    # for the Module.process() we need:
     #       1. events
     #       2. gamestate
     #       3. main_screen
     def process(self, evns: list[pygame.event.Event]) -> bool:
-        gs = self.state.process(evns, self.app_state, self.screen)
+        gs: GameState = self.state.process(evns, self.app_state, self.screen)
         next_module = gs.next_module
+        if gs.reload:
+            self.game = Game(config=self.config)
+            gs.gs_update(2)
         if next_module == 0:
             return False
         self.state = self.dict_modules[next_module]
         return True
-
-    # def _open_scoreboard_file(self) -> dict:
-    #     """
-    #     Open, read and save it to the self.scoreboard
-    #     """
-    #     with open(self.scoreboard_file, "r") as file:
-    #         self.scores = json.load(file.read())
-    #     with open(self.scoreboard_file, "w") as file:
-    #         self.scoreboard = json.load(file.read())
 
     def _save_results(self) -> None:
         with open(self.scoreboard_file, "w+") as file:

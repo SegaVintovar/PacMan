@@ -5,13 +5,12 @@ from .timer import Timer
 from .config import GameConfig
 from .creature import Creature
 from .pacman import Pacman
-from .constants import GHOSTS, WINDOW_SIZE, HEADER_HEIGHT
+from .constants import GHOSTS
 from typing import Any
-from .game_state import GameState
-from .game import Header, Footer
+# from .game import Header, Footer
+import random
 
 
-# we need some class for state returns
 class Level():
     def __init__(self,
                  id: int,
@@ -26,84 +25,72 @@ class Level():
         self.map: Map = Map(self.config, self.seed)
         self.creatures: list[Creature] = []
         self.gums: list[Gum] = []
+        self._gen_gums()
+        print("amount of gums", len(self.gums))
         timer = Timer(config.level_max_time)
         self.timer: Timer = timer
-        # header = Header(self.config, 1000)
-        # self.header: Header = header
-        # footer = Footer(self.config, self.config.lives)
-        # self.footer: Footer = footer
-        self.pacman: Pacman = Pacman(self.map, self.config)
         self.creatures: Creature = []
+        # self.render_creatures(self.map)
 
-    def _prepare_level(self) -> None:
-        # spawn creatures
-        self.creatures.append(self.pacman)
-        ...
+    def isDone(self) -> bool:
+        if not self.gums:
+            return True
+        return False
 
-    def process(self,
-                events: list[pygame.event.Event],
-                game_state: GameState,
-                screen: pygame.Surface
-                ) -> GameState:
-        for event in events:
-            if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
-                ch: str = event.unicode
-                if ch in "wasd":
-                    self.pacman.update_direction(ch.upper())
-                elif (event.key == pygame.K_SPACE or
-                        event.key == pygame.K_q or
-                        event.key == pygame.K_ESCAPE):
-                    # timer needs to be paused here
-                    self.footer.timer.pause()
-                    self.paused = True
-                    game_state.next_module = 2
-                    return game_state
-            if event.type == pygame.QUIT:
-                game_state.next_module = 0
-                game_state.running = False
-                return game_state
-        map_image = self.map.map_image.copy()
-        scaled_map = pygame.transform.scale(
-            map_image, WINDOW_SIZE)
-        self.header.show_me(screen)
-        self.footer.show_me(screen)
-        screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
-        return game_state
+    def process(self, screen: pygame.Surface, pacman: Pacman) -> bool:
+        if self.isDone():
+            return True
+        self.show_gums(screen, pacman)
+        self.render_creatures(screen, pacman)
+        screen.blit(pacman.sprite, pacman.rect)
+        return False
 
     def _gen_gums(self) -> None:
-        # place super gums in corner cells
-        # then fulfill rest of the 
+        # first place super gums in corner cells
+        # then fulfill rest of the grid
         amount = self.config.pacgum
         corner_cells = (
-            self.map[0][0],
-            self.map[0][self.config.height - 1],
-            self.map[self.config.width - 1][0],
-            self.map[self.config.width - 1][self.config.height - 1]
+            self.map.map[0][0],
+            self.map.map[self.config.height - 1][0],
+            self.map.map[0][self.config.width - 1],
+            self.map.map[self.config.height - 1][self.config.width - 1]
         )
-        for row in self.maps[0].map:
-            for c in row:
-                if c.value not in (15, 1):
-                    px, py = c.position
-                    self.gums.append(
-                            Gum(
-                                (px, py),
-                                t="super" if c in corner_cells else ""
-                            )
-                    )
-                    amount -= 1
+        for c in corner_cells:
+            px, py = c.position
+            self.gums.append(
+                Gum(
+                    (px, py),
+                    "super"
+                )
+            )
+            amount -= 1
 
-    def show_gums(self, screen: pygame.Surface) -> None:
+        free_cells = []
+        for row in self.map.map:
+            for cell in row:
+                if cell.value != 15 and cell not in corner_cells:
+                    free_cells.append(cell)
+        # we do not place more then we can
+        amount = min(amount, len(free_cells))
+        # random gen, thanks to Claude
+        rng = random.Random(self.seed)
+        for cell in rng.sample(free_cells, amount):
+            self.gums.append(Gum(cell.position, ""))
+
+    def show_gums(self, screen: pygame.Surface, pacman: Pacman) -> None:
         for g in self.gums:
-            if self.pacman.rect.center == g.rect.center:
-                self.header.score += (self.config.points_per_pacgum
-                                      if not g.type else
-                                      self.config.points_per_super_pacgum)
+            if pacman.rect.center == g.rect.center:
+                pacman.points += (
+                    self.config.points_per_pacgum
+                    if not g.type else
+                    self.config.points_per_super_pacgum
+                    )
                 self.gums.remove(g)
             else:
                 screen.blit(g.image, dest=g.rect)
 
-    def render_creatures(self, map: pygame.Surface) -> None:
-        self.pacman.check()
+    def render_creatures(self, map: pygame.Surface, pacman: Pacman) -> None:
+        pacman.check()
         for creature in self.creatures:
             creature.spawn(map)
         # self.pacman.spawn(map)

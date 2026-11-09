@@ -35,6 +35,10 @@ class Pacman(Creature):
         self.rect.center = self._cell_center(None)
         self._destination = self.rect.center
 
+    def go_to_next_level(self, map: Map) -> None:
+        self.map = map
+        self.measure_spawn()
+
     def _try_next(self) -> bool:
         if self._bounce(None):
             return False
@@ -120,6 +124,7 @@ class Pacman(Creature):
         return self.rect.center == self._destination
 
     def update_direction(self, char: str) -> None:
+        print(f"upd dir: {char}")
         if self._bounce(char):
             return
         dx, dy = KEY_DIRECTIONS[char]
