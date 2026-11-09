@@ -72,8 +72,7 @@ class Footer():
         self.lives: int = lives
         self.image: pygame.Surface = pygame.Surface(
             (WINDOW_SIZE[0], HEADER_HEIGHT))
-        timer = Timer(config.level_max_time)
-        self.timer: Timer = timer
+
         self.timer.start_timer()
         self.font: pygame.font.Font = pygame.font.SysFont("Arial", FONT_SIZE)
 
@@ -84,7 +83,7 @@ class Footer():
                              ),
             dest=(10, 30)
         )
-        time = self.timer.level_max_time - self.timer.time_since_start()
+        # time = self.timer.level_max_time - self.timer.time_since_start()
         if time < 0:
             return
         self.image.blit(
@@ -96,7 +95,7 @@ class Footer():
             dest=(int(WINDOW_SIZE[0]) - 300, 30)
         )
 
-    def show_me(self, screen: pygame.Surface) -> None:
+    def show_me(self, screen: pygame.Surface, time: int) -> None:
         self.image.fill("black")
         self._current_lives_n_timer(time)
         screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
@@ -114,58 +113,29 @@ class Game():
                  maze_gen: MazeGenerator = MazeGenerator) -> None:
         self.config = config
         # should this attribute be in Player class???
-        self.gumsCollected: int = 0
-        self.lives: int = config.lives
+        # self.gumsCollected: int = 0
         self.levels: list[Level] = []
         self._prepare_levels()
         # try ???
-        self.current_lvl: Level = self.levels[0]
-        # prepare levels
-        # self._prepare_creatures()
+        self.current_lvl: Level | None = None
         # self.pacman: Pacman = Pacman(self.map, config)
         header = Header(self.config, 1000)
         self.header: Header = header
         footer = Footer(self.config, self.config.lives)
         self.footer: Footer = footer
+        timer = Timer(config.level_max_time)
+        self.timer: Timer = timer
         self.done = False
         self.running = False
         self.paused = False
-        self.gums: list[Gum] = []
+        # self.gums: list[Gum] = []
         # self._gen_gums()
         # if we are done with a lvl - then we poping it away
-        self.points: int = 0
-
-    # def _gen_gums(self) -> None:
-    #     # amount = self.config.pacgum
-    #     corner_cells = (
-    #         self.maps[0].map[0][0],
-    #         self.maps[0].map[0][self.config.height - 1],
-    #         self.maps[0].map[self.config.width - 1][0],
-    #         self.maps[0].map[self.config.width - 1][self.config.height - 1]
-    #     )
-    #     for row in self.maps[0].map:
-    #         for c in row:
-    #             if c.value not in (15, 1):
-    #                 px, py = c.position
-    #                 self.gums.append(
-    #                         Gum(
-    #                             (px, py),
-    #                             t="super" if c in corner_cells else ""
-    #                         )
-    #                 )
-
-    # def show_gums(self, screen: pygame.Surface) -> None:
-    #     for g in self.gums:
-    #         if self.pacman.rect.center == g.rect.center:
-    #             self.header.score += (self.config.points_per_pacgum
-    #                                   if not g.type else
-    #                                   self.config.points_per_super_pacgum)
-    #             self.gums.remove(g)
-    #         else:
-    #             screen.blit(g.image, dest=g.rect)
+        # self.points: int = 0
 
     # should return 0 , 1 , 2
     # or GameState that will store
+    # track the win_loose condition, we can return gs with extra
     def process(self,
                 events: list[pygame.event.Event],
                 game_state: GameState,
@@ -175,50 +145,56 @@ class Game():
         if self.done:
             # open the page to enter the name of the player
             # so it will add this score to the file
-            return (2, (self.player.name, self.player.score))  # game is done WIN/LOOSE, so we need to store the result
+            game_state.gs_update(6)
+            return game_state  # game is done WIN/LOOSE, so we need to store the result
         if not self.running:
             self.running = True
         # shall lvl process return smth
-        self.current_lvl.process(events=events, game_state=game_state)
-        for event in events:
-            if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
-                ch: str = event.unicode
-                if ch in "wasd":
-                    self.pacman.update_direction(ch.upper())
-                elif (event.key == pygame.K_SPACE or
-                        event.key == pygame.K_q or
-                        event.key == pygame.K_ESCAPE):
-                    # timer needs to be paused here
-                    self.footer.timer.pause()
-                    self.paused = True
-                    game_state.next_module = 2
-                    return game_state
-            if event.type == pygame.QUIT:
-                game_state.next_module = 0
-                game_state.running = False
-                return game_state
-        map_image = self.maps[0].map_image.copy()
-        self.render_creatures(map_image)
-        self.show_gums(map_image)
-        # render gums, ghosts
-        scaled_map = pygame.transform.scale(
-            map_image, WINDOW_SIZE)
-        self.header.show_me(screen)
-        self.footer.show_me(screen)
-        # if not self.footer.show_me(screen):
-        #     return (2, self.)
-        screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
-        return game_state
+        gs: GameState = self.current_lvl.process(
+            events, game_state, screen)
+        return gs
+        # for event in events:
+        #     if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
+        #         ch: str = event.unicode
+        #         if ch in "wasd":
+        #             self.pacman.update_direction(ch.upper())
+        #         elif (event.key == pygame.K_SPACE or
+        #                 event.key == pygame.K_q or
+        #                 event.key == pygame.K_ESCAPE):
+        #             # timer needs to be paused here
+        #             self.footer.timer.pause()
+        #             self.paused = True
+        #             game_state.next_module = 2
+        #             return game_state
+        #     if event.type == pygame.QUIT:
+        #         game_state.next_module = 0
+        #         game_state.running = False
+        #         return game_state
+        # map_image = self.current_lvl.map.map_image.copy()
+        # scaled_map = pygame.transform.scale(
+        #     map_image, WINDOW_SIZE)
+        # self.header.show_me(screen)
+        # self.footer.show_me(screen)
+        # screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
+        # return game_state
 
     def _prepare_levels(self) -> list[Level]:
+        """"
+        First lvl seed comes form the subject, rest random.
+        """
         for i in range(len(self.config.level)):
+            seed = self.config.seed if i == 0 else None
             self.levels.append(Level(
                 int(self.config.level[i]),
                 self.config.level[i],
-                self.config.seed + i,
+                seed,
                 config=self.config
             ))
         print(f"Game: {len(self.config.level)} levels prepared")
+
+
+    def _go_to_next_lvl(self) -> None:
+        ...
 
     # def _awake_ghosts(self) -> None:
     #     for name in GHOSTS:

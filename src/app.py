@@ -11,7 +11,7 @@ from .game_state import GameState
 from .module import Module
 from .instructions import Instructions
 from .pause import Pause
-from .win_loose import Win, Loose
+from .win_loose import WinLoose
 
 
 class App():
@@ -45,8 +45,8 @@ class App():
             self.background.copy(),
             config=config)
         self.pause = Pause(self.background.copy())
-        self.win = Win(self.background.copy())
-        self.loose = Loose(self.background.copy())
+        self.win = WinLoose(self.background.copy())
+        # self.loose = Loose(self.background.copy())
         # do i need this list? dict feels better
         self.modules: list[Module]
         self.dict_modules: dict[int, Module] = {
@@ -54,8 +54,9 @@ class App():
             2: self.menu,
             3: self.scoreboard,
             4: self.intructions,
+            # add score
             5: self.pause,
-            6: self.win,
+            6: self.win_loose,
             7: self.loose,
             0: None
         }

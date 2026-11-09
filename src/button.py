@@ -6,9 +6,11 @@ class Button():
     def __init__(self,
                  text: str,
                  size: tuple[int, int],
-                 position: tuple[int, int]
+                 position: tuple[int, int],
+                 go_to_module: int
                  ) -> None:
         self.text = text
+        self.go_to_module = go_to_module
         self.image: pygame.Surface = pygame.Surface(
             size, pygame.SRCALPHA)
         self.rect: pygame.Rect = pygame.rect.Rect(position, size)

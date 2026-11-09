@@ -65,7 +65,7 @@ class ScoreBoard():
                 events: list[pygame.event.Event],
                 game_state: GameState,
                 screen: pygame.Surface
-                ) -> tuple[int, Any]:
+                ) -> GameState:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or\

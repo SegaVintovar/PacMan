@@ -1,6 +1,6 @@
 from .config import GameConfig
 import pygame
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_PATH, FONT_SIZE
+from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE
 from typing import Any
 from .gradient import make_gradient
 from .game_state import GameState

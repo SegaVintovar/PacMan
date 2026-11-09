@@ -108,7 +108,10 @@ class Menu():
                 if event.key == pygame.K_s:
                     self.seleceted_button += 1
                 if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
-                    return (0, None)
+                    game_state.next_module = 0
+                    game_state.running = False
+                    return game_state
+                    # return (0, None)
                 if event.key == pygame.K_RETURN:
                     print("return")
                     if self.buttons[
@@ -117,23 +120,27 @@ class Menu():
                         # if self.game.paused:
                         #     self.game.footer.timer.resume()
                             # self.game.timer
-                        print("start")
-                        return (1, None)
+                        game_state.next_module = 1
+                        return game_state
                     elif self.buttons[
                         self.seleceted_button % len(self.buttons)
                     ].text == "ScoreBoard":
-                        return (3, None)
+                        game_state.next_module = 3
+                        return game_state
                     elif self.buttons[
                         self.seleceted_button % len(self.buttons)
                     ].text == "Instructions":
-                        return (4, None)
+                        game_state.next_module = 4
+                        return game_state
                     else:
-                        return (0, None)
+                        game_state.next_module = 0
+                        game_state.running = False
+                        return game_state
             if event.type == pygame.QUIT:
                 exit()
         self._render_menu()
         screen.blit(self.image, dest=(0, 0))
-        return (2, None)
+        return game_state
 
     # def open_menu(self, screen: pygame.Surface) -> None:
     #     screen.blit(self.image, (0, 0))
