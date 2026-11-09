@@ -170,12 +170,12 @@ class Game():
     def _gen_gums(self) -> None:
         # amount = self.config.pacgum
         corner_cells = (
-            self.maps[0].map[0][0],
-            self.maps[0].map[0][self.config.height - 1],
-            self.maps[0].map[self.config.width - 1][0],
-            self.maps[0].map[self.config.width - 1][self.config.height - 1]
+            self.maps[0].grid[0][0],
+            self.maps[0].grid[0][self.config.height - 1],
+            self.maps[0].grid[self.config.width - 1][0],
+            self.maps[0].grid[self.config.width - 1][self.config.height - 1]
         )
-        for row in self.maps[0].map:
+        for row in self.maps[0].grid:
             for c in row:
                 if c.value not in (15, 1):
                     px, py = c.position
@@ -282,7 +282,7 @@ class Game():
 
     def render_creatures(self, map: pygame.Surface) -> None:
         for creature in self.creatures:
-            creature.check()
+            creature.check((self.pacman.cell_x, self.pacman.cell_y))
             creature.spawn(map)
         self.pacman.check()
         self.pacman.spawn(map)

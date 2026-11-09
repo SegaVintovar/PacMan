@@ -9,14 +9,14 @@ from typing import Optional
 class Creature(ABC):
     def __init__(self, name: str, position: Coordinate) -> None:
         self.name = name
-        self.postion = position
+        self.position = position
         self.cell_x: int = -1
         self.cell_y: int = -1
         self.sprite: pygame.Surface | None = None
         self._destination: tuple[int, int] | None = None
         self._direction: str = None
 
-    def check(self) -> None:
+    def check(self, pacman: tuple[int, int] | None = None) -> None:
         pass
 
     def get_direction_destination(direction: str) -> tuple[int, int]:

@@ -2,6 +2,7 @@
 from .cell import Cell
 from .config import GameConfig
 from . import MazeGenerator
+from .constants import GHOST_DIRECTIONS
 import pygame
 
 TILE = 64
@@ -17,7 +18,7 @@ class Map:
         self.seed: int = int(self.config.seed)
 
         self._grid: list[list[int]] = []
-        self.map: list[list[Cell]] = self._create_map()
+        self.grid: list[list[Cell]] = self._create_map()
         self.map_image: pygame.Surface = self._build_rect_image()
         self.tiles: list[pygame.Surface] = []
 
@@ -45,7 +46,7 @@ class Map:
     def _build_rect_image(self) -> pygame.Surface:
         screen = pygame.Surface(size=(
             (self.width * TILE), (self.height * TILE)))
-        for row in self.map:
+        for row in self.grid:
             for c in row:
                 screen.blit(c.surface, dest=c.position)
         return screen
@@ -62,10 +63,29 @@ class Map:
             tiles.append(image)
         screen = pygame.Surface(size=(
             (self.width * TILE), (self.height * TILE)))
-        for row in self.map:
+        for row in self.grid:
             for c in row:
                 screen.blit(tiles[c.value], c.position)
         return screen
 
     def get_cel_by_coords(self, x: int, y: int) -> Cell | None:
-        return self.map[y][x] or None
+        return self.grid[y][x] or None
+
+    def off_grid(self, x: int, y: int) -> bool:
+        return (not (x >= 0 and x <= self.width)
+                and (y >= 0 and y <= self.height))
+
+    def is_walled(self, x: int, y: int, direction: str) -> bool:
+        if direction in GHOST_DIRECTIONS.keys():
+            to_x, to_y = GHOST_DIRECTIONS[direction]
+            cell: Cell = self.get_cel_by_coords(x + to_x, y + to_y)
+            match direction:
+                case "up":
+                    return cell.n
+                case "right":
+                    return cell.e
+                case "down":
+                    return cell.s
+                case "left":
+                    return cell.w
+        return True

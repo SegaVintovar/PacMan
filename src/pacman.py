@@ -61,7 +61,7 @@ class Pacman(Creature):
         else:
             self._pixel_moved += SPEED
 
-    def check(self) -> None:
+    def check(self, pacman: tuple[int, int] | None = None) -> None:
         if self._at_destination():
             if not self._next_direction == '':
                 self._change_direction()
@@ -77,7 +77,8 @@ class Pacman(Creature):
                 f"src/assets/sprites/pacman_{self._direction}_closed.png"
                 ).convert_alpha()
         elif ((self._pixel_moved <= TILE * 0.5 and
-              self._pixel_moved > TILE * 0.25) or (self._pixel_moved > TILE * 0.75)):
+              self._pixel_moved > TILE * 0.25) or
+              (self._pixel_moved > TILE * 0.75)):
             self.sprite = pygame.image.load(
                 f"src/assets/sprites/pacman_{self._direction}_narrow.png"
                 ).convert_alpha()

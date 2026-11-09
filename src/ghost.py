@@ -1,6 +1,7 @@
 from .creature import Creature
 import pygame
 import random
+from .behaviour import Behaviour
 from .cell import Cell
 from .constants import GHOSTS, SPEED, GHOST_DIRECTIONS
 from .config import GameConfig
@@ -80,19 +81,19 @@ class Ghost(Creature):
     def retreat_spawn_point() -> None:
         ...
 
-    def check(self) -> None:
-        if self._at_destination() or self._destination is None:
+    def check(self, pacman: tuple[int, int] | None = None) -> None:
+        if self._at_destination():
             self._pick_random_dest()
             if self._bounce():
                 return
         cx, cy = self.rect.center
         tx, ty = self._destination
+        Behaviour.a_star(self.map, pacman, (self.cell_x, self.cell_y))
         speed: int = SPEED if not self.pussy_mod else SPEED/2
+        self.sprite = self._upload_pic()
         step_x = max(-speed, min(speed, tx - cx))
         step_y = max(-speed, min(speed, ty - cy))
         self.rect.move_ip(step_x, step_y)
-        ...
 
     def _out_bound(self, map: Map) -> bool:
         ...
-    # ids are from 0 till 3(inclusive)
