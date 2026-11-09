@@ -146,6 +146,7 @@ class Game(Module):
                 game_state.quit()
                 return game_state
         map_image = self.current_lvl.map.map_image.copy()
+        # if we finished current level
         if self.current_lvl.process(map_image, self.pacman) is True:
             self.current_lvl_id += 1
             if self.current_lvl_id == len(self.config.level):

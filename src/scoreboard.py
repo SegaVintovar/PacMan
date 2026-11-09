@@ -46,19 +46,7 @@ class ScoreBoard():
             print(str(e))
         self._fill_image()
 
-    def _upload_scores(self) -> None:
-        with open("scores.json", mode="r") as file:
-            scores: list[dict] = json.loads(file.read())
-        scores.sort(key=lambda s: s["score"], reverse=True)
-        # lets assume that scores is a list of dicts
-        for score in scores:
-            n = score["name"]
-            scr = score["score"]
-            self.scores.append(Score(
-                    name=n,
-                    score=scr,
-                    font=self.font
-                    ))
+
         # print(len(self.scores))
 
     def process(self,
@@ -126,3 +114,17 @@ class ScoreBoard():
             data.append({"name": score.name, "score": score.score})
         with open("scores.json", mode="w") as file:
             json.dump(data, file, indent=4)
+
+    def _upload_scores(self) -> None:
+        with open("scores.json", mode="r") as file:
+            scores: list[dict] = json.loads(file.read())
+        scores.sort(key=lambda s: s["score"], reverse=True)
+        print("Scores: ", scores)
+        for score in scores:
+            n = score["name"]
+            scr = score["score"]
+            self.scores.append(Score(
+                    name=n,
+                    score=scr,
+                    font=self.font
+                    ))

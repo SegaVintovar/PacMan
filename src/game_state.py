@@ -12,13 +12,18 @@ class GameState():
         self.extra = extra
         self.win = win
         self.reload = False
+        self.player_name: str = ""
 
     def gs_update(self,
                   next_module: int,
                   extra: int = 0,
-                  win: bool = False) -> None:
+                  win: bool = False,
+                  player_name: str = "") -> None:
         if next_module == 0:
             self.running = False
+        if next_module == 2 and player_name:
+            # save result into the file
+            ...
         self.previous = self.next_module
         self.next_module = next_module
         if extra:

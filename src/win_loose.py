@@ -4,6 +4,7 @@ import pygame
 from .game_state import GameState
 from .button import Button
 from .constants import FONT_PATH, FONT_SIZE, WINDOW_SIZE, HEADER_HEIGHT, PINK
+import json
 
 
 def process_txt_input():
@@ -16,7 +17,7 @@ class WinLoose(Module):
     def __init__(self, bg: pygame.Surface) -> None:
         self.background = bg
         self.image: pygame.Surface = self.background.copy()
-        self.player_name: str = "Player"
+        self.name: str = ""
         self.font: pygame.font.Font = pygame.font.Font(FONT_PATH, FONT_SIZE)
         self.hfont: pygame.font.Font = pygame.font.Font(FONT_PATH, FONT_SIZE * 2)
         # self.background.blit(
@@ -44,8 +45,8 @@ class WinLoose(Module):
             header = "Congratulations, you won!"
         else:
             header = "You lost."
-        name = self.player_name
-        char = ""
+        self.name
+        
         for event in events:
             if event.type == pygame.KEYDOWN:
                 # chars, enter, backspace, delete
@@ -53,17 +54,25 @@ class WinLoose(Module):
                     gs.gs_update(2)
                     return gs
                 ch: str = event.unicode
-                char += ch
+                if (ch.isalnum() or ch == " ") and len(self.name) < 10:
+                    self.name += ch
+                if event.key == pygame.K_RETURN:
+                    self._save_score(gs.extra, self.name)
+                    gs.gs_update(2)
+                    return gs
+                if event.key == pygame.K_BACKSPACE:
+                    self.name = self.name[:-1]
             if event.type == pygame.QUIT:
                 gs.quit()
                 return gs
-        name = name if not char else char
-        self._update_image(header, name, score)
+        # name = name if not char else char
+        self._update_image(header, score)
         screen.blit(self.image, dest=(0, 0))
         return gs
 
-    def _update_image(self, header: str, char: str, score: int):
-        # img_cpy = self.background.copy()
+    def _update_image(self, header: str, score: int):
+        img_cpy = self.background.copy()
+        self.image = img_cpy
         # header
         h = (self.hfont.render(header, True, PINK),
              (WINDOW_SIZE[0] * 0.45, HEADER_HEIGHT))
@@ -74,7 +83,7 @@ class WinLoose(Module):
         ur_name = (self.font.render("Name: ", True, PINK),
                    (WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] // 2))
         # entered text
-        ch = (self.hfont.render(char, True, PINK),
+        ch = (self.hfont.render(self.name, True, PINK),
               (WINDOW_SIZE[0] * 0.4, WINDOW_SIZE[1] // 2))
         # score
         s = (self.font.render(("Your score: " + str(score)), True, "white"),
@@ -85,8 +94,27 @@ class WinLoose(Module):
         self.image.blit(ch[0], ch[1])
         self.image.blit(s[0], s[1])
 
-    def enter_ur_name(self) -> None:
-        ...
+    def _upload_scores(self) -> list[dict]:
+        with open("scores.json", mode="r") as file:
+            scores: list[dict] = json.loads(file)
+        scores.sort(key=lambda s: s["score"], reverse=True)
+        print("Scores: ", scores)
+        return scores
+        # lets assume that scores is a list of dicts
+        # for score in scores:
+        #     n = score["name"]
+        #     scr = score["score"]
+        #     self.scores.append(Score(
+        #             name=n,
+        #             score=scr,
+        #             font=self.font
+        #             ))
 
-    def _save_score(self) -> None:
-        ...
+    def _save_score(self, score: int, name: str) -> None:
+        scores = self._upload_scores()
+        name = "Player" if not name else name
+        scores.append({"score": score, "name": name})
+        scores.sort(key=lambda s: s["score"], reverse=True)
+        with open("scores.json", "w") as file:
+            json.dump(scores, file, indent=4)
+        
