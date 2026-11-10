@@ -26,4 +26,4 @@ class Timer():
         self.start_time += now - self.paused_time
 
     def isBurned(self) -> bool:
-        return self.start_time + self.level_max_time < pygame.time.get_ticks()
+        return self.start_time + self.level_max_time * 1000 < pygame.time.get_ticks()

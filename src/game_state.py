@@ -21,9 +21,11 @@ class GameState():
                   player_name: str = "") -> None:
         if next_module == 0:
             self.running = False
-        if next_module == 2 and player_name:
-            # save result into the file
-            ...
+        # cond when we need to init the game again
+        # and game state as well
+        if next_module == 2 and (self.next_module == 5 or self.next_module == 6):
+            print("Reload the game!")
+            self.reload = True
         self.previous = self.next_module
         self.next_module = next_module
         if extra:

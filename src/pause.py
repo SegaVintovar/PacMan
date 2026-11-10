@@ -34,16 +34,13 @@ class Pause(Module):
                     if b.rect.collidepoint(x, y):
                         print("Mouse button", b.text, x, y)
                         if b.text == "Exit":
-                            gs.running = False
-                            gs.next_module = 0
                             gs.gs_update(0)
                         elif b.text == "Continue":
                             gs.gs_update(1)
                         elif b.text == "Save the score":
                             gs.gs_update(6)
-                            gs.next_module = 6
                         elif b.text == "Back to menu":
-                            gs.next_module = 2
+                            gs.gs_update(2)
                         return gs
                         # keyboard events handling
             if event.type == pygame.KEYDOWN:

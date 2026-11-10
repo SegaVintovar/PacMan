@@ -73,10 +73,14 @@ class App():
     #       3. main_screen
     def process(self, evns: list[pygame.event.Event]) -> bool:
         gs: GameState = self.state.process(evns, self.app_state, self.screen)
-        next_module = gs.next_module
+        
         if gs.reload:
             self.game = Game(config=self.config)
-            gs.gs_update(2)
+            self.dict_modules[1] = self.game
+            self.app_state = GameState(2, True)
+            print("game reloaded")
+            gs = self.app_state
+        next_module = gs.next_module
         if next_module == 0:
             return False
         self.state = self.dict_modules[next_module]

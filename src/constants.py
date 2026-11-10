@@ -7,7 +7,7 @@ import pygame
 
 # WINDOW_SIZE = (info.current_w, info.current_h)
 
-WINDOW_SIZE = (1400, 1200)
+WINDOW_SIZE = (800, 600)
 
 TILE = 64  # cell size
 

@@ -113,7 +113,7 @@ class Game(Module):
                 game_state: GameState,
                 screen: pygame.Surface
                 ) -> GameState:
-        if game_state.previous == 2:
+        if game_state.previous == 2 or game_state.previous == 5:
             self.current_lvl.timer.start_timer()
         if self.done:
             # open the page to enter the name of the player
@@ -133,7 +133,7 @@ class Game(Module):
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 # this can make our packy to crash
                 ch: str = event.unicode
-                if ch in "wasd":
+                if ch in "wasd" and len(ch) == 1:
                     self.pacman.update_direction(ch.upper())
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
