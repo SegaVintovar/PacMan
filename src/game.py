@@ -7,6 +7,18 @@ from .game_state import GameState
 import random
 from .module import Module
 
+# from bastiaan
+# from . import MazeGenerator
+# from .creature import Creature
+# from .ghost import Ghost
+# from .map import Map
+# from .pacman import Pacman
+# import pygame
+# from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, GHOSTS
+# from typing import Any
+# # from .game_state import GameState
+# from .gum import Gum
+
 
 class Header():
     def __init__(self, config: GameConfig) -> None:
@@ -103,6 +115,29 @@ class Game(Module):
         # needed???
         self.done = False
         self.paused = False
+    # from bastiaan`s branch, just not to loose
+        # self.gumsCollected: int = 0
+        # self.creatures: list[Creature] = []
+        # self.maps: list[Map] = []
+        # self.maze_gen: MazeGenerator = maze_gen
+        # # self.timer: Timer = Timer(config.level_max_time)
+        # self.player: Player = Player(config.lives)
+        # self._prepare_maps()
+        # self.pacman: Pacman = Pacman(self.maps[0], config)
+        # self.creatures.append(self.pacman)
+        # self._awake_ghosts()
+        # header = Header(self.config, 1000)
+        # self.header: Header = header
+        # footer = Footer(self.config, self.config.lives)
+        # self.footer: Footer = footer
+        # self.done = False
+        # self.running = False
+        # self.paused = False
+        # self.gums: list[Gum] = []
+        # self._gen_gums()
+        # # if we are done with a lvl - then we poping it away
+        # self.levels: list[Level] = []
+        # self.points: int = 0
 
     # should return 0 , 1 , 2
     # or GameState that will store
@@ -199,8 +234,29 @@ class Game(Module):
         """init PacMan, Ghosts"""
         ...
 
-    # def render_creatures(self, map: pygame.Surface) -> None:
-    #     for creature in self.creatures:
-    #         creature.spawn(map)
-    #     self.pacman.check()
-    #     self.pacman.spawn(map)
+    def render_creatures(self, map: pygame.Surface) -> None:
+        for creature in self.creatures:
+            creature.check((self.pacman.cell_x, self.pacman.cell_y))
+            creature.spawn(map)
+        self.pacman.check()
+        self.pacman.spawn(map)
+
+    # def navigate(option: Menu) -> int:
+    #     return 1
+
+
+if __name__ == "__main__":
+    game = Game()
+    game.display_one_map()
+    running: bool = True
+    print("doing it designated")
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        # game.run(screen)
+        # scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
+        # screen.blit(scaled_map, dest=(0, 0))
+        # ourHero.spawn(screen)
+        pygame.display.update()
+    pygame.quit()

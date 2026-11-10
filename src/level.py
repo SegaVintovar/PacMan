@@ -6,6 +6,7 @@ from .config import GameConfig
 from .creature import Creature
 from .pacman import Pacman
 from .constants import GHOSTS
+from .ghost import Ghost
 from typing import Any
 # from .game import Header, Footer
 import random
@@ -29,7 +30,9 @@ class Level():
         print("amount of gums", len(self.gums))
         timer = Timer(config.level_max_time)
         self.timer: Timer = timer
-        self.creatures: Creature = []
+        self.creatures: list[Creature] = []
+        # self.creatures.append(self.pacman)
+        self._awake_ghosts()
         # self.render_creatures(self.map)
 
     def isDone(self) -> bool:
@@ -97,4 +100,9 @@ class Level():
 
     def _awake_ghosts(self) -> None:
         for name in GHOSTS:
-            d: dict[str, Any] = GHOSTS[name]
+            ghost: Creature = Ghost(
+                name=name,
+                map=self.map,
+                config=self.config
+            )
+            self.creatures.append(ghost)

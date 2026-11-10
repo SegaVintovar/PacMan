@@ -2,19 +2,21 @@ from .map import Map
 from pydantic_extra_types.coordinate import Coordinate
 from abc import ABC
 from .constants import TILE
-from pygame import Surface
+import pygame
+from typing import Optional
 
 
 class Creature(ABC):
     def __init__(self, name: str, position: Coordinate) -> None:
         self.name = name
-        self.postion = position
+        self.position = position
         self.cell_x: int = -1
         self.cell_y: int = -1
-        self.picture: Surface | None = None
+        self.sprite: pygame.Surface | None = None
         self._destination: tuple[int, int] | None = None
+        self._direction: str = None
 
-    def move(self, map: Map) -> None:
+    def check(self, pacman: tuple[int, int] | None = None) -> None:
         pass
 
     def get_direction_destination(direction: str) -> tuple[int, int]:
@@ -27,14 +29,20 @@ class Creature(ABC):
         x, y = coords
         return x * TILE + TILE // 2, y * TILE + TILE // 2
 
-    def _out_bound(self, map: Map) -> bool:
+    def _bounce(self, char: Optional[str]) -> bool:
         pass
 
     def _switchable(self, map: Map) -> bool:
         pass
 
-    def spawn(self, screen: Surface) -> None:
+    def spawn(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite, self.rect)
+
+    def _set_destination(self) -> None:
+        pass
+
+    def _at_destination(self) -> bool:
+        return self.rect.center == self._destination
 
 # tmp = Surface((5, 5))
 # obj = draw.rect(tmp, (137, 137, 137), (4, 4))

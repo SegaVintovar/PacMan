@@ -22,11 +22,18 @@ KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
     'A': (-1, 0)
 }
 
-GHOSTS: dict[str, tuple[str, tuple[int, int]]] = {
-    "Clyde": ("orange", ()),
-    "Inky": ("cyan", ()),
-    "Blinky": ("red", ()),
-    "Pinky": ("pink", ())
+GHOST_DIRECTIONS: dict[str, tuple[int, int]] = {
+    'up': (0, -1),
+    'right': (1, 0),
+    'down': (0, 1),
+    'left': (-1, 0)
+}
+
+GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {
+    "Clyde": ("orange", ('right', 'top')),
+    "Inky": ("cyan", ('left', 'bottom')),
+    "Blinky": ("red", ('left', 'top')),
+    "Pinky": ("pink", ('right', 'bottom'))
 }
 
 SPEED: int = 3
