@@ -62,7 +62,6 @@ class Footer():
                              ),
             dest=(10, 30)
         )
-        # time = self.timer.level_max_time - self.timer.time_since_start()
         if time < 0:
             return
         self.image.blit(
@@ -113,8 +112,9 @@ class Game(Module):
                 game_state: GameState,
                 screen: pygame.Surface
                 ) -> GameState:
-        if game_state.previous == 2 or game_state.previous == 5:
+        if game_state.previous == 2:
             self.current_lvl.timer.start_timer()
+        # nothing yet sets this to True
         if self.done:
             # open the page to enter the name of the player
             # so it will add this score to the file
@@ -156,7 +156,7 @@ class Game(Module):
             self.start_current_lvl()
             return game_state
         if self.current_lvl.timer.isBurned():
-            game_state.gs_update()
+            game_state.gs_update(6, self.pacman.points, False)
             return game_state
         self._display(map_image, screen)
         return game_state
@@ -167,7 +167,10 @@ class Game(Module):
             map_image, WINDOW_SIZE)
         self.header.show_me(screen, (self.current_lvl_id + 1),
                             self.pacman.points)
-        time = self.config.level_max_time - self.current_lvl.timer.time_since_start()
+        time = (self.config.level_max_time -
+                self.current_lvl.timer.time_since_start())
+        print("time since start", self.current_lvl.timer.time_since_start(), "\n",
+              "start time", self.current_lvl.timer.start_time)
         self.footer.show_me(screen, time, self.pacman)
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
 

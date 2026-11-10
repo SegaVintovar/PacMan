@@ -1,5 +1,4 @@
 from .module import Module
-from .gradient import make_gradient
 import pygame
 from .game_state import GameState
 from .button import Button
@@ -19,7 +18,8 @@ class WinLoose(Module):
         self.image: pygame.Surface = self.background.copy()
         self.name: str = ""
         self.font: pygame.font.Font = pygame.font.Font(FONT_PATH, FONT_SIZE)
-        self.hfont: pygame.font.Font = pygame.font.Font(FONT_PATH, FONT_SIZE * 2)
+        self.hfont: pygame.font.Font = pygame.font.Font(
+            FONT_PATH, FONT_SIZE * 2)
         # self.background.blit(
         #     self.font.render(
         #         f"Enter your name: {self.player_name}", True, PINK),

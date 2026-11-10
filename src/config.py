@@ -6,6 +6,7 @@ import json
 
 
 class GameConfig(BaseModel):
+    # highscore_filename: str = Field()
     level: list[int] = Field(min_length=1)
     lives: int = Field(gt=0)
     pacgum: int = Field(ge=0)
