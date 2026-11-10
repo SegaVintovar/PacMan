@@ -95,8 +95,11 @@ class WinLoose(Module):
         self.image.blit(s[0], s[1])
 
     def _upload_scores(self) -> list[dict]:
-        with open("scores.json", mode="r") as file:
-            scores: list[dict] = json.loads(file)
+        try:
+            with open("scores.json", mode="r") as file:
+                scores: list[dict] = json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            scores = []
         scores.sort(key=lambda s: s["score"], reverse=True)
         print("Scores: ", scores)
         return scores
@@ -112,6 +115,7 @@ class WinLoose(Module):
 
     def _save_score(self, score: int, name: str) -> None:
         scores = self._upload_scores()
+        scores = [] if not scores else scores
         name = "Player" if not name else name
         scores.append({"score": score, "name": name})
         scores.sort(key=lambda s: s["score"], reverse=True)
