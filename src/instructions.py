@@ -74,7 +74,8 @@ class Instructions(Module):
     def _prep_rules(self) -> None:
         start_pos = (WINDOW_SIZE[0] * 0.25, WINDOW_SIZE[1] * 0.05)
         step = (FONT_SIZE - 15) * 2
-        self.image = self.background.copy()
+        self.image = pygame.Surface(
+            WINDOW_SIZE, pygame.SRCALPHA).convert_alpha()
         for i, rule in enumerate(self.rules):
             position = (start_pos[0], start_pos[1] + i * step)
             self.image.blit(
@@ -98,16 +99,16 @@ class Instructions(Module):
                     return game_state
                 if event.key == pygame.K_w or \
                         event.key == pygame.K_UP:
-                    self.scroll_pos += 10
+                    self.scroll_pos -= 10
                 elif event.key == pygame.K_s or \
                         event.key == pygame.K_DOWN:
-                    self.scroll_pos -= 10
+                    self.scroll_pos += 10
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if self.go_back.rect.collidepoint(x, y):
                     game_state.gs_update(2)
             if event.type == pygame.MOUSEWHEEL:
-                self.scroll_pos += event.y * 10
+                self.scroll_pos += event.y * -10
                 # if self.scroll_pos < 0:
                 #     self.scroll_pos = 0
             if event.type == pygame.QUIT:
@@ -118,5 +119,6 @@ class Instructions(Module):
 
     def _show_me(self, screen: pygame.Surface) -> None:
         # self._prep_rules()
+        screen.blit(self.background, (0, 0))
         screen.blit(self.image, dest=(0, self.scroll_pos))
         screen.blit(self.go_back.image, (0, 0))

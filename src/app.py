@@ -28,6 +28,7 @@ class App():
         screen = pygame.display.set_mode(
             (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
         self.background = make_gradient()
+        self.menu_background = make_gradient(extra=True)
         # info = pygame.display.Info()
         # screen = pygame.display.set_mode(
         #     (info.current_w, info.current_h),
@@ -38,7 +39,7 @@ class App():
         self.app_state = GameState(2, True)
         # then initializing all modules of the app
         self.game: Game = Game(config=self.config)
-        self.menu: Menu = Menu(self.background.copy())
+        self.menu: Menu = Menu(self.menu_background.copy())
         self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy())
         self.intructions: Instructions = Instructions(
             self.background.copy(),
