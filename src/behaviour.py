@@ -45,5 +45,5 @@ class Behaviour:
                 atx, aty = at
                 optx, opty = opt
                 if not map.off_grid(atx + optx, aty + opty):
-                    ...
+                    continue
             break
