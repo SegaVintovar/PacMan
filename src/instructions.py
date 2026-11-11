@@ -1,50 +1,87 @@
 from .config import GameConfig
 import pygame
-from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE
+from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE, CYAN
 from typing import Any
-from .gradient import make_gradient
+# from .gradient import make_gradient
 from .game_state import GameState
 from .button import Button
+from .module import Module
 
 
-class Instructions():
-    rules = ["The game consists of multiple levels (at least 10).",
-             "• Each level has a time limit (e.g., 90 seconds).\n",
-             "• If the time limit is reached, you can decide what happens ",
-             "(e.g., restart the level, end the game, etc.).\n",
-             "• If the player completes a level, they move to the next level.",
-             "• The player keeps their score and",
-             "remaining lives between levels.\n",
-             "• The game ends when all levels are completed or ",
-             "when the player loses all lives.\n",
-             "• During the game, the player can pause and resume the game.\n",
-             "• When the game ends (win or lose),",
-             "the final score is displayed, and the player can ",
-             "enter their name to save the highscore.\n",
-             "• After the game ends, the player is returned to the main menu."
-             ]
+class Instructions(Module):
+    rules = [
+        " ----------- ",
+        "Goal",
+        "",
+        "Eat every pacgum in the maze to clear the level.",
+        "Clear all levels to win the game.",
+        " ----------- ",
+        "Controls:",
+        "",
+        "Move: Arrow keys or W / A / S / D",
+        "Pause: ESC | Q | ",
+        "Menus: Up / Down to navigate, Enter to select",
+        "Name entry: type your name, Enter to confirm, Backspace to delete",
+        " ----------- ",
+        "Rules",
+        "",
+        "You move through corridors only. Walls block you.",
+        "You start each level in the middle of the maze.",
+        "If a ghost touches you, you lose a life and respawn in the middle.",
+        "You lose the game when all lives are gone.",
+        "Each level has a time limit of 90 seconds ⚙. 🔧 When time runs out,",
+        "[the level restarts / the game ends].",
+        "Your score and remaining lives carry over between levels.",
+        " ----------- ",
+        "Items and scoring",
+        "",
+        "Pacgum (small dot): +10 points ⚙",
+        "Super-pacgum (big dot in each corner): +50 points ⚙ and the ghosts",
+        "become edible for a short time",
+        "Edible ghost: +200 points ⚙. An eaten ghost returns to its corner",
+        "and respawns after a few seconds.",
+        "Your score never decreases.",
+        " ----------- ",
+        "Ghosts",
+        "",
+        "4 ghosts start in the 4 corners of the maze.",
+        "Normally they chase you.",
+        "While edible, they run away from you.",
+        " ----------- ",
+        "Highscores",
+        "After a win or a loss, enter your name (max 10 characters, letters,",
+        "digits and spaces). The top 10 scores are shown in the main menu.",
+        " ----------- ",
+        "Cheat mode (for reviewers)",
+        "🔧 Key bindings, for example: I = invincibility, N = skip level,",
+        "F = freeze ghosts, L = extra life, and so on.",
+    ]
 
     def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
         self.background = bg
-        self.font = pygame.font.Font(FONT_PATH, FONT_SIZE - 25)
+        self.image: pygame.Surface = bg.copy()
+        self.font = pygame.font.Font(FONT_PATH, FONT_SIZE - 5)
         self.config = config
         self.go_back: Button = Button(
             "Back to menu",
             ((WINDOW_SIZE[0] * 0.5), (WINDOW_SIZE[1] * 0.1)),
-            ((WINDOW_SIZE[0] * 0.2), (WINDOW_SIZE[1] * 0.9)),
-            2)
+            ((WINDOW_SIZE[0] * 0.01), (WINDOW_SIZE[1] * 0.05)),
+            2,
+            CYAN)
+        self.scroll_pos = 0
         self._prep_rules()
 
     def _prep_rules(self) -> None:
-        start_pos = (WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.2)
-        step = (FONT_SIZE - 15) * 2 
+        start_pos = (WINDOW_SIZE[0] * 0.25, WINDOW_SIZE[1] * 0.05)
+        step = (FONT_SIZE - 15) * 2
+        self.image = self.background.copy()
         for i, rule in enumerate(self.rules):
             position = (start_pos[0], start_pos[1] + i * step)
-            self.background.blit(
+            self.image.blit(
                 self.font.render(rule, True, "white"),
                 dest=(position)
             )
-        self.background.blit(self.go_back.image, self.go_back.rect)
+        # self.image = self.background.copy()
 
     # need to change return type to GameState
     def process(self,
@@ -57,20 +94,29 @@ class Instructions():
                 if event.key == pygame.K_q or\
                       event.key == pygame.K_ESCAPE or\
                         event.key == pygame.K_RETURN:
-                    game_state.next_module = 2
-                    # return (2, None)
+                    game_state.gs_update(2)
+                    return game_state
+                if event.key == pygame.K_w or \
+                        event.key == pygame.K_UP:
+                    self.scroll_pos += 10
+                elif event.key == pygame.K_s or \
+                        event.key == pygame.K_DOWN:
+                    self.scroll_pos -= 10
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if self.go_back.rect.collidepoint(x, y):
-                    game_state.next_module = 2
-                    # return (2, None)
+                    game_state.gs_update(2)
+            if event.type == pygame.MOUSEWHEEL:
+                self.scroll_pos += event.y * 10
+                # if self.scroll_pos < 0:
+                #     self.scroll_pos = 0
             if event.type == pygame.QUIT:
-                game_state.running = False
-                game_state.next_module = 0
+                game_state.quit()
                 return game_state
         self._show_me(screen=screen)
-        # return (4, None)
         return game_state
 
     def _show_me(self, screen: pygame.Surface) -> None:
-        screen.blit(self.background, dest=(0, 0))
+        # self._prep_rules()
+        screen.blit(self.image, dest=(0, self.scroll_pos))
+        screen.blit(self.go_back.image, (0, 0))

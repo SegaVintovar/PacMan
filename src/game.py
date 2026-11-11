@@ -92,14 +92,7 @@ class Footer():
         screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
 
 
-# start the game
-# - open the window, prepare a map/maps?, images
-# - load levels
-# - blit into the screen the menu/map/scoreboard
 class Game(Module):
-    # lets think about it if we are running the game for the first time
-    # or we continue playing after pause
-    # timer per level
     def __init__(self, config: GameConfig) -> None:
         self.config = config
         self.levels: list[Level] = []

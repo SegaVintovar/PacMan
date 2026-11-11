@@ -33,19 +33,22 @@ Task list:
 
 to follow the subject we need to do:
     to do:
-        - Instructions page in the menu
-        - level by level game
-        - process the game.done == True, so in case of Win/Loss user enters his name and result is being saved
-        - make different screen being child classes of ABC with process method - made GameState
-        - handle # comments
-        
+        - config.py   
+            - handle # comments in config and the rest of the input handling 
+        - pac-man.py
+            - The entry point must be python3 pac-man.py config.json from the repo root. Right now it’s python -m src.
+        - Mazegen error handling
+        - ScoreBoard
+            - 
 
     done:
         - structure where we can switch between screens Menu, Game, ScoreBoard
             - idea is that all of these modules have method process() that manages input and blits the image on the main screen
         - maze is visible - we have two options(Cells are uploaded as pictures or as it is now, Cells are generated within the pygame)
         - pacman moves within the walls(small bugs are there, but its fine for now)
-
+        - Instructions page in the menu
+        - level by level game
+        - WinLoose Module
 
 Extras - our ideas that we want to implement
     - to do:

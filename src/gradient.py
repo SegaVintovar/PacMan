@@ -12,6 +12,18 @@ def _lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
     )
 
 
+def _add_palms(surface: pygame.Surface) -> None:
+    palms = []
+    for i in range(1, 4):
+        path = f"src/assets/palms/palm{i}.png"
+        palms.append(pygame.image.load(path))
+    start_pos = (0, WINDOW_SIZE[1] * 0.05)
+    step = WINDOW_SIZE[0] * 0.35
+    for i, p in enumerate(palms):
+        surface.blit(p, dest=(start_pos[0] + i * step,
+                              start_pos[1] + i * 440))
+
+
 def make_gradient(
         size: tuple[int, int] | None = None, extra: bool = False) -> pygame.Surface:
     """Sunset gradient: dark purple at the top, pink at the bottom."""
@@ -32,4 +44,5 @@ def make_gradient(
                                     WINDOW_SIZE[1] * 0.4)),
             (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.02)
             )
+    _add_palms(surface)
     return surface
