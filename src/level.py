@@ -44,7 +44,7 @@ class Level():
         if self.isDone():
             return True
         self.show_gums(screen, pacman)
-        self.render_creatures(screen, pacman)
+        self._render_creatures(screen, pacman)
         screen.blit(pacman.sprite, pacman.rect)
         return False
 
@@ -92,11 +92,18 @@ class Level():
             else:
                 screen.blit(g.image, dest=g.rect)
 
-    def render_creatures(self, map: pygame.Surface, pacman: Pacman) -> None:
-        pacman.check()
+    def _render_creatures(self, screen: pygame.Surface, pacman: Pacman) -> None:
         for creature in self.creatures:
-            creature.spawn(map)
-        # self.pacman.spawn(map)
+            creature.check((pacman.cell_x, pacman.cell_y))
+            creature.spawn(screen)
+        pacman.check()
+        pacman.spawn(screen)
+
+    # def render_creatures(self, map: pygame.Surface, pacman: Pacman) -> None:
+    #     pacman.check()
+    #     for creature in self.creatures:
+    #         creature.spawn(map)
+    #     # self.pacman.spawn(map)
 
     def _awake_ghosts(self) -> None:
         for name in GHOSTS:

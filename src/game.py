@@ -196,6 +196,8 @@ class Game(Module):
         self._display(map_image, screen)
         return game_state
 
+    # def lvl_process(self)
+
     def _display(self,
                  map_image: pygame.Surface, screen: pygame.Surface) -> None:
         scaled_map = pygame.transform.scale(
@@ -204,8 +206,8 @@ class Game(Module):
                             self.pacman.points)
         time = (self.config.level_max_time -
                 self.current_lvl.timer.time_since_start())
-        print("time since start", self.current_lvl.timer.time_since_start(), "\n",
-              "start time", self.current_lvl.timer.start_time)
+        # print("time since start", self.current_lvl.timer.time_since_start(), "\n",
+        #       "start time", self.current_lvl.timer.start_time)
         self.footer.show_me(screen, time, self.pacman)
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
 
@@ -234,12 +236,12 @@ class Game(Module):
         """init PacMan, Ghosts"""
         ...
 
-    def render_creatures(self, map: pygame.Surface) -> None:
-        for creature in self.creatures:
-            creature.check((self.pacman.cell_x, self.pacman.cell_y))
-            creature.spawn(map)
-        self.pacman.check()
-        self.pacman.spawn(map)
+    # def render_creatures(self, map: pygame.Surface) -> None:
+    #     for creature in self.creatures:
+    #         creature.check((self.pacman.cell_x, self.pacman.cell_y))
+    #         creature.spawn(map)
+    #     self.pacman.check()
+    #     self.pacman.spawn(map)
 
     # def navigate(option: Menu) -> int:
     #     return 1
