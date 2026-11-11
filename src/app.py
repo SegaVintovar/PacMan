@@ -86,7 +86,7 @@ class App():
         self.state = self.dict_modules[next_module]
         return True
 
-    def _save_results(self) -> None:
-        with open(self.scoreboard_file, "w+") as file:
-            file.write(json.dumps(str(self.scores)))
-            print("File scores.json was updated")
+    # def _save_results(self) -> None:
+    #     with open(self.scoreboard_file, "w+") as file:
+    #         file.write(json.dumps(str(self.scores)))
+    #         print("File scores.json was updated")
