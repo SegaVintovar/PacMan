@@ -5,7 +5,7 @@ from src.config import GameConfig
 
 default_config = {
     "highscore_filename": "scores.json",
-    "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
     "lives": "3",
     "pacgum": "10",
     "points_per_pacgum": "10",
@@ -31,7 +31,7 @@ def main():
     except Exception as e:
         print("Could not validate given config file", str(e))
         print("Launching the game with default config")
-        config = default_config
+        config = GameConfig(**default_config)
     # here we also need try,
     # so image load or bad config,
     # or maze gen fail
