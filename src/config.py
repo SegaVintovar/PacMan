@@ -6,7 +6,7 @@ import json
 
 
 class GameConfig(BaseModel):
-    # highscore_filename: str = Field()
+    highscore_filename: str = Field()
     level: list[int] = Field(min_length=1)
     lives: int = Field(gt=0)
     pacgum: int = Field(ge=0)
@@ -22,6 +22,7 @@ class GameConfig(BaseModel):
     @staticmethod
     def default_settings() -> dict[str, Any]:
         return {
+            "highscore_filename": "scores.json",
             "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
             "lives": "3",
             "pacgum": "42",
@@ -36,6 +37,8 @@ class GameConfig(BaseModel):
 
     @model_validator(mode="after")
     def check_config(self) -> "GameConfig":
+        if not self.highscore_filename.endswith(".json"):
+            raise ValueError("highscore file has to be JSON format")
         if len(set(self.level)) != len(self.level):
             raise ValueError("level contains duplicates")
         if any(lvl < 1 for lvl in self.level):

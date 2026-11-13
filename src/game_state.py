@@ -26,6 +26,8 @@ class GameState():
         if next_module == 2 and (self.next_module == 5 or self.next_module == 6):
             print("Reload the game!")
             self.reload = True
+        # if next_module == 3 and self.next_module != 3:
+        #     # we need to upload scores
         self.previous = self.next_module
         self.next_module = next_module
         if extra:

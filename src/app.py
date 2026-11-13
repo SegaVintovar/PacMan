@@ -39,7 +39,7 @@ class App():
         # then initializing all modules of the app
         self.game: Game = Game(config=self.config)
         self.menu: Menu = Menu(self.background.copy())
-        self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy())
+        self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy(), config)
         self.intructions: Instructions = Instructions(
             self.background.copy(),
             config=config)
