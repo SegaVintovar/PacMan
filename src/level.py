@@ -27,7 +27,7 @@ class Level():
         self.creatures: list[Creature] = []
         self.gums: list[Gum] = []
         self._gen_gums()
-        print("amount of gums", len(self.gums))
+        # print("amount of gums", len(self.gums))
         timer = Timer(config.level_max_time)
         self.timer: Timer = timer
         self.creatures: list[Creature] = []

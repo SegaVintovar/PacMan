@@ -49,11 +49,6 @@ class ScoreBoard(Module):
             CYAN)
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
-        # try:
-        #     self._upload_scores()
-        # except Exception as e:
-        #     print(str(e))
-        # self._fill_image()
 
     def process(self,
                 events: list[pygame.event.Event],
@@ -110,13 +105,6 @@ class ScoreBoard(Module):
         """
         screen.blit(self.image, dest=(0, 0))
 
-    def _create_score(self, name: str, score: int) -> Score:
-        """"
-        Creation of the Score object
-        name and score are required
-        """
-        return Score(name=name, score=score)
-
     def add_score(self, score: dict[str, Any]) -> None:
         self.scores.append(score)
         self.scores.sort(key=lambda s: s.score, reverse=True)
@@ -125,9 +113,6 @@ class ScoreBoard(Module):
 
     # this one is not working as it should
     def save_scores(self) -> None:
-        # data = []
-        # for score in self.scores:
-        #     data.append(score)
         self.scores.sort(key=lambda x: x["score"], reverse=True)
         try:
             with open(self.config.highscore_filename, mode="w") as file:
@@ -148,12 +133,3 @@ class ScoreBoard(Module):
         else:
             print("Scores were uploaded")
         self.scores = scores[:MAX_SCORES]
-        # self.scores = self.scores[:MAX_SCORES]
-        # for score in scores:
-        #     n = score["name"]
-        #     scr = score["score"]
-        #     self.scores.append(Score(
-        #             name=n,
-        #             score=scr,
-        #             font=self.font
-        #             ))

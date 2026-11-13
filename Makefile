@@ -5,7 +5,8 @@ install:
 
 run:
 	@echo "running Pac Man"
-	@uv run python -m src config.json
+	@uv run python pac-man.py config.json
+
 
 clean:
 	@echo "cleansing __pycache__"
@@ -15,7 +16,7 @@ clean:
 	@rm -rf .venv
 
 lint:
-	echo "linty linty"
+	@echo "linty linty"
 
 lint-strict:
-	echo "linty linty on the juice"
+	@echo "linty linty on the juice"
