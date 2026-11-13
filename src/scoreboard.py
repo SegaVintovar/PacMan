@@ -1,12 +1,13 @@
 from pydantic import BaseModel, Field, model_validator, ConfigDict
-from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE, HEADER_HEIGHT
+from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE
 from .constants import PINK, CYAN, MAX_SCORES
 import pygame
 import json
-from typing import Any
-from .gradient import make_gradient
 from .game_state import GameState
 from .config import GameConfig
+from .button import Button
+from .module import Module
+
 
 class Score(BaseModel):
     # model config is to make pydantic work with pygame object types
@@ -39,6 +40,12 @@ class ScoreBoard():
         self.config = config
         self.background = bg
         self.image = self.background.copy()
+        self.go_back: Button = Button(
+            "Back to menu",
+            ((WINDOW_SIZE[0] * 0.5), (WINDOW_SIZE[1] * 0.1)),
+            ((WINDOW_SIZE[0] * 0.01), (WINDOW_SIZE[1] * 0.05)),
+            2,
+            CYAN)
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
         # try:
@@ -46,9 +53,6 @@ class ScoreBoard():
         # except Exception as e:
         #     print(str(e))
         # self._fill_image()
-
-
-        # print(len(self.scores))
 
     def process(self,
                 events: list[pygame.event.Event],
@@ -58,10 +62,16 @@ class ScoreBoard():
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or\
-                  event.key == pygame.K_q:
-                    game_state.next_module = 2
+                  event.key == pygame.K_q or\
+                  event.key == pygame.K_RETURN:
+                    game_state.gs_update(2)
                     return game_state
-            elif event.type == pygame.QUIT:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if self.go_back.rect.collidepoint(x, y):
+                    game_state.gs_update(2)
+                    return game_state
+            if event.type == pygame.QUIT:
                 game_state.next_module = 0
                 game_state.running = False
                 return game_state
@@ -85,6 +95,7 @@ class ScoreBoard():
                 self.font.render("No scores yet", True, PINK, CYAN),
                 dest=(WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.4)
             )
+        self.image.blit(self.go_back.image, (0, 0))
 
     def show_me(self, screen: pygame.Surface) -> None:
         """

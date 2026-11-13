@@ -28,6 +28,7 @@ class App():
         screen = pygame.display.set_mode(
             (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
         self.background = make_gradient()
+        self.menu_background = make_gradient(extra=True)
         # info = pygame.display.Info()
         # screen = pygame.display.set_mode(
         #     (info.current_w, info.current_h),

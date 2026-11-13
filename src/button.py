@@ -7,7 +7,8 @@ class Button():
                  text: str,
                  size: tuple[int, int],
                  position: tuple[int, int],
-                 go_to_module: int
+                 go_to_module: int,
+                 font_color: pygame.Color = PINK
                  ) -> None:
         self.text = text
         self.go_to_module = go_to_module
@@ -16,7 +17,7 @@ class Button():
         self.rect: pygame.Rect = pygame.rect.Rect(position, size)
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
-        self.font_color: pygame.color.Color = PINK
+        self.font_color: pygame.color.Color = font_color
         self.image.blit(
             self.font.render(self.text, True, self.font_color),
             dest=(FONT_SIZE * 2, FONT_SIZE // 2)

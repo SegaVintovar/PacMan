@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from pygame.event import Event
 from pygame import Surface
 
+
 class GameState():
     pass
 

@@ -23,7 +23,8 @@ class GameState():
             self.running = False
         # cond when we need to init the game again
         # and game state as well
-        if next_module == 2 and (self.next_module == 5 or self.next_module == 6):
+        if next_module == 2 and (self.next_module == 5 or
+                                 self.next_module == 6):
             print("Reload the game!")
             self.reload = True
         # if next_module == 3 and self.next_module != 3:
