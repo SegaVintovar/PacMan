@@ -15,7 +15,7 @@ def _lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
 def _add_palms(surface: pygame.Surface) -> None:
     palms = []
     palm_left = ("src/assets/palms/palm1.png",
-                 (0, WINDOW_SIZE[1] * 0.1))
+                 (-10, WINDOW_SIZE[1] * 0.6))
     palm_mid = ("src/assets/palms/palm2.png",
                 (WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.5))
     palm_right = ("src/assets/palms/palm3.png",
@@ -25,8 +25,7 @@ def _add_palms(surface: pygame.Surface) -> None:
     #     path = f"src/assets/palms/palm{i}.png"
     #     palms.append(pygame.image.load(path))
 
-    for i, p in enumerate(palms):
-
+    for p in palms:
         surface.blit(pygame.image.load(p[0]),
                      dest=(p[1]))
 

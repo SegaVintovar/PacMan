@@ -40,12 +40,13 @@ class App():
         # then initializing all modules of the app
         self.game: Game = Game(config=self.config)
         self.menu: Menu = Menu(self.background.copy())
-        self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy(), config)
+        self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy(),
+                                                 config)
         self.intructions: Instructions = Instructions(
             self.background.copy(),
             config=config)
         self.pause = Pause(self.background.copy())
-        self.win_loose = WinLoose(self.background.copy())
+        self.win_loose = WinLoose(self.background.copy(), config)
         # self.loose = Loose(self.background.copy())
         # do i need this list? dict feels better
         self.modules: list[Module]

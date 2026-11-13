@@ -4,6 +4,7 @@ from .game_state import GameState
 from .button import Button
 from .constants import FONT_PATH, FONT_SIZE, WINDOW_SIZE, HEADER_HEIGHT, PINK
 import json
+from .config import GameConfig
 
 
 def process_txt_input():
@@ -13,8 +14,9 @@ def process_txt_input():
 # enter your name to add the score with a name to the scoreslist
 # how to pass score from here to the 
 class WinLoose(Module):
-    def __init__(self, bg: pygame.Surface) -> None:
+    def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
         self.background = bg
+        self.config = config
         self.image: pygame.Surface = self.background.copy()
         self.name: str = ""
         self.font: pygame.font.Font = pygame.font.Font(FONT_PATH, FONT_SIZE)
@@ -44,9 +46,10 @@ class WinLoose(Module):
         if win:
             header = "Congratulations, you won!"
         else:
-            header = "You lost."
-        self.name
-        
+            if gs.previous == 1:
+                header = "You lost."
+            else:
+                header = "Save your current result here"
         for event in events:
             if event.type == pygame.KEYDOWN:
                 # chars, enter, backspace, delete
@@ -96,7 +99,7 @@ class WinLoose(Module):
 
     def _upload_scores(self) -> list[dict]:
         try:
-            with open("scores.json", mode="r") as file:
+            with open(self.config.highscore_filename, mode="r") as file:
                 scores: list[dict] = json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             scores = []
@@ -119,6 +122,6 @@ class WinLoose(Module):
         name = "Player" if not name else name
         scores.append({"score": score, "name": name})
         scores.sort(key=lambda s: s["score"], reverse=True)
-        with open("scores.json", "w") as file:
+        with open(self.config.highscore_filename, "w") as file:
             json.dump(scores, file, indent=4)
         

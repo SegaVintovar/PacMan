@@ -3,6 +3,7 @@ from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE
 from .constants import PINK, CYAN, MAX_SCORES
 import pygame
 import json
+from typing import Any
 from .game_state import GameState
 from .config import GameConfig
 from .button import Button
@@ -34,7 +35,7 @@ class Score(BaseModel):
         return self
 
 
-class ScoreBoard():
+class ScoreBoard(Module):
     def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
         self.scores: list[dict] = []
         self.config = config
@@ -43,7 +44,7 @@ class ScoreBoard():
         self.go_back: Button = Button(
             "Back to menu",
             ((WINDOW_SIZE[0] * 0.5), (WINDOW_SIZE[1] * 0.1)),
-            ((WINDOW_SIZE[0] * 0.01), (WINDOW_SIZE[1] * 0.05)),
+            (0, 0),
             2,
             CYAN)
         self.font: pygame.font.Font = pygame.font.Font(
@@ -77,19 +78,25 @@ class ScoreBoard():
                 return game_state
         if game_state.previous == 2:
             self._upload_scores()
-            self._fill_image
+            self._fill_image()
+            game_state.gs_update(3)
         self.show_me(screen=screen)
         return game_state
 
     def _fill_image(self) -> None:
+        print("fill image: ", self.scores)
+        self.image = self.background.copy()
         if self.scores:
             start_pos = (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.2)
             for i, score in enumerate(self.scores):
                 s = score["score"]
                 n = score["name"]
+                line = self.font.render(
+                    f"{n}: {s}", True, PINK
+                    )
                 position = (
                     start_pos[0], start_pos[1] + i * WINDOW_SIZE[1] * 0.1)
-                self.image.blit(score.image, position)
+                self.image.blit(line, position)
         else:
             self.image.blit(
                 self.font.render("No scores yet", True, PINK, CYAN),
@@ -110,25 +117,18 @@ class ScoreBoard():
         """
         return Score(name=name, score=score)
 
-    def add_score(self, score: Score) -> None:
+    def add_score(self, score: dict[str, Any]) -> None:
         self.scores.append(score)
         self.scores.sort(key=lambda s: s.score, reverse=True)
         self.scores = self.scores[:MAX_SCORES]
         self._fill_image()
-
-    # def add_score(self, name: str, time: int, score: int) -> None:
-    #     self.scores.append(Score(
-    #         name=name, score=score, date=time, font=self.font
-    #         ))
-    #     self.scores.sort(key=lambda s: s.score, reverse=True)
-    #     self.scores = self.scores[:10]
-    #     self._fill_image()
 
     # this one is not working as it should
     def save_scores(self) -> None:
         # data = []
         # for score in self.scores:
         #     data.append(score)
+        self.scores.sort(key=lambda x: x["score"], reverse=True)
         try:
             with open(self.config.highscore_filename, mode="w") as file:
                 json.dump(self.scores, file, indent=4)
@@ -142,14 +142,13 @@ class ScoreBoard():
             scores.sort(key=lambda s: s["score"], reverse=True)
         except Exception as e:
             print(
-                f"Could not upload scores from {self.config.highscore_filename}\
-                      file: {str(e)}")
+                f"Could not upload scores from\
+                      {self.config.highscore_filename} file: {str(e)}")
             scores = []
         else:
             print("Scores were uploaded")
-        print("Scores: ", scores)
-        self.scores.extend(scores)
-        self.scores = self.scores[:10]
+        self.scores = scores[:MAX_SCORES]
+        # self.scores = self.scores[:MAX_SCORES]
         # for score in scores:
         #     n = score["name"]
         #     scr = score["score"]
