@@ -1,0 +1,27 @@
+# this is for github/actions, so we can build for Windows
+
+name: Build game
+
+on:
+  workflow_dispatch:   # lets you start it manually with a button
+  push:
+    tags: ["v*"]       # or whenever you push a version tag
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pyinstaller pygame
+      # Install the assigned A-Maze-ing package here, as you do locally
+      - run: python build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pacman-${{ matrix.os }}
+          path: dist/pacman

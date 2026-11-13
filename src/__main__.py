@@ -43,7 +43,6 @@ def __main__() -> None:
             print(f"Could not open and validate default config: {str(e)}")
             sys.exit(1)
     print("config validated")
-
     mygame = App(our_config)
     running: bool = True
     while running:

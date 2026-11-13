@@ -1,10 +1,12 @@
-from src import Game, GameConfig
+from src.app import App
 import pygame
 import sys
 import json
 from pydantic import ValidationError
+from src.config import GameConfig
 
 
+# we need to rethink this part to make it good enough
 def validate_config(setting: int) -> GameConfig:
     if setting == 1:
         if not len(sys.argv) == 2:
@@ -46,11 +48,10 @@ def main():
         our_config = validate_config()
 
     print("config validated")
-    mygame = Game(our_config)
-    # screen = mygame.screen
-    running = True
+    mygame = App(our_config)
+    running: bool = True
     while running:
-        mygame.process(pygame.event.get())
+        running = mygame.process(pygame.event.get())
         mygame.clock.tick(60)
         pygame.display.update()
     pygame.quit()

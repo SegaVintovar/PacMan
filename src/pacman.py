@@ -6,10 +6,6 @@ from .creature import Creature
 from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE, SPEED
 from typing import Optional
 
-# lets make it move not by cells but by pixels
-# by dividing coordinates in pixels by TILE
-# we will get Cell position in the grid
-
 
 class Pacman(Creature):
     def __init__(self, map: Map, config: GameConfig) -> None:
@@ -39,6 +35,10 @@ class Pacman(Creature):
         self.cell_x, self.cell_y = col_mid, row_mid
         self.rect.center = self._cell_center(None)
         self._destination = self.rect.center
+
+    def go_to_next_level(self, map: Map) -> None:
+        self.map = map
+        self.measure_spawn()
 
     def _try_next(self) -> bool:
         if self._bounce(None):
@@ -135,6 +135,7 @@ class Pacman(Creature):
         self._destination = (destx, desty)
 
     def update_direction(self, char: str) -> None:
+        print(f"upd dir: {char}")
         if self._bounce(char):
             return
         if self._at_destination():
