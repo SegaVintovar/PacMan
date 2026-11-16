@@ -48,18 +48,9 @@ class Pacman(Creature):
 
     def _in_linear(self, new: str) -> bool:
         return (True if self._direction == 'W' and new == 'S'
-               or self._direction == 'S' and new == 'W'
-               or self._direction == 'D' and new == 'A'
-               or self._direction == 'A' and new == 'D' else False)
-
-    def get_direction_destination(self, chr: str | None) -> tuple[int, int]:
-        direction: tuple[int, int] = KEY_DIRECTIONS[self._direction
-                                                    if chr is None
-                                                    else chr.capitalize()]
-        x, y = direction
-        diff: tuple[int, int] = (self.cell_x + x, self.cell_y + y)
-        coords: tuple[int, int] = self._cell_center(diff)
-        return coords
+                or self._direction == 'S' and new == 'W'
+                or self._direction == 'D' and new == 'A'
+                or self._direction == 'A' and new == 'D' else False)
 
     def _pass_pixel(self) -> None:
         if self._pixel_moved >= TILE:

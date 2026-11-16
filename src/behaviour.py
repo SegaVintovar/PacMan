@@ -36,7 +36,7 @@ class Behaviour:
                at: tuple[int, int]) -> None:
         routes: list[str] = ["up", "right", "down", "left"]
         steps: int = 0
-        cellCost: list[tuple[int, int]] = []
+        # cellCost: list[tuple[int, int]] = []
         while steps < 3:
             costs: list[int] = []
             for route in routes:

@@ -150,9 +150,6 @@ class Game(Module):
             self.current_lvl.timer.resume()
             self.paused = False
 
-        # check if the level is done and if we should switch the next one
-        # level switch works
-        # check if there is a time
         # check if the pacman is still alive
 
         for event in events:
@@ -162,6 +159,8 @@ class Game(Module):
                 if (ch in "wasd" and len(ch) == 1
                    or ch in "WASD" and len(ch) == 1):
                     self.pacman.update_direction(ch.upper())
+                elif ch == "1":
+                    self.pacman.lives += 1
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
                         event.key == pygame.K_ESCAPE):
@@ -169,6 +168,7 @@ class Game(Module):
                     self.paused = True
                     game_state.gs_update(5, self.pacman.points)
                     return game_state
+                
             if event.type == pygame.QUIT:
                 game_state.quit()
                 return game_state

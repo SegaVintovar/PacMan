@@ -67,10 +67,10 @@ class Map:
     #             screen.blit(tiles[c.value], c.position)
     #     return screen
 
-    def get_cel_by_coords(self, x: int, y: int) -> Cell | None:
-        if not self.off_grid(x, y):
-            return self.map[y][x]
-        return None
+    # def isCell(self, coord: tuple[])
+
+    def get_cel_by_coords(self, x: int, y: int) -> Cell:
+        return self.map[y][x]
 
     def off_grid(self, x: int, y: int) -> bool:
         return x < 0 or x >= self.width or y < 0 or y >= self.height
@@ -79,14 +79,15 @@ class Map:
         if not self.off_grid(x, y):
             if direction in GHOST_DIRECTIONS.keys():
                 to_x, to_y = GHOST_DIRECTIONS[direction]
-                cell: Cell = self.get_cel_by_coords(x + to_x, y + to_y)
-                match direction:
-                    case "up":
-                        return cell.n
-                    case "right":
-                        return cell.e
-                    case "down":
-                        return cell.s
-                    case "left":
-                        return cell.w
+                if not self.off_grid(x + to_x, y + to_y):
+                    cell: Cell = self.get_cel_by_coords(x + to_x, y + to_y)
+                    match direction:
+                        case "up":
+                            return cell.n
+                        case "right":
+                            return cell.e
+                        case "down":
+                            return cell.s
+                        case "left":
+                            return cell.w
         return True

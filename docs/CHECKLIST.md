@@ -22,13 +22,13 @@ progresses and keep it in the project management folder.
 
 ## Gameplay
 
-- [ ] Lose a life on ghost touch; Pacman respawns in the middle; ghosts reset to corners
-- [ ] Game over at 0 lives
+- [ ] Lose a life on ghost touch; Pacman respawns in the middle; ghosts reset to corners B
+- [ ] Game over at 0 lives V
 - [ ] Super-pacgum makes ghosts edible for a limited time
 - [ ] Edible ghosts flee; eating one gives `points_per_ghost`
 - [ ] Eaten ghost respawns in its corner after a few seconds
 - [ ] Ghost AI: chase the player (e.g. BFS); `Behaviour.a_star` is an empty stub (can be done after publishing)
-- [ ] Fix `Level.show_gums`: do not remove from the list while looping over it
+- [ ] Fix `Level.show_gums`: do not remove from the list while looping over it V
 - [ ] Optional: arrow keys next to WASD
 
 ## Config
@@ -83,9 +83,9 @@ progresses and keep it in the project management folder.
 
 ## Root files and README
 
-- [ ] `Makefile`: `install`, `run`, `debug`, `clean`, `lint`, optional `lint-strict`
-- [ ] `.gitignore`
-- [ ] `requirements.txt` or `pyproject.toml`
+- [x] `Makefile`: `install`, `run`, `debug`, `clean`, `lint`, optional `lint-strict`
+- [x] `.gitignore`
+- [x] `requirements.txt` or `pyproject.toml`
 - [ ] `README.md`, first line in italics: *This project has been created as part of the 42 curriculum by vsudak, brogaar* (check logins)
 - [ ] README sections: Description, Instructions, Resources (incl. AI use), Configuration, Highscore, Maze Generation, Implementation, General Software Architecture, Project Management
 
@@ -99,7 +99,7 @@ progresses and keep it in the project management folder.
 - [ ] Blocking points and conflicts
 
 ## Packaging and itch.io
-
+for Val
 - [ ] Packaging script/spec at repo root
 - [ ] Linux build and Windows build (Windows machine or GitHub Actions)
 - [ ] In-package instructions (controls, options, config) and default config

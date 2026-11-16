@@ -85,7 +85,7 @@ class Ghost(Creature):
 
     # def retreat_spawn_point() -> None:
     #     ...
-    def check(self, pacman: tuple[int, int]) -> None:
+    def check(self, pacman: tuple[int, int] | None) -> None:
         if self._at_destination():
             self._pick_random_dest()
             if self._bounce(None):

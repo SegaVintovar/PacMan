@@ -14,5 +14,5 @@ checking comments
 	"width": "12",
 	"height": "12",
 	"seed": "42",
-	"level_max_time": "60"
+	"level_max_time": "15"
 }
