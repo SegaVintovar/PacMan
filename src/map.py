@@ -2,10 +2,8 @@
 from .cell import Cell
 from .config import GameConfig
 from maze_gen.mazegenerator import MazeGenerator
-from .constants import GHOST_DIRECTIONS
+from .constants import GHOST_DIRECTIONS, TILE
 import pygame
-
-TILE = 64
 
 
 class Map:

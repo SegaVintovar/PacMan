@@ -18,7 +18,7 @@ class Creature(ABC):
         self._direction: str | None = None
 
     @abstractmethod
-    def check(self, pacman: tuple[int, int]) -> None:
+    def check(self, pacman: pygame.Rect | None) -> bool:
         pass
 
     # @abstractmethod

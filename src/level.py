@@ -21,6 +21,9 @@ class Level():
         self.config = config
         self.name = name
         self.seed = seed
+        self.pussy_time: int = 10
+        pussy_timer: Timer = Timer(self.pussy_time)
+        self.pussy_timer: Timer = pussy_timer
         self.map: Map = Map(self.config, self.seed)
         self.creatures: list[Creature] = []
         self.gums: list[Gum] = []
@@ -86,9 +89,9 @@ class Level():
                     self.config.points_per_super_pacgum
                     )
                 if g.type == "super":
-                    print("run you b*tches")
                     for ghost in self.creatures:
-                        ghost.pussy_mod = True
+                        ghost.fear_paccie()
+                    self.pussy_timer.start_timer()
                 self.gums.remove(g)
             else:
                 screen.blit(g.image, dest=g.rect)
@@ -97,7 +100,7 @@ class Level():
                           screen: pygame.Surface, pacman: Pacman
                           ) -> None:
         for creature in self.creatures:
-            creature.check((pacman.cell_x, pacman.cell_y))
+            creature.check(pacman)
             creature.spawn(screen)
         pacman.check()
         pacman.spawn(screen)

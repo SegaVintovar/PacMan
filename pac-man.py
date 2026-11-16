@@ -36,7 +36,7 @@ def main() -> None:
     # so image load or bad config,
     # or maze gen fail
     # not gonna give traceback
-    mygame = App(config)
+    # TODO: LOADING SPRITES IN MY SPRITEBANK
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())

@@ -1,11 +1,11 @@
 from .creature import Creature
 import pygame
 import random
-from .behaviour import Behaviour
 from .cell import Cell
 from .constants import GHOSTS, SPEED, GHOST_DIRECTIONS
 from .config import GameConfig
 from .map import Map
+from .pacman import Pacman
 from enum import Enum
 from typing import Optional
 
@@ -23,6 +23,7 @@ class Ghost(Creature):
         self.map = map
         self.config = config
         self._direction: str = "left"
+        self.eaten: bool = False
         self.pussy_mod: bool = False
         self.start: tuple[int, int] = ()
         self.rect: pygame.Rect = self._create_rect()
@@ -40,6 +41,14 @@ class Ghost(Creature):
         centered: tuple[int, int] = self._cell_center(None)
         destx, desty = centered
         self._destination = (destx, desty)
+
+    def fear_paccie(self) -> None:
+        self.pussy_mod = True
+        self._upload_pic()
+
+    def disrespect_paccie(self) -> None:
+        self.pussy_mod = False
+        self._upload_pic()
 
     def _upload_pic(self) -> pygame.Surface:
         src: str = (f"{GHOSTS[self.name][0]}_{self._direction}.png"
@@ -84,20 +93,20 @@ class Ghost(Creature):
         return False
 
     # def retreat_spawn_point() -> None:
-    #     ...
-    def check(self, pacman: tuple[int, int] | None) -> None:
+    def check(self, pacman: Pacman | None) -> bool:
         if self._at_destination():
             self._pick_random_dest()
-            if self._bounce(None):
-                return
+            self.sprite = self._upload_pic()
+        if self.rect.colliderect(pacman.rect):
+            if not self.pussy_mod:
+                return True
+            else:
+                print(f"you no ain't catch me b*tch. pang pang >> {self.name}")
+            return True
         cx, cy = self.rect.center
         tx, ty = self._destination
-        print(f"{self.name}'s A* down here:")
-        Behaviour.a_star(self.map, pacman, (self.cell_x, self.cell_y))
         speed: int = SPEED if not self.pussy_mod else SPEED//2
-        self.sprite = self._upload_pic()
         step_x = max(-speed, min(speed, tx - cx))
         step_y = max(-speed, min(speed, ty - cy))
         self.rect.move_ip(step_x, step_y)
-    # def _out_bound(self, map: Map) -> bool:
-    #     ...
+        return False

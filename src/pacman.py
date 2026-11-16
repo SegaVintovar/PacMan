@@ -58,7 +58,7 @@ class Pacman(Creature):
         else:
             self._pixel_moved += SPEED
 
-    def check(self, pacman: tuple[int, int] | None = None) -> None:
+    def check(self, pacman: "Pacman" = None) -> bool:
         if self._at_destination():
             if not self._next_direction == '':
                 self._change_direction()
@@ -86,6 +86,9 @@ class Pacman(Creature):
         step_x = max(-2, min(2, tx - cx))
         step_y = max(-2, min(2, ty - cy))
         self.rect.move_ip(step_x, step_y)
+
+    def die(self) -> None:
+        self.lives -= 1
 
     def _bounce(self, char: Optional[str]) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
