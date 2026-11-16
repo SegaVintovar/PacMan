@@ -28,7 +28,7 @@ progresses and keep it in the project management folder.
 - [ ] Edible ghosts flee; eating one gives `points_per_ghost`
 - [ ] Eaten ghost respawns in its corner after a few seconds
 - [ ] Ghost AI: chase the player (e.g. BFS); `Behaviour.a_star` is an empty stub (can be done after publishing)
-- [ ] Fix `Level.show_gums`: do not remove from the list while looping over it V
+- [x] Fix `Level.show_gums`: do not remove from the list while looping over it V
 - [ ] Optional: arrow keys next to WASD
 
 ## Config

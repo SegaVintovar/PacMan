@@ -106,33 +106,7 @@ class Game(Module):
         # needed???
         self.done = False
         self.paused = False
-    # from bastiaan`s branch, just not to loose
-        # self.gumsCollected: int = 0
-        # self.creatures: list[Creature] = []
-        # self.maps: list[Map] = []
-        # self.maze_gen: MazeGenerator = maze_gen
-        # # self.timer: Timer = Timer(config.level_max_time)
-        # self.player: Player = Player(config.lives)
-        # self._prepare_maps()
-        # self.pacman: Pacman = Pacman(self.maps[0], config)
-        # self.creatures.append(self.pacman)
-        # self._awake_ghosts()
-        # header = Header(self.config, 1000)
-        # self.header: Header = header
-        # footer = Footer(self.config, self.config.lives)
-        # self.footer: Footer = footer
-        # self.done = False
-        # self.running = False
-        # self.paused = False
-        # self.gums: list[Gum] = []
-        # self._gen_gums()
-        # # if we are done with a lvl - then we poping it away
-        # self.levels: list[Level] = []
-        # self.points: int = 0
 
-    # should return 0 , 1 , 2
-    # or GameState that will store
-    # track the win_loose condition, we can return gs with extra
     def process(self,
                 events: list[pygame.event.Event],
                 game_state: GameState,
@@ -143,7 +117,6 @@ class Game(Module):
         # nothing yet sets this to True
         if self.done:
             # open the page to enter the name of the player
-            # so it will add this score to the file
             game_state.gs_update(6, self.pacman.points)
             return game_state
         if self.paused:
@@ -168,7 +141,7 @@ class Game(Module):
                     self.paused = True
                     game_state.gs_update(5, self.pacman.points)
                     return game_state
-                
+
             if event.type == pygame.QUIT:
                 game_state.quit()
                 return game_state
@@ -187,8 +160,6 @@ class Game(Module):
             return game_state
         self._display(map_image, screen)
         return game_state
-
-    # def lvl_process(self)
 
     def _display(self,
                  map_image: pygame.Surface, screen: pygame.Surface) -> None:
@@ -221,17 +192,3 @@ class Game(Module):
         self.current_lvl = self.levels[self.current_lvl_id]
         self.current_lvl.timer.start_time = pygame.time.get_ticks()
         self.pacman.go_to_next_level(self.current_lvl.map)
-
-    # def _init_creatures() -> None:
-    #     """init PacMan, Ghosts"""
-    #     ...
-
-    # def render_creatures(self, map: pygame.Surface) -> None:
-    #     for creature in self.creatures:
-    #         creature.check((self.pacman.cell_x, self.pacman.cell_y))
-    #         creature.spawn(map)
-    #     self.pacman.check()
-    #     self.pacman.spawn(map)
-
-    # def navigate(option: Menu) -> int:
-    #     return 1
