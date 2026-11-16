@@ -37,7 +37,8 @@ progresses and keep it in the project management folder.
 - [x] Launch with `python3 pac-man.py config.json` (add `pac-man.py` at root)
 - [ ] Clamp invalid values one by one to defaults, log a clear message, continue
 - [ ] Unknown keys ignored, no traceback anywhere
-- [ ] Remove dependency on `storage/config.json`; no `sys.exit(1)` on bad config
+- [x] if the given config is invalid, we falling back to the default one
+- [x] Remove dependency on `storage/config.json`; no `sys.exit(1)` on bad config
 - [x] Fix `GameConfig.load` and the "at least 15" vs `< 10` message mismatch
 - [x] `highscore_filename` key (in highscore fix patch)
 - [ ] Test odd values: missing keys, strings instead of ints, tiny/huge sizes
@@ -75,7 +76,7 @@ progresses and keep it in the project management folder.
 
 ## Linting and code quality
 
-- [ ] flake8 clean
+- [x] flake8 clean
 - [ ] mypy clean (`lint` flags), try `--strict`
 - [ ] Type hints everywhere, PEP 257 docstrings
 - [ ] Remove dead code (`if __name__` block in `game.py`, unused imports, stubs)

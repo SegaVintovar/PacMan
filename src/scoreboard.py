@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator, ConfigDict
+# from pydantic import BaseModel, Field, model_validator, ConfigDict
 from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE
 from .constants import PINK, CYAN, MAX_SCORES
 import pygame
@@ -10,43 +10,41 @@ from .button import Button
 from .module import Module
 
 
-class Score(BaseModel):
-    # model config is to make pydantic work with pygame object types
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+# class Score(BaseModel):
+#     # model config is to make pydantic work with pygame object types
+#     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    name: str = Field(min_length=3)
-    score: int = Field(ge=0)
-    font: pygame.font.Font
-    image: pygame.Surface | None = None
+#     name: str = Field(min_length=3)
+#     score: int = Field(ge=0)
+#     font: pygame.font.Font
+#     image: pygame.Surface | None = None
 
-    @model_validator(mode="after")
-    def post_init(self) -> None:
-        text = self.font.render(
-            f"{self.name}: {self.score}", True, PINK)
-        self.image = pygame.Surface(
-            (WINDOW_SIZE[0] * 0.5, WINDOW_SIZE[1] * 0.1),
-            pygame.SRCALPHA
-        )
-        self.image.blit(
-            text,
-            dest=(WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.05)
-            )
-        print("post validation of the score is done")
-        return self
-
-
+#     @model_validator(mode="after")
+#     def post_init(self) -> None:
+#         text = self.font.render(
+#             f"{self.name}: {self.score}", True, PINK)
+#         self.image = pygame.Surface(
+#             (WINDOW_SIZE[0] * 0.5, WINDOW_SIZE[1] * 0.1),
+#             pygame.SRCALPHA
+#         )
+#         self.image.blit(
+#             text,
+#             dest=(WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.05)
+#             )
+#         print("post validation of the score is done")
+#         return self
 class ScoreBoard(Module):
     def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
-        self.scores: list[dict] = []
+        self.scores: list[dict[str, Any]] = []
         self.config = config
         self.background = bg
         self.image = self.background.copy()
         self.go_back: Button = Button(
             "Back to menu",
-            ((WINDOW_SIZE[0] * 0.5), (WINDOW_SIZE[1] * 0.1)),
+            (int(WINDOW_SIZE[0] * 0.5), int(WINDOW_SIZE[1] * 0.1)),
             (0, 0),
             2,
-            CYAN)
+            pygame.color.Color(CYAN))
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
 
@@ -107,7 +105,7 @@ class ScoreBoard(Module):
 
     def add_score(self, score: dict[str, Any]) -> None:
         self.scores.append(score)
-        self.scores.sort(key=lambda s: s.score, reverse=True)
+        self.scores.sort(key=lambda s: s["score"], reverse=True)
         self.scores = self.scores[:MAX_SCORES]
         self._fill_image()
 
@@ -123,7 +121,7 @@ class ScoreBoard(Module):
     def _upload_scores(self) -> None:
         try:
             with open(self.config.highscore_filename, mode="r") as file:
-                scores: list[dict] = json.loads(file.read())
+                scores: list[dict[str, Any]] = json.loads(file.read())
             scores.sort(key=lambda s: s["score"], reverse=True)
         except Exception as e:
             print(

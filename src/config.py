@@ -1,6 +1,5 @@
 
-from pydantic import BaseModel, Field, model_validator, ValidationError
-from pathlib import Path
+from pydantic import BaseModel, Field, model_validator
 from typing import Any
 import json
 
@@ -10,7 +9,7 @@ import json
 # starts with "#" or "//" or /* */
 class GameConfig(BaseModel):
     highscore_filename: str = Field(min_length=5, default="scores.json")
-    level: list[int] = Field(
+    level: list[str] = Field(
         min_length=1,
         default=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
         )
@@ -98,16 +97,16 @@ class GameConfig(BaseModel):
         if self.height < 10:
             raise ValueError("map height needs to be at least 10")
         return self
-
-    @classmethod
-    def load(cls: "GameConfig",
-             path: str | Path = "config.json") -> "GameConfig":
-        path = Path(path)
-        try:
-            return cls.check_config(path.read_text())
-        except (OSError, ValidationError) as err:
-            print(
-                f"Invalid or missing config ({err}); using default settings.")
-            defaults: dict[str, Any] = GameConfig.default_settings()
-            path.write_text(json.dumps(defaults, indent=4))
-            return cls.model_validate(defaults)
+    # @classmethod
+    # def load(cls: "GameConfig",
+    #          path: str | Path = "config.json") -> "GameConfig":
+    #     path = Path(path)
+    #     try:
+    #         return cls.check_config(path.read_text())
+    #     except (OSError, ValidationError) as err:
+    #         print(
+    #             f"Invalid or missing config ({
+    # err}); using default settings.")
+    #         defaults: dict[str, Any] = GameConfig.default_settings()
+    #         path.write_text(json.dumps(defaults, indent=4))
+    #         return cls.model_validate(defaults)

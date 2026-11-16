@@ -19,10 +19,10 @@ class Pacman(Creature):
             f"src/assets/sprites/pacman_{self._direction}_wide.png",
             ).convert_alpha()
         coord = (TILE - SPRIE_SIZE) // 2
-        self.rect = self.sprite.get_rect(topleft=(coord, coord))
+        self.rect: pygame.Rect = self.sprite.get_rect(topleft=(coord, coord))
         self.measure_spawn()
         self._destination: tuple[int, int] = self._cell_center(None)
-        self._origin: tuple[int, int] = self.rect
+        self._origin: tuple[int, int] = self.rect.center
         self._pixel_moved: int = 0
 
     """Creating an escapable point for pac-man.
@@ -46,15 +46,13 @@ class Pacman(Creature):
         self._set_destination()
         return True
 
-    def get_direction_destination(self, chr: str | None) -> tuple[int, int]:
-        direction: tuple[int, int] = KEY_DIRECTIONS[self._direction
-                                                    if chr is None
-                                                    else chr.capitalize()]
-        x, y = direction
-        diff: tuple[int, int] = (self.cell_x + x, self.cell_y + y)
-        coords: tuple[int, int] = self._cell_center(diff)
-        return coords
-
+    # def get_direction_destination(self, chr: str) -> tuple[int, int]:
+    #     d = self._direction if not chr else chr.capitalize()
+    #     direction: tuple[int, int] = KEY_DIRECTIONS[d]
+    #     x, y = direction
+    #     diff: tuple[int, int] = (self.cell_x + x, self.cell_y + y)
+    #     coords: tuple[int, int] = self._cell_center(diff)
+    #     return coords
     def _pass_pixel(self) -> None:
         if self._pixel_moved >= TILE:
             self._pixel_moved = SPEED

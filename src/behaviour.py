@@ -21,7 +21,6 @@ class Behaviour:
              pacman: Creature, ghost: Creature) -> str:
         ...
 
-    @staticmethod
     def coward_flee(grid: list[list[Cell]],
                     pacman: Creature, ghost: Creature) -> str:
         ...

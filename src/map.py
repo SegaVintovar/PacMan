@@ -1,7 +1,7 @@
 
 from .cell import Cell
 from .config import GameConfig
-from mazegenerator import MazeGenerator
+from maze_gen.mazegenerator import MazeGenerator
 from .constants import GHOST_DIRECTIONS
 import pygame
 
@@ -67,8 +67,8 @@ class Map:
     #             screen.blit(tiles[c.value], c.position)
     #     return screen
 
-    def get_cel_by_coords(self, x: int, y: int) -> Cell | None:
-        return self.map[y][x] or None
+    def get_cel_by_coords(self, x: int, y: int) -> Cell:
+        return self.map[y][x]
 
     def off_grid(self, x: int, y: int) -> bool:
         return (not (x >= 0 and x <= self.width)
@@ -77,14 +77,15 @@ class Map:
     def is_walled(self, x: int, y: int, direction: str) -> bool:
         if direction in GHOST_DIRECTIONS.keys():
             to_x, to_y = GHOST_DIRECTIONS[direction]
-            cell: Cell = self.get_cel_by_coords(x + to_x, y + to_y)
-            match direction:
-                case "up":
-                    return cell.n
-                case "right":
-                    return cell.e
-                case "down":
-                    return cell.s
-                case "left":
-                    return cell.w
+            cell = self.get_cel_by_coords(x + to_x, y + to_y)
+            if cell:
+                match direction:
+                    case "up":
+                        return cell.n
+                    case "right":
+                        return cell.e
+                    case "down":
+                        return cell.s
+                    case "left":
+                        return cell.w
         return True

@@ -18,7 +18,7 @@ default_config = {
 }
 
 
-def main():
+def main() -> None:
     try:
         if len(sys.argv) != 2:
             raise Exception(
@@ -31,7 +31,7 @@ def main():
     except Exception as e:
         print("Could not validate given config file", str(e))
         print("Launching the game with default config")
-        config = GameConfig(**default_config)
+        config = GameConfig(*default_config)
     # here we also need try,
     # so image load or bad config,
     # or maze gen fail

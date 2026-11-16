@@ -1,14 +1,10 @@
 from .module import Module
 import pygame
 from .game_state import GameState
-from .button import Button
 from .constants import FONT_PATH, FONT_SIZE, WINDOW_SIZE, HEADER_HEIGHT, PINK
 import json
 from .config import GameConfig
-
-
-def process_txt_input():
-    ...
+from typing import Any
 
 
 # enter your name to add the score with a name to the scoreslist
@@ -28,7 +24,7 @@ class WinLoose(Module):
         #     dest=(WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.4)
         # )
         self.score: int = 0
-        self.buttons: Button = []
+        # self.buttons: Button = []
         # self.image: pygame.Surface = pygame.Surface(
         #     (WINDOW_SIZE[0],
         #      WINDOW_SIZE[1] + HEADER_HEIGHT * 2)
@@ -73,7 +69,7 @@ class WinLoose(Module):
         screen.blit(self.image, dest=(0, 0))
         return gs
 
-    def _update_image(self, header: str, score: int):
+    def _update_image(self, header: str, score: int) -> None:
         img_cpy = self.background.copy()
         self.image = img_cpy
         # header
@@ -97,10 +93,10 @@ class WinLoose(Module):
         self.image.blit(ch[0], ch[1])
         self.image.blit(s[0], s[1])
 
-    def _upload_scores(self) -> list[dict]:
+    def _upload_scores(self) -> list[dict[str, Any]]:
         try:
             with open(self.config.highscore_filename, mode="r") as file:
-                scores: list[dict] = json.load(file)
+                scores: list[dict[str, Any]] = json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             scores = []
         scores.sort(key=lambda s: s["score"], reverse=True)

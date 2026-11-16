@@ -10,6 +10,7 @@ from .module import Module
 from .instructions import Instructions
 from .pause import Pause
 from .win_loose import WinLoose
+from typing import Any
 
 
 class App():
@@ -37,7 +38,7 @@ class App():
         self.app_state = GameState(2, True)
         # then initializing all modules of the app
         self.game: Game = Game(config=self.config)
-        self.menu: Menu = Menu(self.background.copy())
+        self.menu: Menu = Menu(self.menu_background.copy())
         self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy(),
                                                  config)
         self.intructions: Instructions = Instructions(
@@ -47,8 +48,7 @@ class App():
         self.win_loose = WinLoose(self.background.copy(), config)
         # self.loose = Loose(self.background.copy())
         # do i need this list? dict feels better
-        self.modules: list[Module]
-        self.dict_modules: dict[int, Module] = {
+        self.dict_modules: dict[int, Any[Module]] = {
             1: self.game,
             2: self.menu,
             3: self.scoreboard,
