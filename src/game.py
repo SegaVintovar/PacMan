@@ -161,7 +161,8 @@ class Game(Module):
             if event.type == pygame.KEYDOWN:  # or event.type == pygame.KEYUP
                 # this can make our packy to crash
                 ch: str = event.unicode
-                if ch in "wasd" and len(ch) == 1:
+                if (ch in "wasd" and len(ch) == 1
+                   or ch in "WASD" and len(ch) == 1):
                     self.pacman.update_direction(ch.upper())
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or

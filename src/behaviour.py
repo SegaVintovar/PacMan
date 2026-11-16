@@ -36,14 +36,23 @@ class Behaviour:
                dest: tuple[int, int],
                at: tuple[int, int]) -> None:
         routes: list[str] = ["up", "right", "down", "left"]
-        # nodes: list[tuple[int, int]] = []
-        # closed: list[tuple[int, int]] = []
-        while True:
+        steps: int = 0
+        cellCost: list[tuple[int, int]] = []
+        while steps < 3:
+            costs: list[int] = []
             for route in routes:
                 opt: tuple[int, int] = GHOST_DIRECTIONS[route]
                 destx, desty = dest
                 atx, aty = at
                 optx, opty = opt
-                if not map.off_grid(atx + optx, aty + opty):
+                if map.off_grid(atx + optx, aty + opty):
                     continue
-            break
+                if map.is_walled(atx, aty, route):
+                    continue
+                h: int = abs(atx - destx) + abs(aty - desty)
+                c: int = h + steps
+                costs.append(c)
+                if atx == destx and aty == desty:
+                    break
+            print(f"\tthe cheapest: {costs}")
+            steps += 1

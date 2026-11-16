@@ -46,6 +46,12 @@ class Pacman(Creature):
         self._set_destination()
         return True
 
+    def _in_linear(self, new: str) -> bool:
+        return (True if self._direction == 'W' and new == 'S'
+               or self._direction == 'S' and new == 'W'
+               or self._direction == 'D' and new == 'A'
+               or self._direction == 'A' and new == 'D' else False)
+
     def get_direction_destination(self, chr: str | None) -> tuple[int, int]:
         direction: tuple[int, int] = KEY_DIRECTIONS[self._direction
                                                     if chr is None
@@ -135,10 +141,11 @@ class Pacman(Creature):
         self._destination = (destx, desty)
 
     def update_direction(self, char: str) -> None:
-        print(f"upd dir: {char}")
+        print(f"in line test: {self._in_linear(char)}")
         if self._bounce(char):
             return
-        if self._at_destination():
+        if (self._at_destination()
+           or not self._at_destination() and self._in_linear(char)):
             if self._next_direction == '':
                 self._next_direction = char
             self._change_direction()

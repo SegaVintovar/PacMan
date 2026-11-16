@@ -22,11 +22,11 @@ class Ghost(Creature):
         self.map = map
         self.config = config
         self._direction: str = "left"
+        self.pussy_mod: bool = False
         self.start: tuple[int, int] = ()
         self.rect: pygame.Rect = self._create_rect()
         self.rect.center = self._cell_center(None)
         self.sprite: pygame.Surface = self._upload_pic()
-        self.pussy_mod: bool = False
         self._destination: tuple[int, int] = self._cell_center(None)
 
     def _set_destination(self) -> None:
@@ -41,10 +41,11 @@ class Ghost(Creature):
         self._destination = (destx, desty)
 
     def _upload_pic(self) -> pygame.Surface:
+        src: str = (f"{GHOSTS[self.name][0]}_{self._direction}.png"
+                    if not self.pussy_mod else
+                    "frightened_blue.png")
         return pygame.image.load(
-            "src/assets/sprites/ghost_"
-            f"{GHOSTS[self.name][0]}_{self._direction}.png",
-            ).convert_alpha()
+            f"src/assets/sprites/ghost_{src}").convert_alpha()
 
     def _create_rect(self) -> pygame.Rect:
         coords: tuple[str, str] = GHOSTS[self.name][1]
@@ -68,6 +69,8 @@ class Ghost(Creature):
 
     def _bounce(self) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
+        if not cell:
+            return True
         if self._direction == "up" and cell.n:
             return True
         if self._direction == "right" and cell.e:
@@ -88,6 +91,7 @@ class Ghost(Creature):
                 return
         cx, cy = self.rect.center
         tx, ty = self._destination
+        print(f"{self.name}'s A* down here:")
         Behaviour.a_star(self.map, pacman, (self.cell_x, self.cell_y))
         speed: int = SPEED if not self.pussy_mod else SPEED/2
         self.sprite = self._upload_pic()
