@@ -33,12 +33,12 @@ progresses and keep it in the project management folder.
 
 ## Config
 
-- [ ] Ignore lines starting with `#` (optionally `//` and `/* */`)
-- [ ] Launch with `python3 pac-man.py config.json` (add `pac-man.py` at root)
+- [x] Ignore lines starting with `#` (optionally `//` and `/* */`)
+- [x] Launch with `python3 pac-man.py config.json` (add `pac-man.py` at root)
 - [ ] Clamp invalid values one by one to defaults, log a clear message, continue
 - [ ] Unknown keys ignored, no traceback anywhere
 - [ ] Remove dependency on `storage/config.json`; no `sys.exit(1)` on bad config
-- [ ] Fix `GameConfig.load` and the "at least 15" vs `< 10` message mismatch
+- [x] Fix `GameConfig.load` and the "at least 15" vs `< 10` message mismatch
 - [x] `highscore_filename` key (in highscore fix patch)
 - [ ] Test odd values: missing keys, strings instead of ints, tiny/huge sizes
 
@@ -50,7 +50,7 @@ progresses and keep it in the project management folder.
 - [x] Entries validated one by one (bad ones skipped, good ones kept)
 - [x] Name field cleared after saving / leaving the name screen
 - [ ] Store the file in a user-writable directory for the packaged build
-- [ ] Manual test: save score, open scoreboard without restart; broken file; read-only dir
+- [x] Manual test: save score, open scoreboard without restart; broken file; read-only dir
 
 ## Cheat mode
 
@@ -64,7 +64,7 @@ progresses and keep it in the project management folder.
 
 ## Maze generator
 
-- [ ] Set `PERFECT = False` according to the assigned package's interface
+- [x] Set `PERFECT = False` according to the assigned package's interface
 - [ ] Handle generator failure cleanly (message, no traceback)
 
 ## Robustness

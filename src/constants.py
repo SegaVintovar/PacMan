@@ -1,10 +1,4 @@
-import pygame
-
-
-# pygame.init()
-
 # info = pygame.display.Info()
-
 # WINDOW_SIZE = (info.current_w, info.current_h)
 SPEED: int = 3
 WINDOW_SIZE = (1000, 750)
@@ -35,8 +29,6 @@ GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {
     "Blinky": ("red", ('left', 'top')),
     "Pinky": ("pink", ('right', 'bottom'))
 }
-
-
 
 # FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
 FONT_SIZE = 20

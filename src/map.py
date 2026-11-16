@@ -1,7 +1,7 @@
 
 from .cell import Cell
 from .config import GameConfig
-from . import MazeGenerator
+from mazegenerator import MazeGenerator
 from .constants import GHOST_DIRECTIONS
 import pygame
 

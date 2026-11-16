@@ -4,7 +4,6 @@ import json
 from .config import GameConfig
 from pydantic import ValidationError
 from .app import App
-from . import MazeGenerator
 
 
 def validate_config(argv: list[str]) -> GameConfig:

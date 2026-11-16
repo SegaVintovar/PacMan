@@ -4,7 +4,6 @@ import pygame
 class Timer():
     """
     Every level will have its own timer
-    
     """
     def __init__(self, level_max_time: int) -> None:
         self.level_max_time = level_max_time

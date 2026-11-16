@@ -6,9 +6,8 @@ import json
 
 
 # read the file, then text.splitlines()
-# loop through lines, strip them and exclude that starts with "#" or "//" or /* */
-
-
+# loop through lines, strip them and exclude that
+# starts with "#" or "//" or /* */
 class GameConfig(BaseModel):
     highscore_filename: str = Field(min_length=5, default="scores.json")
     level: list[int] = Field(

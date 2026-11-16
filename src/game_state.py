@@ -8,7 +8,6 @@ class GameState():
         self.next_module = next_module
         self.previous: int = 0
         self.running = running
-        # now extra are points, but there should be a mark if it was win or loss
         self.extra = extra
         self.win = win
         self.reload = False

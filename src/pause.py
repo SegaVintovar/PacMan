@@ -1,9 +1,8 @@
 from .module import Module
-from .gradient import make_gradient
 from .game_state import GameState
 from pygame import Surface
 from .button import Button
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, PINK
+from .constants import WINDOW_SIZE, PINK
 import pygame
 
 

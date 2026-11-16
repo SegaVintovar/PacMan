@@ -3,10 +3,8 @@ from .config import GameConfig
 from .constants import WINDOW_SIZE, HEADER_HEIGHT
 from .game import Game
 from .menu import Menu
-import json
 from .scoreboard import ScoreBoard
 from .gradient import make_gradient
-# from typing import Any
 from .game_state import GameState
 from .module import Module
 from .instructions import Instructions
@@ -75,7 +73,7 @@ class App():
     #       3. main_screen
     def process(self, evns: list[pygame.event.Event]) -> bool:
         gs: GameState = self.state.process(evns, self.app_state, self.screen)
-        
+
         if gs.reload:
             self.game = Game(config=self.config)
             self.dict_modules[1] = self.game

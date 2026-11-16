@@ -12,7 +12,7 @@ def process_txt_input():
 
 
 # enter your name to add the score with a name to the scoreslist
-# how to pass score from here to the 
+# how to pass score from here to the
 class WinLoose(Module):
     def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
         self.background = bg
@@ -124,4 +124,3 @@ class WinLoose(Module):
         scores.sort(key=lambda s: s["score"], reverse=True)
         with open(self.config.highscore_filename, "w") as file:
             json.dump(scores, file, indent=4)
-        

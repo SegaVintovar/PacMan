@@ -199,8 +199,6 @@ class Game(Module):
                             self.pacman.points)
         time = (self.config.level_max_time -
                 self.current_lvl.timer.time_since_start())
-        # print("time since start", self.current_lvl.timer.time_since_start(), "\n",
-        #       "start time", self.current_lvl.timer.start_time)
         self.footer.show_me(screen, time, self.pacman)
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
 
