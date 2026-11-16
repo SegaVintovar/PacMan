@@ -1,20 +1,18 @@
 from .module import Module
 import pygame
 from .game_state import GameState
-from .button import Button
 from .constants import FONT_PATH, FONT_SIZE, WINDOW_SIZE, HEADER_HEIGHT, PINK
 import json
-
-
-def process_txt_input():
-    ...
+from .config import GameConfig
+from typing import Any
 
 
 # enter your name to add the score with a name to the scoreslist
-# how to pass score from here to the 
+# how to pass score from here to the
 class WinLoose(Module):
-    def __init__(self, bg: pygame.Surface) -> None:
+    def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
         self.background = bg
+        self.config = config
         self.image: pygame.Surface = self.background.copy()
         self.name: str = ""
         self.font: pygame.font.Font = pygame.font.Font(FONT_PATH, FONT_SIZE)
@@ -26,7 +24,7 @@ class WinLoose(Module):
         #     dest=(WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.4)
         # )
         self.score: int = 0
-        self.buttons: Button = []
+        # self.buttons: Button = []
         # self.image: pygame.Surface = pygame.Surface(
         #     (WINDOW_SIZE[0],
         #      WINDOW_SIZE[1] + HEADER_HEIGHT * 2)
@@ -44,9 +42,10 @@ class WinLoose(Module):
         if win:
             header = "Congratulations, you won!"
         else:
-            header = "You lost."
-        self.name
-        
+            if gs.previous == 1:
+                header = "You lost."
+            else:
+                header = "Save your current result here"
         for event in events:
             if event.type == pygame.KEYDOWN:
                 # chars, enter, backspace, delete
@@ -70,7 +69,7 @@ class WinLoose(Module):
         screen.blit(self.image, dest=(0, 0))
         return gs
 
-    def _update_image(self, header: str, score: int):
+    def _update_image(self, header: str, score: int) -> None:
         img_cpy = self.background.copy()
         self.image = img_cpy
         # header
@@ -94,10 +93,10 @@ class WinLoose(Module):
         self.image.blit(ch[0], ch[1])
         self.image.blit(s[0], s[1])
 
-    def _upload_scores(self) -> list[dict]:
+    def _upload_scores(self) -> list[dict[str, Any]]:
         try:
-            with open("scores.json", mode="r") as file:
-                scores: list[dict] = json.load(file)
+            with open(self.config.highscore_filename, mode="r") as file:
+                scores: list[dict[str, Any]] = json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             scores = []
         scores.sort(key=lambda s: s["score"], reverse=True)
@@ -119,6 +118,5 @@ class WinLoose(Module):
         name = "Player" if not name else name
         scores.append({"score": score, "name": name})
         scores.sort(key=lambda s: s["score"], reverse=True)
-        with open("scores.json", "w") as file:
+        with open(self.config.highscore_filename, "w") as file:
             json.dump(scores, file, indent=4)
-        

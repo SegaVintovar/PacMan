@@ -1,53 +1,52 @@
-from pydantic import BaseModel, Field, model_validator, ConfigDict
-from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE, HEADER_HEIGHT
+# from pydantic import BaseModel, Field, model_validator, ConfigDict
+from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE
 from .constants import PINK, CYAN, MAX_SCORES
 import pygame
 import json
 from typing import Any
-from .gradient import make_gradient
 from .game_state import GameState
+from .config import GameConfig
+from .button import Button
+from .module import Module
 
 
-class Score(BaseModel):
-    # model config is to make pydantic work with pygame object types
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+# class Score(BaseModel):
+#     # model config is to make pydantic work with pygame object types
+#     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    name: str = Field(min_length=3)
-    score: int = Field(ge=0)
-    font: pygame.font.Font
-    image: pygame.Surface | None = None
+#     name: str = Field(min_length=3)
+#     score: int = Field(ge=0)
+#     font: pygame.font.Font
+#     image: pygame.Surface | None = None
 
-    @model_validator(mode="after")
-    def post_init(self) -> None:
-        text = self.font.render(
-            f"{self.name}: {self.score}", True, PINK)
-        self.image = pygame.Surface(
-            (WINDOW_SIZE[0] * 0.5, WINDOW_SIZE[1] * 0.1),
-            pygame.SRCALPHA
-        )
-        self.image.blit(
-            text,
-            dest=(WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.05)
-            )
-        print("post validation of the score is done")
-        return self
-
-
-class ScoreBoard():
-    def __init__(self, bg: pygame.Surface) -> None:
-        self.scores: list[Score] = []
+#     @model_validator(mode="after")
+#     def post_init(self) -> None:
+#         text = self.font.render(
+#             f"{self.name}: {self.score}", True, PINK)
+#         self.image = pygame.Surface(
+#             (WINDOW_SIZE[0] * 0.5, WINDOW_SIZE[1] * 0.1),
+#             pygame.SRCALPHA
+#         )
+#         self.image.blit(
+#             text,
+#             dest=(WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.05)
+#             )
+#         print("post validation of the score is done")
+#         return self
+class ScoreBoard(Module):
+    def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
+        self.scores: list[dict[str, Any]] = []
+        self.config = config
         self.background = bg
         self.image = self.background.copy()
+        self.go_back: Button = Button(
+            "Back to menu",
+            (int(WINDOW_SIZE[0] * 0.5), int(WINDOW_SIZE[1] * 0.1)),
+            (0, 0),
+            2,
+            pygame.color.Color(CYAN))
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
-        try:
-            self._upload_scores()
-        except Exception as e:
-            print(str(e))
-        self._fill_image()
-
-
-        # print(len(self.scores))
 
     def process(self,
                 events: list[pygame.event.Event],
@@ -57,28 +56,46 @@ class ScoreBoard():
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or\
-                  event.key == pygame.K_q:
-                    game_state.next_module = 2
+                  event.key == pygame.K_q or\
+                  event.key == pygame.K_RETURN:
+                    game_state.gs_update(2)
                     return game_state
-            elif event.type == pygame.QUIT:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if self.go_back.rect.collidepoint(x, y):
+                    game_state.gs_update(2)
+                    return game_state
+            if event.type == pygame.QUIT:
                 game_state.next_module = 0
                 game_state.running = False
                 return game_state
+        if game_state.previous == 2:
+            self._upload_scores()
+            self._fill_image()
+            game_state.gs_update(3)
         self.show_me(screen=screen)
         return game_state
 
     def _fill_image(self) -> None:
+        print("fill image: ", self.scores)
+        self.image = self.background.copy()
         if self.scores:
             start_pos = (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.2)
             for i, score in enumerate(self.scores):
+                s = score["score"]
+                n = score["name"]
+                line = self.font.render(
+                    f"{n}: {s}", True, PINK
+                    )
                 position = (
                     start_pos[0], start_pos[1] + i * WINDOW_SIZE[1] * 0.1)
-                self.image.blit(score.image, position)
+                self.image.blit(line, position)
         else:
             self.image.blit(
                 self.font.render("No scores yet", True, PINK, CYAN),
                 dest=(WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.4)
             )
+        self.image.blit(self.go_back.image, (0, 0))
 
     def show_me(self, screen: pygame.Surface) -> None:
         """
@@ -86,45 +103,31 @@ class ScoreBoard():
         """
         screen.blit(self.image, dest=(0, 0))
 
-    def _create_score(self, name: str, score: int) -> Score:
-        """"
-        Creation of the Score object
-        name and score are required
-        """
-        return Score(name=name, score=score)
-
-    def add_score(self, score: Score) -> None:
+    def add_score(self, score: dict[str, Any]) -> None:
         self.scores.append(score)
-        self.scores.sort(key=lambda s: s.score, reverse=True)
+        self.scores.sort(key=lambda s: s["score"], reverse=True)
         self.scores = self.scores[:MAX_SCORES]
         self._fill_image()
 
-    # def add_score(self, name: str, time: int, score: int) -> None:
-    #     self.scores.append(Score(
-    #         name=name, score=score, date=time, font=self.font
-    #         ))
-    #     self.scores.sort(key=lambda s: s.score, reverse=True)
-    #     self.scores = self.scores[:10]
-    #     self._fill_image()
-
     # this one is not working as it should
     def save_scores(self) -> None:
-        data = []
-        for score in self.scores:
-            data.append({"name": score.name, "score": score.score})
-        with open("scores.json", mode="w") as file:
-            json.dump(data, file, indent=4)
+        self.scores.sort(key=lambda x: x["score"], reverse=True)
+        try:
+            with open(self.config.highscore_filename, mode="w") as file:
+                json.dump(self.scores, file, indent=4)
+        except Exception as e:
+            print("Could not save scores: ", str(e))
 
     def _upload_scores(self) -> None:
-        with open("scores.json", mode="r") as file:
-            scores: list[dict] = json.loads(file.read())
-        scores.sort(key=lambda s: s["score"], reverse=True)
-        print("Scores: ", scores)
-        for score in scores:
-            n = score["name"]
-            scr = score["score"]
-            self.scores.append(Score(
-                    name=n,
-                    score=scr,
-                    font=self.font
-                    ))
+        try:
+            with open(self.config.highscore_filename, mode="r") as file:
+                scores: list[dict[str, Any]] = json.loads(file.read())
+            scores.sort(key=lambda s: s["score"], reverse=True)
+        except Exception as e:
+            print(
+                f"Could not upload scores from\
+                      {self.config.highscore_filename} file: {str(e)}")
+            scores = []
+        else:
+            print("Scores were uploaded")
+        self.scores = scores[:MAX_SCORES]

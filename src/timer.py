@@ -4,7 +4,6 @@ import pygame
 class Timer():
     """
     Every level will have its own timer
-    
     """
     def __init__(self, level_max_time: int) -> None:
         self.level_max_time = level_max_time
@@ -32,4 +31,5 @@ class Timer():
 
     def isBurned(self) -> bool:
         end = self.start_time + self.level_max_time * 1000
-        return end < pygame.time.get_ticks()
+        answer: bool = end < pygame.time.get_ticks()
+        return answer

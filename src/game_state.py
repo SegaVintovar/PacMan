@@ -8,7 +8,6 @@ class GameState():
         self.next_module = next_module
         self.previous: int = 0
         self.running = running
-        # now extra are points, but there should be a mark if it was win or loss
         self.extra = extra
         self.win = win
         self.reload = False
@@ -23,9 +22,12 @@ class GameState():
             self.running = False
         # cond when we need to init the game again
         # and game state as well
-        if next_module == 2 and (self.next_module == 5 or self.next_module == 6):
+        if next_module == 2 and (self.next_module == 5 or
+                                 self.next_module == 6):
             print("Reload the game!")
             self.reload = True
+        # if next_module == 3 and self.next_module != 3:
+        #     # we need to upload scores
         self.previous = self.next_module
         self.next_module = next_module
         if extra:

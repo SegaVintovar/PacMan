@@ -1,9 +1,7 @@
 from .module import Module
-from .gradient import make_gradient
 from .game_state import GameState
-from pygame import Surface
 from .button import Button
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, PINK
+from .constants import WINDOW_SIZE, PINK
 import pygame
 
 
@@ -15,10 +13,10 @@ class Pause(Module):
     - back to menu
     - exit
     """
-    def __init__(self, bg: Surface) -> None:
+    def __init__(self, bg: pygame.Surface) -> None:
         self.background = bg
         self.selected_button: int = 0
-        self.image: Surface
+        self.image: pygame.Surface
         self.buttons: list[Button] = []
         self._create_buttons()
 
@@ -27,7 +25,6 @@ class Pause(Module):
                 gs: GameState,
                 screen: pygame.Surface) -> GameState:
         for event in events:
-            # mouse handling
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 for b in self.buttons:
@@ -42,7 +39,6 @@ class Pause(Module):
                         elif b.text == "Back to menu":
                             gs.gs_update(2)
                         return gs
-                        # keyboard events handling
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     self.selected_button -= 1
@@ -53,7 +49,6 @@ class Pause(Module):
                     gs.running = False
                     return gs
                 if event.key == pygame.K_RETURN:
-                    print("return")
                     selected_button = self.buttons[
                         self.selected_button % len(self.buttons)
                     ]
@@ -81,7 +76,7 @@ class Pause(Module):
                 Button(
                     b[0],
                     size,
-                    (start_position[0], start_position[1] + i * step),
+                    (int(start_position[0]), start_position[1] + i * step),
                     b[1]
                     )
             )

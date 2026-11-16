@@ -1,13 +1,7 @@
-import pygame
-
-
-# pygame.init()
-
 # info = pygame.display.Info()
-
 # WINDOW_SIZE = (info.current_w, info.current_h)
-
-WINDOW_SIZE = (1400, 1200)
+SPEED: int = 3
+WINDOW_SIZE = (1000, 750)
 
 TILE = 64  # cell size
 
@@ -36,16 +30,14 @@ GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {
     "Pinky": ("pink", ('right', 'bottom'))
 }
 
-SPEED: int = 3
-
 # FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
-FONT_SIZE = 30
+FONT_SIZE = 20
 # colors for the menu
 PINK = (255, 80, 180)
 CYAN = (0, 230, 255)
 WHITE = (235, 235, 235)
 BLACK = (0, 0, 0)
-
+SPEED
 FONT_PATH = "src/assets/fonts/Bungee-Regular.ttf"
 
 MAX_SCORES = 10
