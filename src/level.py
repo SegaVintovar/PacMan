@@ -85,6 +85,10 @@ class Level():
                     if not g.type else
                     self.config.points_per_super_pacgum
                     )
+                if g.type == "super":
+                    print("run you b*tches")
+                    for ghost in self.creatures:
+                        ghost.pussy_mod = True
                 self.gums.remove(g)
             else:
                 screen.blit(g.image, dest=g.rect)

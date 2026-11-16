@@ -67,18 +67,19 @@ class Map:
     #             screen.blit(tiles[c.value], c.position)
     #     return screen
 
-    def get_cel_by_coords(self, x: int, y: int) -> Cell:
-        return self.map[y][x]
+    def get_cel_by_coords(self, x: int, y: int) -> Cell | None:
+        if not self.off_grid(x, y):
+            return self.map[y][x]
+        return None
 
     def off_grid(self, x: int, y: int) -> bool:
-        return (not (x >= 0 and x <= self.width)
-                and (y >= 0 and y <= self.height))
+        return x < 0 or x >= self.width or y < 0 or y >= self.height
 
     def is_walled(self, x: int, y: int, direction: str) -> bool:
-        if direction in GHOST_DIRECTIONS.keys():
-            to_x, to_y = GHOST_DIRECTIONS[direction]
-            cell = self.get_cel_by_coords(x + to_x, y + to_y)
-            if cell:
+        if not self.off_grid(x, y):
+            if direction in GHOST_DIRECTIONS.keys():
+                to_x, to_y = GHOST_DIRECTIONS[direction]
+                cell: Cell = self.get_cel_by_coords(x + to_x, y + to_y)
                 match direction:
                     case "up":
                         return cell.n
