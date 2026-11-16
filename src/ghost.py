@@ -7,6 +7,7 @@ from .constants import GHOSTS, SPEED, GHOST_DIRECTIONS
 from .config import GameConfig
 from .map import Map
 from enum import Enum
+from typing import Optional
 
 
 class behavior(Enum):
@@ -64,10 +65,11 @@ class Ghost(Creature):
         }
         picked: int = random.randrange(0, 4)
         self._direction = directions[picked]
-        if not self._bounce():
+        if not self._bounce(None):
             self._set_destination()
 
-    def _bounce(self) -> bool:
+    def _bounce(self, char: Optional[str]) -> bool:
+        # def _bounce(self) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
         if not cell:
             return True
@@ -81,23 +83,21 @@ class Ghost(Creature):
             return True
         return False
 
-    def retreat_spawn_point() -> None:
-        ...
-
-    def check(self, pacman: tuple[int, int] | None = None) -> None:
+    # def retreat_spawn_point() -> None:
+    #     ...
+    def check(self, pacman: tuple[int, int]) -> None:
         if self._at_destination():
             self._pick_random_dest()
-            if self._bounce():
+            if self._bounce(None):
                 return
         cx, cy = self.rect.center
         tx, ty = self._destination
         print(f"{self.name}'s A* down here:")
         Behaviour.a_star(self.map, pacman, (self.cell_x, self.cell_y))
-        speed: int = SPEED if not self.pussy_mod else SPEED/2
+        speed: int = SPEED if not self.pussy_mod else SPEED//2
         self.sprite = self._upload_pic()
         step_x = max(-speed, min(speed, tx - cx))
         step_y = max(-speed, min(speed, ty - cy))
         self.rect.move_ip(step_x, step_y)
-
-    def _out_bound(self, map: Map) -> bool:
-        ...
+    # def _out_bound(self, map: Map) -> bool:
+    #     ...

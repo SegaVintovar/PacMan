@@ -1,11 +1,7 @@
-# from .game_state import GameState
+from .game_state import GameState
 from abc import ABC, abstractmethod
 from pygame.event import Event
 from pygame import Surface
-
-
-class GameState():
-    pass
 
 
 class Module(ABC):

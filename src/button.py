@@ -8,7 +8,7 @@ class Button():
                  size: tuple[int, int],
                  position: tuple[int, int],
                  go_to_module: int,
-                 font_color: pygame.Color = PINK
+                 font_color: pygame.Color = pygame.Color(PINK)
                  ) -> None:
         self.text = text
         self.go_to_module = go_to_module

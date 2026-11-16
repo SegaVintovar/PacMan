@@ -19,10 +19,10 @@ class Pacman(Creature):
             f"src/assets/sprites/pacman_{self._direction}_wide.png",
             ).convert_alpha()
         coord = (TILE - SPRIE_SIZE) // 2
-        self.rect = self.sprite.get_rect(topleft=(coord, coord))
+        self.rect: pygame.Rect = self.sprite.get_rect(topleft=(coord, coord))
         self.measure_spawn()
         self._destination: tuple[int, int] = self._cell_center(None)
-        self._origin: tuple[int, int] = self.rect
+        self._origin: tuple[int, int] = self.rect.center
         self._pixel_moved: int = 0
 
     """Creating an escapable point for pac-man.

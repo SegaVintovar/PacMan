@@ -1,7 +1,6 @@
 from .config import GameConfig
 import pygame
 from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE, CYAN
-from typing import Any
 # from .gradient import make_gradient
 from .game_state import GameState
 from .button import Button
@@ -64,10 +63,10 @@ class Instructions(Module):
         self.config = config
         self.go_back: Button = Button(
             "Back to menu",
-            ((WINDOW_SIZE[0] * 0.5), (WINDOW_SIZE[1] * 0.1)),
-            ((WINDOW_SIZE[0] * 0.01), (WINDOW_SIZE[1] * 0.05)),
+            (int(WINDOW_SIZE[0] * 0.5), int(WINDOW_SIZE[1] * 0.1)),
+            (int(WINDOW_SIZE[0] * 0.01), int(WINDOW_SIZE[1] * 0.05)),
             2,
-            CYAN)
+            pygame.color.Color(CYAN))
         self.scroll_pos = 0
         self._prep_rules()
 
@@ -89,7 +88,7 @@ class Instructions(Module):
                 events: list[pygame.event.Event],
                 game_state: GameState,
                 screen: pygame.Surface
-                ) -> tuple[int, Any]:
+                ) -> GameState:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q or\

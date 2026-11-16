@@ -1,4 +1,4 @@
-from . import GameConfig
+from .config import GameConfig
 from .pacman import Pacman
 import pygame
 from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, FONT_PATH
@@ -78,9 +78,8 @@ class Footer():
             return
         self.image.blit(
             self.font.render(
-                f"Time left: {
-                    time
-                    }", True, (255, 0, 0)
+                f"Time left: {time}",
+                True, (255, 0, 0)
                 ),
             dest=(int(WINDOW_SIZE[0]) - 300, 30)
         )
@@ -98,8 +97,7 @@ class Game(Module):
         self.levels: list[Level] = []
         self.current_lvl_id: int = 0
         self._prepare_levels()
-        self.current_lvl: Level | None = None if not self.levels \
-            else self.levels[self.current_lvl_id]
+        self.current_lvl: Level = self.levels[self.current_lvl_id]
         self.pacman: Pacman = Pacman(self.current_lvl.map, config)
         header = Header(self.config)
         self.header: Header = header
@@ -200,12 +198,10 @@ class Game(Module):
                             self.pacman.points)
         time = (self.config.level_max_time -
                 self.current_lvl.timer.time_since_start())
-        # print("time since start", self.current_lvl.timer.time_since_start(), "\n",
-        #       "start time", self.current_lvl.timer.start_time)
         self.footer.show_me(screen, time, self.pacman)
         screen.blit(scaled_map, dest=(0, HEADER_HEIGHT))
 
-    def _prepare_levels(self) -> list[Level]:
+    def _prepare_levels(self) -> None:
         """"
         First lvl seed comes form the subject, rest random.
         """
@@ -219,16 +215,16 @@ class Game(Module):
             ))
         print(f"Game: {len(self.config.level)} levels prepared")
 
-    def start_current_lvl(self):
+    def start_current_lvl(self) -> None:
         print("lvl_id", self.current_lvl_id)
         print("amount of lvls", len(self.levels))
         self.current_lvl = self.levels[self.current_lvl_id]
         self.current_lvl.timer.start_time = pygame.time.get_ticks()
         self.pacman.go_to_next_level(self.current_lvl.map)
 
-    def _init_creatures() -> None:
-        """init PacMan, Ghosts"""
-        ...
+    # def _init_creatures() -> None:
+    #     """init PacMan, Ghosts"""
+    #     ...
 
     # def render_creatures(self, map: pygame.Surface) -> None:
     #     for creature in self.creatures:
@@ -239,20 +235,3 @@ class Game(Module):
 
     # def navigate(option: Menu) -> int:
     #     return 1
-
-
-if __name__ == "__main__":
-    game = Game()
-    game.display_one_map()
-    running: bool = True
-    print("doing it designated")
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        # game.run(screen)
-        # scaled_map = pygame.transform.scale(ourMap.map_image, WINDOW_SIZE)
-        # screen.blit(scaled_map, dest=(0, 0))
-        # ourHero.spawn(screen)
-        pygame.display.update()
-    pygame.quit()

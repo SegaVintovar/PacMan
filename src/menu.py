@@ -2,9 +2,10 @@ from .constants import WINDOW_SIZE, PINK
 import pygame
 from .button import Button
 from .game_state import GameState
+from .module import Module
 
 
-class Menu():
+class Menu(Module):
     def __init__(self, bg: pygame.Surface):
         # image is a background
         # self.background = make_gradient(
@@ -22,7 +23,7 @@ class Menu():
         size: tuple[int, int] = (
             int(WINDOW_SIZE[0] * 0.4), int(WINDOW_SIZE[1] * 0.05)
             )
-        start_position = (size[0] * 0.7, int(WINDOW_SIZE[1] * 0.4))
+        start_position = (int(size[0] * 0.7), int(WINDOW_SIZE[1] * 0.4))
         step = int(WINDOW_SIZE[1] * 0.1)
         start = ("Start", 1)
         # cntinue = "Continue"
