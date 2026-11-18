@@ -107,9 +107,6 @@ class Game(Module):
         self.done = False
         self.paused = False
 
-    # should return 0 , 1 , 2
-    # or GameState that will store
-    # track the win_loose condition, we can return gs with extra
     def process(self,
                 events: list[pygame.event.Event],
                 game_state: GameState,
@@ -120,7 +117,6 @@ class Game(Module):
         # nothing yet sets this to True
         if self.done:
             # open the page to enter the name of the player
-            # so it will add this score to the file
             game_state.gs_update(6, self.pacman.points)
             return game_state
         if self.paused:
@@ -164,8 +160,6 @@ class Game(Module):
             return game_state
         self._display(map_image, screen)
         return game_state
-
-    # def lvl_process(self)
 
     def _display(self,
                  map_image: pygame.Surface, screen: pygame.Surface) -> None:

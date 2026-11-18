@@ -119,4 +119,4 @@ class WinLoose(Module):
         scores.append({"score": score, "name": name})
         scores.sort(key=lambda s: s["score"], reverse=True)
         with open(self.config.highscore_filename, "w") as file:
-            json.dump(scores, file, indent=4)
+            json.dump(scores[:10], file, indent=4)

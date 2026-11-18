@@ -28,12 +28,9 @@ class Level():
         self.creatures: list[Creature] = []
         self.gums: list[Gum] = []
         self._gen_gums()
-        # print("amount of gums", len(self.gums))
         timer = Timer(config.level_max_time)
         self.timer: Timer = timer
-        # self.creatures.append(self.pacman)
         self._awake_ghosts()
-        # self.render_creatures(self.map)
 
     def isDone(self) -> bool:
         if not self.gums:
@@ -81,6 +78,7 @@ class Level():
             self.gums.append(Gum(cell.position, ""))
 
     def show_gums(self, screen: pygame.Surface, pacman: Pacman) -> None:
+        to_remove = []
         for g in self.gums:
             if pacman.rect.center == g.rect.center:
                 pacman.points += (
@@ -95,6 +93,8 @@ class Level():
                 self.gums.remove(g)
             else:
                 screen.blit(g.image, dest=g.rect)
+        for g in to_remove:
+            self.gums.remove(g)
 
     def _render_creatures(self,
                           screen: pygame.Surface, pacman: Pacman

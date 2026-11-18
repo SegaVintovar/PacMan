@@ -81,7 +81,8 @@ class Menu(Module):
                     game_state.gs_update(seleceted_button.go_to_module)
                     return game_state
             if event.type == pygame.QUIT:
-                exit()
+                game_state.quit()
+                return game_state
         self._render_menu()
         screen.blit(self.image, dest=(0, 0))
         return game_state

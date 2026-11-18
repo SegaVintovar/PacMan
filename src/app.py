@@ -24,6 +24,7 @@ class App():
     def __init__(self, config: GameConfig) -> None:
         self.config = config
         pygame.init()
+        pygame.mixer.init()
         screen = pygame.display.set_mode(
             (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
         self.background = make_gradient()

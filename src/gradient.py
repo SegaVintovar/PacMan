@@ -1,5 +1,6 @@
 import pygame
 from .constants import WINDOW_SIZE, HEADER_HEIGHT
+from .paths import ASSETS_DIR
 
 
 def _lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
@@ -14,11 +15,11 @@ def _lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
 
 def _add_palms(surface: pygame.Surface) -> None:
     palms = []
-    palm_left = ("src/assets/palms/palm1.png",
+    palm_left = (ASSETS_DIR / "palms" / "palm1.png",
                  (-10, WINDOW_SIZE[1] * 0.6))
-    palm_mid = ("src/assets/palms/palm2.png",
+    palm_mid = (ASSETS_DIR / "palms" / "palm2.png",
                 (WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.5))
-    palm_right = ("src/assets/palms/palm3.png",
+    palm_right = (ASSETS_DIR / "palms" / "palm3.png",
                   (WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.8))
     palms = [palm_left, palm_mid, palm_right]
     # for i in range(1, 4):
@@ -43,7 +44,7 @@ def make_gradient(
         color = _lerp_color(top, bottom, y / size[1])
         pygame.draw.line(surface, color, (0, y), (size[0], y))
     if extra:
-        logo_path = "src/assets/menu/FT_PacMan.png"
+        logo_path = ASSETS_DIR / "menu" / "FT_PacMan.png"
         logo = pygame.image.load(logo_path).convert_alpha()
         surface.blit(
             pygame.transform.scale(

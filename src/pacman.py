@@ -5,6 +5,9 @@ from .map import Map
 from .creature import Creature
 from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE, SPEED
 from typing import Optional
+from .paths import ASSETS_DIR
+
+SPRITES = ASSETS_DIR / "sprites"
 
 
 class Pacman(Creature):
@@ -16,7 +19,7 @@ class Pacman(Creature):
         self._direction = 'A'
         self._next_direction: str = ''
         self.sprite = pygame.image.load(
-            f"src/assets/sprites/pacman_{self._direction}_wide.png",
+            SPRITES / f"pacman_{self._direction}_wide.png",
             ).convert_alpha()
         coord = (TILE - SPRIE_SIZE) // 2
         self.rect: pygame.Rect = self.sprite.get_rect(topleft=(coord, coord))
@@ -24,6 +27,7 @@ class Pacman(Creature):
         self._destination: tuple[int, int] = self._cell_center(None)
         self._origin: tuple[int, int] = self.rect.center
         self._pixel_moved: int = 0
+        self.munch_sound: pygame.mixer.Sound = pygame.mixer.Sound(ASSETS_DIR / "sounds" / "pacman_chomp.wav")
 
     """Creating an escapable point for pac-man.
        in case of an odd amount it is a right spawn
@@ -39,6 +43,9 @@ class Pacman(Creature):
     def go_to_next_level(self, map: Map) -> None:
         self.map = map
         self.measure_spawn()
+
+    def play_sound(self) -> None:
+        self.munch_sound.play()
 
     def _try_next(self) -> bool:
         if self._bounce(None):
@@ -71,17 +78,17 @@ class Pacman(Creature):
         if (self._pixel_moved > TILE * 0.5 and
            self._pixel_moved <= TILE * 0.75):
             self.sprite = pygame.image.load(
-                f"src/assets/sprites/pacman_{self._direction}_closed.png"
+                SPRITES / f"pacman_{self._direction}_closed.png"
                 ).convert_alpha()
         elif ((self._pixel_moved <= TILE * 0.5 and
               self._pixel_moved > TILE * 0.25) or
               (self._pixel_moved > TILE * 0.75)):
             self.sprite = pygame.image.load(
-                f"src/assets/sprites/pacman_{self._direction}_narrow.png"
+                SPRITES / f"pacman_{self._direction}_narrow.png"
                 ).convert_alpha()
         else:
             self.sprite = pygame.image.load(
-                f"src/assets/sprites/pacman_{self._direction}_wide.png"
+                SPRITES / f"pacman_{self._direction}_wide.png"
                 ).convert_alpha()
         step_x = max(-2, min(2, tx - cx))
         step_y = max(-2, min(2, ty - cy))
@@ -146,5 +153,5 @@ class Pacman(Creature):
         else:
             self._next_direction = char
         self.sprite = pygame.image.load(
-            f"src/assets/sprites/pacman_{self._direction}_wide.png"
+            SPRITES / f"pacman_{self._direction}_wide.png"
         ).convert_alpha()

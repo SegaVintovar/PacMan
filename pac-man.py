@@ -2,9 +2,10 @@ from src.app import App
 import pygame
 import sys
 from src.config import GameConfig
+from src.paths import PROJECT_DIR
 
 default_config = {
-    "highscore_filename": "scores.json",
+    "highscore_filename": PROJECT_DIR / "scores.json",
     "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
     "lives": "3",
     "pacgum": "10",
@@ -28,15 +29,12 @@ def main() -> None:
         if not sys.argv[1].endswith(".json"):
             raise Exception("The config file has to be .json format")
         config = GameConfig(sys.argv[1])
+        print(f"{sys.argv[1]} is validated!")
     except Exception as e:
         print("Could not validate given config file", str(e))
         print("Launching the game with default config")
-        config = GameConfig(*default_config)
-    # here we also need try,
-    # so image load or bad config,
-    # or maze gen fail
-    # not gonna give traceback
-    # TODO: LOADING SPRITES IN MY SPRITEBANK
+        config = GameConfig()
+    mygame = App(config)
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())
