@@ -1,7 +1,9 @@
+from .paths import ASSETS_DIR
+
 # info = pygame.display.Info()
 # WINDOW_SIZE = (info.current_w, info.current_h)
 SPEED: int = 3
-WINDOW_SIZE = (1400, 1200)
+WINDOW_SIZE = (1200, 900)
 
 TILE = 64  # cell size
 
@@ -38,7 +40,8 @@ CYAN = (0, 230, 255)
 WHITE = (235, 235, 235)
 BLACK = (0, 0, 0)
 SPEED
-FONT_PATH = "src/assets/fonts/Bungee-Regular.ttf"
+
+FONT_PATH = ASSETS_DIR / "fonts" / "Bungee-Regular.ttf"
 
 MAX_SCORES = 10
 

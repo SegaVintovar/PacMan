@@ -8,6 +8,7 @@ from .config import GameConfig
 from .map import Map
 from enum import Enum
 from typing import Optional
+from .paths import ASSETS_DIR
 
 
 class behavior(Enum):
@@ -24,7 +25,7 @@ class Ghost(Creature):
         self.config = config
         self._direction: str = "left"
         self.pussy_mod: bool = False
-        self.start: tuple[int, int] = ()
+        self.start: tuple[int, int]
         self.rect: pygame.Rect = self._create_rect()
         self.rect.center = self._cell_center(None)
         self.sprite: pygame.Surface = self._upload_pic()
@@ -46,7 +47,7 @@ class Ghost(Creature):
                     if not self.pussy_mod else
                     "frightened_blue.png")
         return pygame.image.load(
-            f"src/assets/sprites/ghost_{src}").convert_alpha()
+            ASSETS_DIR / "sprites" / f"ghost_{src}").convert_alpha()
 
     def _create_rect(self) -> pygame.Rect:
         coords: tuple[str, str] = GHOSTS[self.name][1]

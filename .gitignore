@@ -1,8 +1,10 @@
 .gitignore
 __pycache__
 .venv
-uv.lock
 *.zip
 scores.json
 .gitignore
 project_state_1311.md
+dist/
+build/
+pac-man.spec

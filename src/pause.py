@@ -55,7 +55,8 @@ class Pause(Module):
                     gs.gs_update(selected_button.go_to_module)
                     return gs
             if event.type == pygame.QUIT:
-                exit()
+                gs.quit()
+                return gs
         self._show_pause_menu(screen)
         return gs
 
