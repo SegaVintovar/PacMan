@@ -6,18 +6,7 @@ from .level import Level
 from .game_state import GameState
 import random
 from .module import Module
-
-# from bastiaan
-# from . import MazeGenerator
-# from .creature import Creature
-# from .ghost import Ghost
-# from .map import Map
-# from .pacman import Pacman
-# import pygame
-# from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, GHOSTS
-# from typing import Any
-# # from .game_state import GameState
-# from .gum import Gum
+from .pathfinder import Pathfinder
 
 
 class Header():
@@ -182,7 +171,7 @@ class Game(Module):
                 int(self.config.level[i]),
                 self.config.level[i],
                 seed,
-                config=self.config
+                self.config
             ))
         print(f"Game: {len(self.config.level)} levels prepared")
 

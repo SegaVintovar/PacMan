@@ -9,6 +9,8 @@ from .map import Map
 from enum import Enum
 from typing import Optional
 from .paths import ASSETS_DIR
+from .pathfinder import Pathfinder
+from .pacman import Pacman
 
 
 class behavior(Enum):
@@ -30,6 +32,7 @@ class Ghost(Creature):
         self.rect.center = self._cell_center(None)
         self.sprite: pygame.Surface = self._upload_pic()
         self._destination: tuple[int, int] = self._cell_center(None)
+        self.path: list[Cell] = []
 
     def _set_destination(self) -> None:
         if self._direction not in GHOST_DIRECTIONS:
@@ -84,17 +87,47 @@ class Ghost(Creature):
             return True
         return False
 
-    # def retreat_spawn_point() -> None:
-    #     ...
-    def check(self, pacman: tuple[int, int] | None) -> None:
+    def check(self, pacman: Pacman | None) -> None:
+        def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
+            def one(v: int) -> int:
+                if v == 0:
+                    return 0
+                elif v > 0:
+                    return 1
+                else:
+                    return -1
+            curr = cell.grid_coord
+            target = next_cell.grid_coord
+            delta_x = target[0] - curr[0]
+            delta_y = target[1] - curr[1]
+            return (one(delta_x), one(delta_y))
+
+        directions: dict[int, str] = {
+            (0, -1): "up",
+            (1, 0): "right",
+            (0, 1): "down",
+            (-1, 0): "left"
+        }
         if self._at_destination():
-            self._pick_random_dest()
+            if not self.path:
+                return
+            # update self directiom
+            # set destination
+            next_cell = self.path.pop(0)
+            picked = pick_dir(
+                self.map.map[self.cell_y][self.cell_x], next_cell)
+            self._direction = directions[picked]
+            self._set_destination()
+            # self._pick_random_dest()
             if self._bounce(None):
                 return
         cx, cy = self.rect.center
         tx, ty = self._destination
         print(f"{self.name}'s A* down here:")
-        Behaviour.a_star(self.map, pacman, (self.cell_x, self.cell_y))
+        Behaviour.a_star(
+            self.map,
+            (pacman.cell_x, pacman.cell_y),
+            (self.cell_x, self.cell_y))
         speed: int = SPEED if not self.pussy_mod else SPEED//2
         self.sprite = self._upload_pic()
         step_x = max(-speed, min(speed, tx - cx))
@@ -102,3 +135,7 @@ class Ghost(Creature):
         self.rect.move_ip(step_x, step_y)
     # def _out_bound(self, map: Map) -> bool:
     #     ...
+
+    # def at_cell_center(self, map: list[list[Cell]]) -> bool:
+    #     if self.rect.center ==
+    #     return False

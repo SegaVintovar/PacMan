@@ -3,11 +3,11 @@ from .map import Map
 import pygame
 from .timer import Timer
 from .config import GameConfig
-from .creature import Creature
 from .pacman import Pacman
 from .constants import GHOSTS
 from .ghost import Ghost
 import random
+from .pathfinder import Pathfinder
 
 
 class Level():
@@ -15,19 +15,20 @@ class Level():
                  id: int,
                  name: str,
                  seed: int,
-                 config: GameConfig
+                 config: GameConfig,
                  ) -> None:
         self.id = id
         self.config = config
         self.name = name
         self.seed = seed
         self.map: Map = Map(self.config, self.seed)
-        self.creatures: list[Creature] = []
+        self.creatures: list[Ghost] = []
         self.gums: list[Gum] = []
         self._gen_gums()
         timer = Timer(config.level_max_time)
         self.timer: Timer = timer
         self._awake_ghosts()
+        self.pathfinder: Pathfinder = Pathfinder(self.map)
 
     def isDone(self) -> bool:
         if not self.gums:
@@ -94,17 +95,23 @@ class Level():
             self.gums.remove(g)
 
     def _render_creatures(self,
-                          screen: pygame.Surface, pacman: Pacman
+                          screen: pygame.Surface,
+                          pacman: Pacman
                           ) -> None:
-        for creature in self.creatures:
-            creature.check((pacman.cell_x, pacman.cell_y))
-            creature.spawn(screen)
+        for ghost in self.creatures:
+            if ghost._at_destination():
+                # regen the path
+                self.pathfinder.build_path(ghost, pacman)
+                ...
+            # make ghost follow the path
+            ghost.check(pacman)
+            ghost.spawn(screen)
         pacman.check()
         pacman.spawn(screen)
 
     def _awake_ghosts(self) -> None:
         for name in GHOSTS:
-            ghost: Creature = Ghost(
+            ghost = Ghost(
                 name=name,
                 map=self.map,
                 config=self.config

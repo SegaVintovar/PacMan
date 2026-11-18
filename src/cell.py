@@ -21,23 +21,29 @@ class Cell():
     def __init__(
             self,
             n: bool, e: bool, s: bool, w: bool, position: tuple[int, int],
-            value: int, special: str = ""
+            value: int, coord: tuple[int, int], special: str = ""
             ) -> None:
         self.n = n
         self.e = e
         self.s = s
         self.w = w
         self.special = special
+        self.grid_coord = coord
         self.position = position
         self.value = value
         self.surface: pygame.Surface
+        self.rect: pygame.Rect
         # self.gum: Gum | None
         self._set_surface()
+        self._set_rect()
         self.render_walls()
         # self.gum: Gum | None = None
 
     def _set_surface(self) -> None:
         self.surface = pygame.Surface((TILE, TILE))
+
+    def _set_rect(self) -> None:
+        self.rect = pygame.Rect(self.position, (TILE, TILE))
 
     def render_walls(self) -> None:
         # cell_base = pygame.Surface(size=(TILE, TILE))
