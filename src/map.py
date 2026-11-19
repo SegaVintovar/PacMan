@@ -34,8 +34,9 @@ class Map:
                  bool((c >> 1) & 1),      	 # East
                  bool((c >> 2) & 1),     	 # South
                  bool((c >> 3) & 1),     	 # West
-                 ((x * TILE), (y * TILE)),   # position
-                 c                       	 # value
+                 ((x * TILE), (y * TILE)),   # position px
+                 c,                       	 # value
+                 (x, y),                     # position in the grid
                 ))
             iMap.append(tmp)
         return iMap

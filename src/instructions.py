@@ -8,54 +8,6 @@ from .module import Module
 
 
 class Instructions(Module):
-    rules = [
-        " ----------- ",
-        "Goal",
-        "",
-        "Eat every pacgum in the maze to clear the level.",
-        "Clear all levels to win the game.",
-        " ----------- ",
-        "Controls:",
-        "",
-        "Move: Arrow keys or W / A / S / D",
-        "Pause: ESC | Q | ",
-        "Menus: Up / Down to navigate, Enter to select",
-        "Name entry: type your name, Enter to confirm, Backspace to delete",
-        " ----------- ",
-        "Rules",
-        "",
-        "You move through corridors only. Walls block you.",
-        "You start each level in the middle of the maze.",
-        "If a ghost touches you, you lose a life and respawn in the middle.",
-        "You lose the game when all lives are gone.",
-        "Each level has a time limit of 90 seconds ⚙. 🔧 When time runs out,",
-        "[the level restarts / the game ends].",
-        "Your score and remaining lives carry over between levels.",
-        " ----------- ",
-        "Items and scoring",
-        "",
-        "Pacgum (small dot): +10 points ⚙",
-        "Super-pacgum (big dot in each corner): +50 points ⚙ and the ghosts",
-        "become edible for a short time",
-        "Edible ghost: +200 points ⚙. An eaten ghost returns to its corner",
-        "and respawns after a few seconds.",
-        "Your score never decreases.",
-        " ----------- ",
-        "Ghosts",
-        "",
-        "4 ghosts start in the 4 corners of the maze.",
-        "Normally they chase you.",
-        "While edible, they run away from you.",
-        " ----------- ",
-        "Highscores",
-        "After a win or a loss, enter your name (max 10 characters, letters,",
-        "digits and spaces). The top 10 scores are shown in the main menu.",
-        " ----------- ",
-        "Cheat mode (for reviewers)",
-        "🔧 Key bindings, for example: I = invincibility, N = skip level,",
-        "F = freeze ghosts, L = extra life, and so on.",
-    ]
-
     def __init__(self, bg: pygame.Surface, config: GameConfig) -> None:
         self.background = bg
         self.image: pygame.Surface = bg.copy()
@@ -71,11 +23,61 @@ class Instructions(Module):
         self._prep_rules()
 
     def _prep_rules(self) -> None:
+        rules = [
+                " <<----------->> ",
+                "Goal",
+                "",
+                "Eat every pacgum in the maze to clear the level.",
+                "Clear all levels to win the game.",
+                " <<----------->> ",
+                "Controls:",
+                "",
+                "Move: Arrow keys or W / A / S / D",
+                "Pause: ESC | Q | ",
+                "Menus: Up / Down to navigate, Enter to select",
+                "Name entry: type your name, Enter to confirm, Backspace to delete",
+                " <<----------->> ",
+                "Rules",
+                "",
+                "You move through corridors only. Walls block you.",
+                "You start each level in the middle of the maze.",
+                "If a ghost touches you, you lose a life and respawn in the middle.",
+                "You lose the game when all lives are gone.",
+                "Each level has a time limit of 90 seconds. When time runs out,",
+                "[the level restarts / the game ends].",
+                "Your score and remaining lives carry over between levels.",
+                " <<----------->> ",
+                "Items and scoring",
+                "",
+                f"Pacgum (small dot):    +{self.config.points_per_pacgum}\
+                      points",
+                f"Super-pacgum (big dot in each corner):    \
+                      +{self.config.points_per_super_pacgum} points",
+                "and the ghosts become edible for a short time",
+                f"Edible ghost: +{self.config.points_per_ghost
+                                  } points.",
+                "An eaten ghost returns to its corner",
+                "and respawns after a few seconds.",
+                "Your score never decreases.",
+                " <<----------->> ",
+                "Ghosts",
+                "",
+                "4 ghosts start in the 4 corners of the maze.",
+                "Normally they chase you.",
+                "While edible, they run away from you.",
+                " <<----------->> ",
+                "Highscores",
+                "After a win or a loss, enter your name (max 10 characters, letters,",
+                "digits and spaces). The top 10 scores are shown in the main menu.",
+                " <<----------->> ",
+                "Cheat mode (for reviewers)",
+                "Key bindings: '1' = extra life"
+            ]
         start_pos = (WINDOW_SIZE[0] * 0.25, WINDOW_SIZE[1] * 0.05)
         step = (FONT_SIZE - 15) * 2
         self.image = pygame.Surface(
             WINDOW_SIZE, pygame.SRCALPHA).convert_alpha()
-        for i, rule in enumerate(self.rules):
+        for i, rule in enumerate(rules):
             position = (start_pos[0], start_pos[1] + i * step)
             self.image.blit(
                 self.font.render(rule, True, "white"),

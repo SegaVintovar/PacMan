@@ -3,7 +3,7 @@ from .paths import ASSETS_DIR
 # info = pygame.display.Info()
 # WINDOW_SIZE = (info.current_w, info.current_h)
 SPEED: int = 3
-WINDOW_SIZE = (1200, 900)
+WINDOW_SIZE = (1400, 1200)
 
 TILE = 64  # cell size
 

@@ -42,7 +42,7 @@ class ScoreBoard(Module):
         self.go_back: Button = Button(
             "Back to menu",
             (int(WINDOW_SIZE[0] * 0.5), int(WINDOW_SIZE[1] * 0.1)),
-            (0, 0),
+            (int(WINDOW_SIZE[0] * 0.01), int(WINDOW_SIZE[1] * 0.05)),
             2,
             pygame.color.Color(CYAN))
         self.font: pygame.font.Font = pygame.font.Font(

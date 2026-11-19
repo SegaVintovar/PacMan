@@ -17,6 +17,10 @@ clean:
 debug:
 	uv run python -m pdb pac-man.py
 
+build:
+	pyinstaller pac-man.py --name pacman --onedir --noconfirm \
+  --add-data "src/assets:src/assets" --add-data "config.json:." --paths .
+
 lint:
 	flake8 .
 	mypy . --warn-return-any\

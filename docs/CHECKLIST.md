@@ -35,8 +35,8 @@ progresses and keep it in the project management folder.
 
 - [x] Ignore lines starting with `#` (optionally `//` and `/* */`)
 - [x] Launch with `python3 pac-man.py config.json` (add `pac-man.py` at root)
-- [ ] Clamp invalid values one by one to defaults, log a clear message, continue
-- [ ] Unknown keys ignored, no traceback anywhere
+- [x] Invalid config.json makes fallback to default values
+- [x] Unknown keys ignored, no traceback anywhere
 - [x] if the given config is invalid, we falling back to the default one
 - [x] Remove dependency on `storage/config.json`; no `sys.exit(1)` on bad config
 - [x] Fix `GameConfig.load` and the "at least 15" vs `< 10` message mismatch
@@ -59,7 +59,7 @@ progresses and keep it in the project management folder.
 - [ ] Invincibility
 - [ ] Skip level
 - [ ] Freeze ghosts
-- [ ] Extra lives
+- [x] Extra lives - key "1"
 - [ ] Speed boost
 - [ ] Make ghosts edible (to test ghost eating quickly)
 
@@ -71,7 +71,7 @@ progresses and keep it in the project management folder.
 ## Robustness
 
 - [ ] Load Pacman sprites once instead of every frame
-- [ ] Asset paths independent of the working directory (needed for packaging)
+- [ ] Asset paths independent of the working directory (needed for packaging) - Path.resolve() handled this
 - [ ] Edge cases: empty name, Escape in name entry, closing the window in every state
 
 ## Linting and code quality

@@ -10,6 +10,8 @@ from .spriteBank import SpriteBank
 from enum import Enum
 from typing import Optional
 from .paths import ASSETS_DIR
+from .pathfinder import Pathfinder
+from .pacman import Pacman
 
 
 class behavior(Enum):
@@ -33,6 +35,7 @@ class Ghost(Creature):
         self.rect.center = self._cell_center(None)
         self.sprite: pygame.Surface = SpriteBank.get_sprite("ghost", self._sprite_id)
         self._destination: tuple[int, int] = self._cell_center(None)
+        self.path: list[Cell] = []
 
     def _set_destination(self) -> None:
         if self._direction not in GHOST_DIRECTIONS:
@@ -101,18 +104,63 @@ class Ghost(Creature):
         return False
 
     # def retreat_spawn_point() -> None:
+    # def check(self, pacman: Pacman | None) -> bool:
+    #     if self._at_destination():
+    #         self._pick_random_dest()
+    #         self._update_pic()
+    #     if self.rect.colliderect(pacman.rect):
+    #         if not self.pussy_mod:
+    #             pacman.die()
+    #         else:
+    #             self.get_eaten()
+    #         return True
+    #     cx, cy = self.rect.center
+    #     tx, ty = self._destination
+
     def check(self, pacman: Pacman | None) -> bool:
+
+        def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
+            def one(v: int) -> int:
+                if v == 0:
+                    return 0
+                elif v > 0:
+                    return 1
+                else:
+                    return -1
+            curr = cell.grid_coord
+            target = next_cell.grid_coord
+            delta_x = target[0] - curr[0]
+            delta_y = target[1] - curr[1]
+            return (one(delta_x), one(delta_y))
+
+        directions: dict[int, str] = {
+            (0, -1): "up",
+            (1, 0): "right",
+            (0, 1): "down",
+            (-1, 0): "left"
+        }
+
         if self._at_destination():
-            self._pick_random_dest()
+            if not self.path:
+                return False
+
+            next_cell = self.path.pop(0)
+            picked = pick_dir(
+                self.map.map[self.cell_y][self.cell_x], next_cell)
+            self._direction = directions[picked]
+            self._set_destination()
             self._update_pic()
+            # self._pick_random_dest()
+            if self._bounce(None):
+                return False
         if self.rect.colliderect(pacman.rect):
             if not self.pussy_mod:
                 pacman.die()
             else:
                 self.get_eaten()
-            return True
         cx, cy = self.rect.center
         tx, ty = self._destination
+
         speed: int = SPEED if not self.pussy_mod else SPEED//2
         step_x = max(-speed, min(speed, tx - cx))
         step_y = max(-speed, min(speed, ty - cy))

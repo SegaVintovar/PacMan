@@ -20,7 +20,8 @@ class Button():
         self.font_color: pygame.color.Color = font_color
         self.image.blit(
             self.font.render(self.text, True, self.font_color),
-            dest=(FONT_SIZE * 2, FONT_SIZE // 2)
+            # dest=(FONT_SIZE * 2, FONT_SIZE // 2)
+            dest=(position)
             )
 
     def update_button_image(self, selected: bool) -> None:
