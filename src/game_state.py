@@ -12,6 +12,7 @@ class GameState():
         self.win = win
         self.reload = False
         self.player_name: str = ""
+        self.wasted = False
 
     def gs_update(self,
                   next_module: int,
@@ -26,6 +27,8 @@ class GameState():
                                  self.next_module == 6):
             print("Reload the game!")
             self.reload = True
+        # if next_module == 6 and self.next_module == 1 and extra:
+
         # if next_module == 3 and self.next_module != 3:
         #     # we need to upload scores
         self.previous = self.next_module

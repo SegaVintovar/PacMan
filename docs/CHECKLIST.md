@@ -22,11 +22,11 @@ progresses and keep it in the project management folder.
 
 ## Gameplay
 
-- [ ] Lose a life on ghost touch; Pacman respawns in the middle; ghosts reset to corners B
-- [ ] Game over at 0 lives V
+- [x] Lose a life on ghost touch; Pacman respawns in the middle; ghosts reset to corners B
+- [x] Game over at 0 lives V
 - [ ] Super-pacgum makes ghosts edible for a limited time
-- [ ] Edible ghosts flee; eating one gives `points_per_ghost`
-- [ ] Eaten ghost respawns in its corner after a few seconds
+- [ ] Edible ghosts flee; eating one gives `points_per_ghost` 
+- [x] Eaten ghost respawns in its corner after a few seconds
 - [ ] Ghost AI: chase the player (e.g. BFS); `Behaviour.a_star` is an empty stub (can be done after publishing)
 - [x] Fix `Level.show_gums`: do not remove from the list while looping over it V
 - [ ] Optional: arrow keys next to WASD

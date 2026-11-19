@@ -11,7 +11,6 @@ from enum import Enum
 from typing import Optional
 from .paths import ASSETS_DIR
 from .pathfinder import Pathfinder
-from .pacman import Pacman
 
 
 class behavior(Enum):
@@ -47,6 +46,14 @@ class Ghost(Creature):
         centered: tuple[int, int] = self._cell_center(None)
         destx, desty = centered
         self._destination = (destx, desty)
+
+    def measure_spawn(self) -> None:
+        coords: tuple[str, str] = GHOSTS[self.name][1]
+        _x, _y = coords
+        self.cell_x = self.config.width - 1 if not _x == 'left' else 0
+        self.cell_y = self.config.height - 1 if not _y == 'top' else 0
+        self.start = (self.cell_x, self.cell_y)
+        self.rect.center = self._cell_center(None)
 
     def get_eaten(self) -> None:
         self._sprite_id = f"eyes-{self._direction}"
@@ -116,6 +123,8 @@ class Ghost(Creature):
             target = next_cell.grid_coord
             delta_x = target[0] - curr[0]
             delta_y = target[1] - curr[1]
+            if abs(one(delta_x)) == abs(one(delta_y)):
+                delta_x = 0
             return (one(delta_x), one(delta_y))
 
         directions: dict[int, str] = {
@@ -143,7 +152,12 @@ class Ghost(Creature):
         if self.rect.colliderect(pacman.rect):
             if not self.pussy_mod:
                 pacman.die()
+                self.measure_spawn()
+                self.path = []
+                self._destination = self._cell_center(None)
+                return True
             else:
+                pacman.points += self.config.points_per_ghost
                 self.get_eaten()
         cx, cy = self.rect.center
         tx, ty = self._destination

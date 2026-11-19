@@ -1,7 +1,7 @@
 from .config import GameConfig
 from .pacman import Pacman
 import pygame
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, FONT_PATH
+from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, FONT_PATH, ASSETS_DIR
 from .level import Level
 from .game_state import GameState
 import random
@@ -93,8 +93,31 @@ class Game(Module):
         footer = Footer(self.config)
         self.footer: Footer = footer
         # needed???
-        self.done = False
-        self.paused = False
+        # self.done = False
+        self.paused: bool = False
+        self.wasted: bool = False
+        original = pygame.image.load(
+            ASSETS_DIR / "WASTED_hires.png")
+        orig_w, orig_h = original.get_size()
+        new_w = int(WINDOW_SIZE[0] * 0.85)
+        new_h = int(orig_h * new_w / orig_w)
+        self.wasted_surface: pygame.Surface = pygame.transform.smoothscale(
+            original, (new_w, new_h))
+        self.wasted_pos: tuple[int, int] = (
+            (WINDOW_SIZE[0] - new_w) // 2,
+            (WINDOW_SIZE[1] - new_h) // 2,
+            )
+        original = pygame.image.load(
+            ASSETS_DIR / "mission_passed.png")
+        orig_w, orig_h = original.get_size()
+        new_w = int(WINDOW_SIZE[0] * 0.85)
+        new_h = int(orig_h * new_w / orig_w)
+        self.mission_passed: pygame.Surface = pygame.transform.smoothscale(
+            original, (new_w, new_h))
+        self.mis_pas_pos: tuple[int, int] = (
+            (WINDOW_SIZE[0] - new_w) // 2,
+            (WINDOW_SIZE[1] - new_h) // 2,
+            )
 
     def process(self,
                 events: list[pygame.event.Event],
@@ -104,10 +127,10 @@ class Game(Module):
         if game_state.previous == 2:
             self.current_lvl.timer.start_timer()
         # nothing yet sets this to True
-        if self.done:
-            # open the page to enter the name of the player
-            game_state.gs_update(6, self.pacman.points)
-            return game_state
+        # if not self.packie_still_alive():
+        #     # open the page to enter the name of the player
+        #     game_state.gs_update(6, self.pacman.points)
+        #     return game_state
         if self.paused:
             self.current_lvl.timer.resume()
             self.paused = False
@@ -138,14 +161,26 @@ class Game(Module):
         # if we finished current level
         if self.current_lvl.process(map_image, self.pacman) is True:
             self.current_lvl_id += 1
+            screen.blit(self.mission_passed,
+                        dest=self.mis_pas_pos)
+            pygame.display.update()
+            pygame.time.delay(2000)
             if self.current_lvl_id == len(self.config.level):
                 # here we finally won
                 game_state.gs_update(6, self.pacman.points, True)
                 return game_state
             self.start_current_lvl()
             return game_state
-        if self.current_lvl.timer.isBurned():
+        if self.current_lvl.timer.isBurned() or\
+           not self.packie_still_alive():
+            # wasted
+            screen.blit(
+                self.wasted_surface,
+                dest=self.wasted_pos)
+            pygame.display.update()
+            pygame.time.delay(2000)
             game_state.gs_update(6, self.pacman.points, False)
+            game_state.wasted = True
             return game_state
         self._display(map_image, screen)
         return game_state
@@ -181,3 +216,8 @@ class Game(Module):
         self.current_lvl = self.levels[self.current_lvl_id]
         self.current_lvl.timer.start_time = pygame.time.get_ticks()
         self.pacman.go_to_next_level(self.current_lvl.map)
+
+    def packie_still_alive(self) -> bool:
+        if self.pacman.lives > 0:
+            return True
+        return False
