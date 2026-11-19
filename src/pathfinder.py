@@ -154,3 +154,14 @@ class Pathfinder():
         path.reverse()
         ghost.path = path[1:]
         print(ghost.name, ghost.path)
+
+    def run_away(self, ghost: Creature, pacman: Creature) -> None:
+        opposite_dir = {
+            (1, 0): (-1, 0),
+            (0, 1): (0, -1),
+            (-1, 0): (1, 0),
+            (0, -1): (0, 1)
+        }
+        # 1. in with dir pacman is
+        # 2. choose opposite direction
+        
