@@ -21,7 +21,7 @@ class Level():
         self.config = config
         self.name = name
         self.seed = seed
-        self.pussy_time: int = 10
+        self.pussy_time: int = 8
         pussy_timer: Timer = Timer(self.pussy_time)
         self.pussy_timer: Timer = pussy_timer
         self.map: Map = Map(self.config, self.seed)
@@ -103,12 +103,14 @@ class Level():
                           ) -> None:
         for ghost in self.creatures:
             if ghost._at_destination():
-                # regen the path
                 self.pathfinder.build_path(ghost, pacman)
                 ...
             # make ghost follow the path
             ghost.check(pacman)
             ghost.spawn(screen)
+            if (self.pussy_timer.time_since_start() == self.pussy_time
+               and ghost.pussy_mod):
+                ghost.disrespect_paccie()
         pacman.check()
         pacman.spawn(screen)
 

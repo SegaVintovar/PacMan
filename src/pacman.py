@@ -99,10 +99,9 @@ class Pacman(Creature):
         dying_stage: int = 0
         while not dying_stage == 11:
             self._sprite_id = (f"death-0{dying_stage}"
-                              if dying_stage < 10 else f"death-{dying_stage}")
+                               if dying_stage < 10 else f"death-{dying_stage}")
             self.sprite = SpriteBank.get_sprite("pacman", self._sprite_id)
             dying_stage += 1
-
 
     def _bounce(self, char: Optional[str]) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
@@ -149,7 +148,6 @@ class Pacman(Creature):
         self._destination = (destx, desty)
 
     def update_direction(self, char: str) -> None:
-        print(f"in line test: {self._in_linear(char)}")
         if self._bounce(char):
             return
         if (self._at_destination()

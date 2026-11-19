@@ -1,6 +1,7 @@
 from .creature import Creature
 import pygame
 import random
+from .behaviour import Behaviour
 from .cell import Cell
 from .constants import GHOSTS, SPEED, GHOST_DIRECTIONS
 from .config import GameConfig
@@ -9,9 +10,6 @@ from .pacman import Pacman
 from .spriteBank import SpriteBank
 from enum import Enum
 from typing import Optional
-from .paths import ASSETS_DIR
-from .pathfinder import Pathfinder
-from .pacman import Pacman
 
 
 class behavior(Enum):
@@ -33,7 +31,8 @@ class Ghost(Creature):
         self._sprite_id: str = f"{self.name}-{self._direction}"
         self.rect: pygame.Rect = self._create_rect()
         self.rect.center = self._cell_center(None)
-        self.sprite: pygame.Surface = SpriteBank.get_sprite("ghost", self._sprite_id)
+        self.sprite: pygame.Surface = SpriteBank.get_sprite("ghost",
+                                                            self._sprite_id)
         self._destination: tuple[int, int] = self._cell_center(None)
         self.path: list[Cell] = []
 
@@ -51,7 +50,7 @@ class Ghost(Creature):
     def get_eaten(self) -> None:
         self._sprite_id = f"eyes-{self._direction}"
         self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
-        self.rect = self.sprite.get_rect(topleft=self.start)
+        Behaviour.a_star(self.map, self.start, (self.cell_x, self.cell_y))
 
     def fear_paccie(self) -> None:
         self.pussy_mod = True
@@ -64,7 +63,7 @@ class Ghost(Creature):
     def _update_pic(self) -> None:
         self._sprite_id: str = (f"{self.name}-{self._direction}"
                                 if not self.pussy_mod
-                                else f"frightened-blue")
+                                else "frightened-blue")
 
         self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
 
@@ -161,7 +160,7 @@ class Ghost(Creature):
         cx, cy = self.rect.center
         tx, ty = self._destination
 
-        speed: int = SPEED if not self.pussy_mod else SPEED//2
+        speed: int = SPEED - 1 if not self.pussy_mod else SPEED//2
         step_x = max(-speed, min(speed, tx - cx))
         step_y = max(-speed, min(speed, ty - cy))
         self.rect.move_ip(step_x, step_y)

@@ -113,16 +113,14 @@ class Pathfinder():
                 # y = c.position[1]
                 if ghost.rect.colliderect(c.rect):
                     start_cell = c
-                    print("found start cell", c.position)
                 if pacman.rect.colliderect(c.rect):
                     target_cell = c
-                    print("target cell: ", target_cell.position)
         queue = deque([start_cell])
         came_from = {start_cell: None}
         visited = set()
         if ghost.name == "Pinky" or ghost.name == "Blinky":
 
-            while queue and target_cell not in came_from: # without " and target_cell not in came_from" it gives different behavior
+            while queue and target_cell not in came_from:  # without " and target_cell not in came_from" it gives different behavior
                 current_c = queue.popleft()
                 if current_c not in visited:
                     visited.add(current_c)
@@ -147,10 +145,8 @@ class Pathfinder():
                             queue.append(n[1])
         path = []
         step: Cell | None = target_cell
-        print(came_from)
         while step is not None:
             path.append(step)
             step = came_from[step]
         path.reverse()
         ghost.path = path[1:]
-        print(ghost.name, ghost.path)
