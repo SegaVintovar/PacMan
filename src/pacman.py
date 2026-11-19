@@ -50,7 +50,7 @@ class Pacman(Creature):
 
     def _update_pic(self) -> None:
         if (self._pixel_moved > TILE * 0.5 and
-            self._pixel_moved <= TILE * 0.75):
+           self._pixel_moved <= TILE * 0.75):
             self._opening = "closed"
         elif ((self._pixel_moved <= TILE * 0.5 and
               self._pixel_moved > TILE * 0.25) or
@@ -102,6 +102,7 @@ class Pacman(Creature):
                                if dying_stage < 10 else f"death-{dying_stage}")
             self.sprite = SpriteBank.get_sprite("pacman", self._sprite_id)
             dying_stage += 1
+        self.measure_spawn()
 
     def _bounce(self, char: Optional[str]) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)

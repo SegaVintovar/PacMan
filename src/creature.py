@@ -21,6 +21,10 @@ class Creature(ABC):
     def check(self, pacman: pygame.Rect | None) -> bool:
         pass
 
+    @abstractmethod
+    def measure_spawn(self) -> None:
+        pass
+
     # @abstractmethod
     # def get_direction_destination(self, direction: str) -> tuple[int, int]:
     #     pass

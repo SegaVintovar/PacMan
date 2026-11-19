@@ -102,15 +102,6 @@ class WinLoose(Module):
         scores.sort(key=lambda s: s["score"], reverse=True)
         print("Scores: ", scores)
         return scores
-        # lets assume that scores is a list of dicts
-        # for score in scores:
-        #     n = score["name"]
-        #     scr = score["score"]
-        #     self.scores.append(Score(
-        #             name=n,
-        #             score=scr,
-        #             font=self.font
-        #             ))
 
     def _save_score(self, score: int, name: str) -> None:
         scores = self._upload_scores()

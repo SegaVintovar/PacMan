@@ -2,8 +2,8 @@ import pygame
 import os
 from .config import GameConfig
 from .constants import (WINDOW_SIZE,
-                       HEADER_HEIGHT,
-                       GHOSTS, GHOST_DIRECTIONS)
+                        HEADER_HEIGHT,
+                        GHOSTS, GHOST_DIRECTIONS, ASSETS_DIR)
 from .game import Game
 from .menu import Menu
 from .scoreboard import ScoreBoard
@@ -34,14 +34,16 @@ class App():
         self.screen: pygame.Surface = screen
         self.background = make_gradient()
         self.menu_background = make_gradient(extra=True)
-        _sprites: str = "src/assets/sprites"
+        _sprites: str = ASSETS_DIR / "sprites"
         _files: list[str] = [f for f in os.listdir(_sprites)]
         for _f in _files:
-            _surf: pygame.Surface = pygame.image.load(f"{_sprites}/{_f}").convert_alpha()
+            _surf: pygame.Surface = pygame.image.load(
+                f"{_sprites}/{_f}").convert_alpha()
             comp: list[str] = _f.split('_')
             if "pacman" in comp:
-                _key: str = "".join([c for c in comp
-                             if 'W' in c or 'A' in c or 'S' in c or 'D' in c])
+                _key: str = "".join(
+                    [c for c in comp
+                     if 'W' in c or 'A' in c or 'S' in c or 'D' in c])
                 if _key in ("W", "A", "S", "D"):
                     name: str = os.path.splitext(f"{_key}-{comp[-1]}")[0]
                     SpriteBank.store(comp[0], name, _surf)
@@ -51,10 +53,13 @@ class App():
                     SpriteBank.store(comp[0], name, _surf)
             elif "ghost" in comp:
                 _direction: str = "".join(os.path.splitext(comp[-1])[0])
-                name: str = "".join([_name for _name in GHOSTS.keys() if GHOSTS[_name][0] in comp])
+                name: str = "".join(
+                    [_name for _name in GHOSTS.keys()
+                     if GHOSTS[_name][0] in comp])
                 if name in GHOSTS.keys():
                     SpriteBank.store(comp[0], f"{name}-{_direction}", _surf)
-                elif not name in GHOSTS.keys() and _direction in GHOST_DIRECTIONS.keys():
+                elif (name not in GHOSTS.keys() and
+                      _direction in GHOST_DIRECTIONS.keys()):
                     SpriteBank.store(comp[0], f"eyes-{_direction}", _surf)
                 else:
                     _key: str = os.path.splitext(f"frightened-{comp[-1]}")[0]
@@ -62,10 +67,6 @@ class App():
             else:
                 fruit: str = "".join(os.path.splitext(comp[-1])[0])
                 SpriteBank.store(comp[0], fruit, _surf)
-        # info = pygame.display.Info()
-        # screen = pygame.display.set_mode(
-        #     (info.current_w, info.current_h),
-        #     pygame.FULLSCREEN)
         clock = pygame.time.Clock()
         self.clock: pygame.time.Clock = clock
         self.app_state = GameState(2, True)
@@ -79,8 +80,6 @@ class App():
             config=config)
         self.pause = Pause(self.background.copy())
         self.win_loose = WinLoose(self.background.copy(), config)
-        # self.loose = Loose(self.background.copy())
-        # do i need this list? dict feels better
         self.dict_modules: dict[int, Any[Module]] = {
             1: self.game,
             2: self.menu,
@@ -111,15 +110,10 @@ class App():
             self.game = Game(config=self.config)
             self.dict_modules[1] = self.game
             self.app_state = GameState(2, True)
-            print("game reloaded")
+            print("Game reloaded")
             gs = self.app_state
         next_module = gs.next_module
         if next_module == 0:
             return False
         self.state = self.dict_modules[next_module]
         return True
-
-    # def _save_results(self) -> None:
-    #     with open(self.scoreboard_file, "w+") as file:
-    #         file.write(json.dumps(str(self.scores)))
-    #         print("File scores.json was updated")

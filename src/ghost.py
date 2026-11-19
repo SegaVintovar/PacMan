@@ -10,6 +10,8 @@ from .pacman import Pacman
 from .spriteBank import SpriteBank
 from enum import Enum
 from typing import Optional
+from .paths import ASSETS_DIR
+from .pathfinder import Pathfinder
 
 
 class behavior(Enum):
@@ -46,6 +48,14 @@ class Ghost(Creature):
         centered: tuple[int, int] = self._cell_center(None)
         destx, desty = centered
         self._destination = (destx, desty)
+
+    def measure_spawn(self) -> None:
+        coords: tuple[str, str] = GHOSTS[self.name][1]
+        _x, _y = coords
+        self.cell_x = self.config.width - 1 if not _x == 'left' else 0
+        self.cell_y = self.config.height - 1 if not _y == 'top' else 0
+        self.start = (self.cell_x, self.cell_y)
+        self.rect.center = self._cell_center(None)
 
     def get_eaten(self) -> None:
         self._sprite_id = f"eyes-{self._direction}"
@@ -102,22 +112,7 @@ class Ghost(Creature):
             return True
         return False
 
-    # def retreat_spawn_point() -> None:
-    # def check(self, pacman: Pacman | None) -> bool:
-    #     if self._at_destination():
-    #         self._pick_random_dest()
-    #         self._update_pic()
-    #     if self.rect.colliderect(pacman.rect):
-    #         if not self.pussy_mod:
-    #             pacman.die()
-    #         else:
-    #             self.get_eaten()
-    #         return True
-    #     cx, cy = self.rect.center
-    #     tx, ty = self._destination
-
-    def check(self, pacman: Pacman | None) -> bool:
-
+    def check(self, pacman: Pacman | None, extra: str = "") -> bool:
         def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
             def one(v: int) -> int:
                 if v == 0:
@@ -130,6 +125,8 @@ class Ghost(Creature):
             target = next_cell.grid_coord
             delta_x = target[0] - curr[0]
             delta_y = target[1] - curr[1]
+            if abs(one(delta_x)) == abs(one(delta_y)):
+                delta_x = 0
             return (one(delta_x), one(delta_y))
 
         directions: dict[int, str] = {
@@ -140,22 +137,29 @@ class Ghost(Creature):
         }
 
         if self._at_destination():
-            if not self.path:
-                return False
+            if not extra:
+                if not self.path:
+                    return False
 
-            next_cell = self.path.pop(0)
-            picked = pick_dir(
-                self.map.map[self.cell_y][self.cell_x], next_cell)
-            self._direction = directions[picked]
-            self._set_destination()
+                next_cell = self.path.pop(0)
+                picked = pick_dir(
+                    self.map.map[self.cell_y][self.cell_x], next_cell)
+                self._direction = directions[picked]
+                self._set_destination()
+            else:
+                self._pick_random_dest()
             self._update_pic()
-            # self._pick_random_dest()
             if self._bounce(None):
                 return False
         if self.rect.colliderect(pacman.rect):
             if not self.pussy_mod:
                 pacman.die()
+                self.measure_spawn()
+                self.path = []
+                self._destination = self._cell_center(None)
+                return True
             else:
+                pacman.points += self.config.points_per_ghost
                 self.get_eaten()
         cx, cy = self.rect.center
         tx, ty = self._destination

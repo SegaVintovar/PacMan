@@ -33,13 +33,13 @@ class Level():
         self._awake_ghosts()
         self.pathfinder: Pathfinder = Pathfinder(self.map)
 
-    def isDone(self) -> bool:
+    def isDone(self, pacman: Pacman) -> bool:
         if not self.gums:
             return True
         return False
 
     def process(self, screen: pygame.Surface, pacman: Pacman) -> bool:
-        if self.isDone():
+        if self.isDone(pacman):
             return True
         self.show_gums(screen, pacman)
         self._render_creatures(screen, pacman)
@@ -102,11 +102,13 @@ class Level():
                           pacman: Pacman
                           ) -> None:
         for ghost in self.creatures:
+            # ghost is scared or it is chasing
             if ghost._at_destination():
                 self.pathfinder.build_path(ghost, pacman)
                 ...
             # make ghost follow the path
-            ghost.check(pacman)
+            if ghost.check(pacman):
+                self._reset_ghosts()
             ghost.spawn(screen)
             if (self.pussy_timer.time_since_start() == self.pussy_time
                and ghost.pussy_mod):
@@ -122,3 +124,9 @@ class Level():
                 config=self.config
             )
             self.creatures.append(ghost)
+
+    def _reset_ghosts(self) -> None:
+        for g in self.creatures:
+            g.measure_spawn()
+            self.path = []
+            g._destination = g._cell_center(None)

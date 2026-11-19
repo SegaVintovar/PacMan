@@ -66,7 +66,6 @@ from .constants import TILE
 #         ghost.path = cells
 
 
-
 # my pathfinder - i am tired and it is not there
 class Pathfinder():
     def __init__(self, map: Map) -> None:
@@ -150,3 +149,13 @@ class Pathfinder():
             step = came_from[step]
         path.reverse()
         ghost.path = path[1:]
+
+    def run_away(self, ghost: Creature, pacman: Creature) -> None:
+        opposite_dir = {
+            (1, 0): (-1, 0),
+            (0, 1): (0, -1),
+            (-1, 0): (1, 0),
+            (0, -1): (0, 1)
+        }
+        # 1. in with dir pacman is
+        # 2. choose opposite direction
