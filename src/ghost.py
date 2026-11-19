@@ -6,6 +6,7 @@ from .constants import GHOSTS, SPEED, GHOST_DIRECTIONS
 from .config import GameConfig
 from .map import Map
 from .pacman import Pacman
+from .spriteBank import SpriteBank
 from enum import Enum
 from typing import Optional
 from .paths import ASSETS_DIR
@@ -27,9 +28,10 @@ class Ghost(Creature):
         self.eaten: bool = False
         self.pussy_mod: bool = False
         self.start: tuple[int, int]
+        self._sprite_id: str = f"{self.name}-{self._direction}"
         self.rect: pygame.Rect = self._create_rect()
         self.rect.center = self._cell_center(None)
-        self.sprite: pygame.Surface = self._upload_pic()
+        self.sprite: pygame.Surface = SpriteBank.get_sprite("ghost", self._sprite_id)
         self._destination: tuple[int, int] = self._cell_center(None)
 
     def _set_destination(self) -> None:
@@ -43,20 +45,25 @@ class Ghost(Creature):
         destx, desty = centered
         self._destination = (destx, desty)
 
+    def get_eaten(self) -> None:
+        self._sprite_id = f"eyes-{self._direction}"
+        self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
+        self.rect = self.sprite.get_rect(topleft=self.start)
+
     def fear_paccie(self) -> None:
         self.pussy_mod = True
-        self._upload_pic()
+        self._update_pic()
 
     def disrespect_paccie(self) -> None:
         self.pussy_mod = False
-        self._upload_pic()
+        self._update_pic()
 
-    def _upload_pic(self) -> pygame.Surface:
-        src: str = (f"{GHOSTS[self.name][0]}_{self._direction}.png"
-                    if not self.pussy_mod else
-                    "frightened_blue.png")
-        return pygame.image.load(
-            ASSETS_DIR / "sprites" / f"ghost_{src}").convert_alpha()
+    def _update_pic(self) -> None:
+        self._sprite_id: str = (f"{self.name}-{self._direction}"
+                                if not self.pussy_mod
+                                else f"frightened-blue")
+
+        self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
 
     def _create_rect(self) -> pygame.Rect:
         coords: tuple[str, str] = GHOSTS[self.name][1]
@@ -97,12 +104,12 @@ class Ghost(Creature):
     def check(self, pacman: Pacman | None) -> bool:
         if self._at_destination():
             self._pick_random_dest()
-            self.sprite = self._upload_pic()
+            self._update_pic()
         if self.rect.colliderect(pacman.rect):
             if not self.pussy_mod:
-                return True
+                pacman.die()
             else:
-                print(f"you no ain't catch me b*tch. pang pang >> {self.name}")
+                self.get_eaten()
             return True
         cx, cy = self.rect.center
         tx, ty = self._destination

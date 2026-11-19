@@ -3,6 +3,7 @@ from .config import GameConfig
 from .cell import Cell
 from .map import Map
 from .creature import Creature
+from .spriteBank import SpriteBank
 from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE, SPEED
 from typing import Optional
 from .paths import ASSETS_DIR
@@ -18,9 +19,9 @@ class Pacman(Creature):
         self.points: int = 0
         self._direction = 'A'
         self._next_direction: str = ''
-        self.sprite = pygame.image.load(
-            SPRITES / f"pacman_{self._direction}_wide.png",
-            ).convert_alpha()
+        self._opening: str = "wide"
+        self._sprite_id: str = f"{self._direction}-{self._opening}"
+        self.sprite = SpriteBank.get_sprite("pacman", self._sprite_id)
         coord = (TILE - SPRIE_SIZE) // 2
         self.rect: pygame.Rect = self.sprite.get_rect(topleft=(coord, coord))
         self.measure_spawn()
@@ -46,6 +47,19 @@ class Pacman(Creature):
 
     def play_sound(self) -> None:
         self.munch_sound.play()
+
+    def _update_pic(self) -> None:
+        if (self._pixel_moved > TILE * 0.5 and
+            self._pixel_moved <= TILE * 0.75):
+            self._opening = "closed"
+        elif ((self._pixel_moved <= TILE * 0.5 and
+              self._pixel_moved > TILE * 0.25) or
+                (self._pixel_moved > TILE * 0.75)):
+            self._opening = "narrow"
+        else:
+            self._opening = "wide"
+        self._sprite_id = f"{self._direction}-{self._opening}"
+        self.sprite = SpriteBank.get_sprite("pacman", self._sprite_id)
 
     def _try_next(self) -> bool:
         if self._bounce(None):
@@ -75,27 +89,20 @@ class Pacman(Creature):
         cx, cy = self.rect.center
         tx, ty = self._destination
         self._pass_pixel()
-        if (self._pixel_moved > TILE * 0.5 and
-           self._pixel_moved <= TILE * 0.75):
-            self.sprite = pygame.image.load(
-                SPRITES / f"pacman_{self._direction}_closed.png"
-                ).convert_alpha()
-        elif ((self._pixel_moved <= TILE * 0.5 and
-              self._pixel_moved > TILE * 0.25) or
-              (self._pixel_moved > TILE * 0.75)):
-            self.sprite = pygame.image.load(
-                SPRITES / f"pacman_{self._direction}_narrow.png"
-                ).convert_alpha()
-        else:
-            self.sprite = pygame.image.load(
-                SPRITES / f"pacman_{self._direction}_wide.png"
-                ).convert_alpha()
+        self._update_pic()
         step_x = max(-2, min(2, tx - cx))
         step_y = max(-2, min(2, ty - cy))
         self.rect.move_ip(step_x, step_y)
 
     def die(self) -> None:
         self.lives -= 1
+        dying_stage: int = 0
+        while not dying_stage == 11:
+            self._sprite_id = (f"death-0{dying_stage}"
+                              if dying_stage < 10 else f"death-{dying_stage}")
+            self.sprite = SpriteBank.get_sprite("pacman", self._sprite_id)
+            dying_stage += 1
+
 
     def _bounce(self, char: Optional[str]) -> bool:
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
@@ -152,6 +159,4 @@ class Pacman(Creature):
             self._change_direction()
         else:
             self._next_direction = char
-        self.sprite = pygame.image.load(
-            SPRITES / f"pacman_{self._direction}_wide.png"
-        ).convert_alpha()
+        self._update_pic()
