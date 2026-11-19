@@ -120,17 +120,31 @@ class Pathfinder():
         queue = deque([start_cell])
         came_from = {start_cell: None}
         visited = set()
-        while queue and target_cell not in came_from: # without " and target_cell not in came_from" it gives different behavior
-            current_c = queue.popleft()
-            if current_c not in visited:
-                visited.add(current_c)
-                neighbours = get_neighbours(current_c, self.map.map)
-                for n in neighbours:
-                    if n[1] not in visited:
-                        came_from[n[1]] = current_c
-                        if n[1] == target_cell:
-                            break
-                        queue.append(n[1])
+        if ghost.name == "Pinky" or ghost.name == "Blinky":
+
+            while queue and target_cell not in came_from: # without " and target_cell not in came_from" it gives different behavior
+                current_c = queue.popleft()
+                if current_c not in visited:
+                    visited.add(current_c)
+                    neighbours = get_neighbours(current_c, self.map.map)
+                    for n in neighbours:
+                        if n[1] not in visited:
+                            came_from[n[1]] = current_c
+                            if n[1] == target_cell:
+                                break
+                            queue.append(n[1])
+        else:
+            while queue:  # without " and target_cell not in came_from" it gives different behavior
+                current_c = queue.popleft()
+                if current_c not in visited:
+                    visited.add(current_c)
+                    neighbours = get_neighbours(current_c, self.map.map)
+                    for n in neighbours:
+                        if n[1] not in visited:
+                            came_from[n[1]] = current_c
+                            if n[1] == target_cell:
+                                break
+                            queue.append(n[1])
         path = []
         step: Cell | None = target_cell
         print(came_from)
