@@ -1,16 +1,15 @@
 import pygame
-from pydantic_extra_types.coordinate import Coordinate
-# from .cell import Cell
 from .constants import TILE
 
 
 class Gum():
-    def __init__(self, position: Coordinate, t: str = "") -> None:
+    def __init__(self, position: tuple[int, int], t: str = "") -> None:
         self.position = position
         self.type: str = t if not t else "super"
-        self.size: Coordinate = (5, 5) if not self.type else (10, 10)
+        self.size: tuple[int, int] = (5, 5) if not self.type else (10, 10)
         self.image: pygame.Surface = pygame.Surface(self.size)
-        self.image.fill("white")
+        color = "yellow" if self.type else "white"
+        self.image.fill(color)
         self.hovered: bool = False
         self.rect = pygame.Rect(
             (

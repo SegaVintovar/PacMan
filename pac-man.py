@@ -1,56 +1,46 @@
-from src import Game, GameConfig
+from src.app import App
 import pygame
+import os
 import sys
-import json
-from pydantic import ValidationError
+from src.spriteBank import SpriteBank
+from src.config import GameConfig
+from src.constants import GHOSTS, GHOST_DIRECTIONS
+from src.paths import PROJECT_DIR
+
+default_config = {
+    "highscore_filename": PROJECT_DIR / "scores.json",
+    "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+    "lives": "3",
+    "pacgum": "10",
+    "points_per_pacgum": "10",
+    "points_per_super_pacgum": "50",
+    "points_per_ghost": "200",
+    "width": "12",
+    "height": "12",
+    "seed": "42",
+    "level_max_time": "60"
+}
 
 
-def validate_config(setting: int) -> GameConfig:
-    if setting == 1:
-        if not len(sys.argv) == 2:
-            # print(sys.argv)
-            raise EOFError("Only one argument is required")
-        elif not sys.argv[1].endswith(".json"):
-            raise TypeError("'.json' file format is expected")
-        # here we should try to load config from argument of the pac-man.py,
-        # but in case it is not possible we should run the game with default one
-        # this is according to the subject!
-        # NOT DONE YET!!!!
-        try:
-            with open(sys.argv[1], mode="r") as file:
-                cfg = json.loads(file.read())
-            our_config = GameConfig(**cfg)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Could not find file {sys.argv[1]}")
-        except PermissionError:
-            raise PermissionError(f"Could not open the file {sys.argv[1]}")
-        except json.JSONDecodeError:
-            raise json.JSONDecodeError("Broken JSON")
-        except ValidationError:
-            raise ValidationError("Could not validate the config")
-        else:
-            return our_config
-    else:
-        with open("storage/config.json", mode="r") as file:
-            cfg = json.loads(file.read())
-        return GameConfig(**cfg)
-
-
-def main():
+def main() -> None:
     try:
-        our_config: GameConfig = validate_config(1)
+        if len(sys.argv) != 2:
+            raise Exception(
+                "The game has to be launched as: \
+                    $python pac-man.py config.json" +
+                "\n Probably the argument is missing")
+        if not sys.argv[1].endswith(".json"):
+            raise Exception("The config file has to be .json format")
+        config = GameConfig(sys.argv[1])
+        print(f"{sys.argv[1]} is validated!")
     except Exception as e:
-        print(f"Could start the PacMan with given config {sys.argv[1]}")
-        print(f"The error was: {str(e)}")
-        print("\n\nStarting the Game with default config\n\n")
-        our_config = validate_config()
-
-    print("config validated")
-    mygame = Game(our_config)
-    # screen = mygame.screen
-    running = True
+        print("Could not validate given config file", str(e))
+        print("Launching the game with default config")
+        config = GameConfig()
+    mygame = App(config)
+    running: bool = True
     while running:
-        mygame.process(pygame.event.get())
+        running = mygame.process(pygame.event.get())
         mygame.clock.tick(60)
         pygame.display.update()
     pygame.quit()

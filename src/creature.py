@@ -1,24 +1,29 @@
-from .map import Map
+# from .map import Map
 from pydantic_extra_types.coordinate import Coordinate
-from abc import ABC
+from abc import ABC, abstractmethod
 from .constants import TILE
-from pygame import Surface
+import pygame
+from typing import Optional
 
 
 class Creature(ABC):
     def __init__(self, name: str, position: Coordinate) -> None:
         self.name = name
-        self.postion = position
+        self.position = position
         self.cell_x: int = -1
         self.cell_y: int = -1
-        self.picture: Surface | None = None
+        self.sprite: pygame.Surface
+        self.rect: pygame.Rect
         self._destination: tuple[int, int] | None = None
+        self._direction: str | None = None
 
-    def move(self, map: Map) -> None:
+    @abstractmethod
+    def check(self, pacman: pygame.Rect | None) -> bool:
         pass
 
-    def get_direction_destination(direction: str) -> tuple[int, int]:
-        pass
+    # @abstractmethod
+    # def get_direction_destination(self, direction: str) -> tuple[int, int]:
+    #     pass
 
     def _cell_center(self, coords: tuple[int, int] | None) -> tuple[int, int]:
         if coords is None:
@@ -27,15 +32,23 @@ class Creature(ABC):
         x, y = coords
         return x * TILE + TILE // 2, y * TILE + TILE // 2
 
-    def _out_bound(self, map: Map) -> bool:
+    @abstractmethod
+    def _bounce(self, char: Optional[str]) -> bool:
         pass
 
-    def _switchable(self, map: Map) -> bool:
-        pass
+    # @abstractmethod
+    # def _switchable(self, map: Map) -> bool:
+    #     pass
 
-    def spawn(self, screen: Surface) -> None:
+    def spawn(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite, self.rect)
 
-# tmp = Surface((5, 5))
-# obj = draw.rect(tmp, (137, 137, 137), (4, 4))
-# obj.move()
+    @abstractmethod
+    def _set_destination(self) -> None:
+        pass
+
+    # src/creature.py:45: error: "Creature" has no attribute "rect"
+    # [attr-defined]
+    def _at_destination(self) -> bool:
+        answer: bool = self.rect.center == self._destination
+        return answer

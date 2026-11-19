@@ -1,4 +1,9 @@
-WINDOW_SIZE = (700, 600)
+from .paths import ASSETS_DIR
+
+# info = pygame.display.Info()
+# WINDOW_SIZE = (info.current_w, info.current_h)
+SPEED: int = 3
+WINDOW_SIZE = (1400, 1200)
 
 TILE = 64  # cell size
 
@@ -13,24 +18,30 @@ KEY_DIRECTIONS: dict[str, tuple[int, int]] = {
     'A': (-1, 0)
 }
 
-GHOSTS: dict[str, tuple[str, tuple[int, int]]] = {
-    "Clyde": ("orange", ()),
-    "Inky": ("cyan", ()),
-    "Blinky": ("red", ()),
-    "Pinky": ("pink", ())
+GHOST_DIRECTIONS: dict[str, tuple[int, int]] = {
+    'up': (0, -1),
+    'right': (1, 0),
+    'down': (0, 1),
+    'left': (-1, 0)
 }
 
-SPEED: int = 3
+GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {
+    "Clyde": ("orange", ('right', 'top')),
+    "Inky": ("cyan", ('left', 'bottom')),
+    "Blinky": ("red", ('left', 'top')),
+    "Pinky": ("pink", ('right', 'bottom'))
+}
 
-FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
-FONT_SIZE = 20
+# FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
+FONT_SIZE = 30
 # colors for the menu
 PINK = (255, 80, 180)
 CYAN = (0, 230, 255)
 WHITE = (235, 235, 235)
 BLACK = (0, 0, 0)
+SPEED
 
-FONT_PATH = "src/assets/fonts/Bungee-Regular.ttf"
+FONT_PATH = ASSETS_DIR / "fonts" / "Bungee-Regular.ttf"
 
 MAX_SCORES = 10
 

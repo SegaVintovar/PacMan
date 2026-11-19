@@ -1,24 +1,22 @@
 
 from .cell import Cell
 from .config import GameConfig
-from . import MazeGenerator
+from maze_gen.mazegenerator import MazeGenerator
+from .constants import GHOST_DIRECTIONS, TILE
 import pygame
-
-TILE = 64
 
 
 class Map:
-    def __init__(self, config: GameConfig) -> None:
+    def __init__(self, config: GameConfig, seed: int) -> None:
         # error handling now or do try init Map
         self.config = config
-        self.pacgum: int = int(self.config.pacgum)
+        # self.pacgum: int = int(self.config.pacgum)
         self.width: int = int(self.config.width)
         self.height: int = int(self.config.height)
-        self.seed: int = int(self.config.seed)
-
+        self.seed: int = seed
         self._grid: list[list[int]] = []
         self.map: list[list[Cell]] = self._create_map()
-        self.map_image: pygame.Surface = self._build_rect_image()
+        self.map_image: pygame.Surface = self._build_image()
         self.tiles: list[pygame.Surface] = []
 
     def _create_map(self) -> list[list[Cell]]:
@@ -36,13 +34,14 @@ class Map:
                  bool((c >> 1) & 1),      	 # East
                  bool((c >> 2) & 1),     	 # South
                  bool((c >> 3) & 1),     	 # West
-                 ((x * TILE), (y * TILE)),   # position
-                 c                       	 # value
+                 ((x * TILE), (y * TILE)),   # position px
+                 c,                       	 # value
+                 (x, y),                     # position in the grid
                 ))
             iMap.append(tmp)
         return iMap
 
-    def _build_rect_image(self) -> pygame.Surface:
+    def _build_image(self) -> pygame.Surface:
         screen = pygame.Surface(size=(
             (self.width * TILE), (self.height * TILE)))
         for row in self.map:
@@ -51,21 +50,43 @@ class Map:
         return screen
 
     # can be used to build an image with .png pictures
-    def _build_image(self) -> pygame.Surface:
-        tiles = []
-        for i in range(16):
-            try:
-                image = pygame.image.load(
-                    f"src/assets/cells/tile_{i}.png").convert()
-            except Exception as e:
-                raise e
-            tiles.append(image)
-        screen = pygame.Surface(size=(
-            (self.width * TILE), (self.height * TILE)))
-        for row in self.map:
-            for c in row:
-                screen.blit(tiles[c.value], c.position)
-        return screen
+    # def _build_image(self) -> pygame.Surface:
+    #     tiles = []
+    #     for i in range(16):
+    #         try:
+    #             image = pygame.image.load(
+    #                 f"src/assets/cells/tile_{i}.png").convert()
+    #         except Exception as e:
+    #             raise e
+    #         tiles.append(image)
+    #     screen = pygame.Surface(size=(
+    #         (self.width * TILE), (self.height * TILE)))
+    #     for row in self.map:
+    #         for c in row:
+    #             screen.blit(tiles[c.value], c.position)
+    #     return screen
 
-    def get_cel_by_coords(self, x: int, y: int) -> Cell | None:
-        return self.map[y][x] or None
+    # def isCell(self, coord: tuple[])
+
+    def get_cel_by_coords(self, x: int, y: int) -> Cell:
+        return self.map[y][x]
+
+    def off_grid(self, x: int, y: int) -> bool:
+        return x < 0 or x >= self.width or y < 0 or y >= self.height
+
+    def is_walled(self, x: int, y: int, direction: str) -> bool:
+        if not self.off_grid(x, y):
+            if direction in GHOST_DIRECTIONS.keys():
+                to_x, to_y = GHOST_DIRECTIONS[direction]
+                if not self.off_grid(x + to_x, y + to_y):
+                    cell: Cell = self.get_cel_by_coords(x + to_x, y + to_y)
+                    match direction:
+                        case "up":
+                            return cell.n
+                        case "right":
+                            return cell.e
+                        case "down":
+                            return cell.s
+                        case "left":
+                            return cell.w
+        return True

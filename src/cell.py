@@ -1,6 +1,6 @@
 import pygame
-from .constants import PINK, TILE, WALL_COLOR
-from .gum import Gum
+from .constants import TILE, WALL_COLOR
+# from .gum import Gum
 
 
 class Cell():
@@ -21,29 +21,35 @@ class Cell():
     def __init__(
             self,
             n: bool, e: bool, s: bool, w: bool, position: tuple[int, int],
-            value: int, special: str = ""
+            value: int, coord: tuple[int, int], special: str = ""
             ) -> None:
         self.n = n
         self.e = e
         self.s = s
         self.w = w
         self.special = special
+        self.grid_coord = coord
         self.position = position
         self.value = value
-        self.surface: pygame.Surface | None = None
-        self.gum: Gum | None
-        self.set_surface()
+        self.surface: pygame.Surface
+        self.rect: pygame.Rect
+        # self.gum: Gum | None
+        self._set_surface()
+        self._set_rect()
         self.render_walls()
         # self.gum: Gum | None = None
 
-    def set_surface(self) -> None:
+    def _set_surface(self) -> None:
         self.surface = pygame.Surface((TILE, TILE))
+
+    def _set_rect(self) -> None:
+        self.rect = pygame.Rect(self.position, (TILE, TILE))
 
     def render_walls(self) -> None:
         # cell_base = pygame.Surface(size=(TILE, TILE))
         # closed Cell
         if self.value == 15:
-            self.surface.fill(PINK)
+            self.surface.fill(WALL_COLOR)
         walls = []
         # cell_base.set_alpha()
         if self.n:
@@ -57,30 +63,6 @@ class Cell():
         for w in walls:
             pygame.draw.rect(self.surface, WALL_COLOR, w)
 
-    def creature_destination(self) -> tuple[int, int]:
-        x, y = self.position
-        return (x + TILE // 2, y + TILE // 2)
-
-# pygame.Rect.collidelist()
-
-
-if __name__ == "__main__":
-    # testing rendering of the single Cell
-    pygame.init()
-    # window = pygame.display.set_mode(WINDOW_SIZE)
-    screen: pygame.Surface = pygame.Surface((TILE, TILE))
-    # pygame.display.set_caption("Hello Pygame for pac-man")
-
-    cell = Cell(1, 1, 1, 1, (0, 0), 15)
-
-    screen.blit(cell.surface, dest=(0, 0))
-    # window.blit(screen, dest=(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2))
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        pygame.display.update()
-
-    pygame.quit()
+    # def creature_destination(self) -> tuple[int, int]:
+    #     x, y = self.position
+    #     return (x + TILE // 2, y + TILE // 2)
