@@ -1,9 +1,8 @@
 from .creature import Creature
 import pygame
 import random
-from .behaviour import Behaviour
 from .cell import Cell
-from .constants import GHOSTS, SPEED, GHOST_DIRECTIONS
+from .constants import GHOSTS, SPEEDS, GHOST_DIRECTIONS
 from .config import GameConfig
 from .map import Map
 from .pacman import Pacman
@@ -29,7 +28,6 @@ class Ghost(Creature):
         self._direction: str = "left"
         self.eaten: bool = False
         self.pussy_mod: bool = False
-        self.start: tuple[int, int]
         self._sprite_id: str = f"{self.name}-{self._direction}"
         self.rect: pygame.Rect = self._create_rect()
         self.rect.center = self._cell_center(None)
@@ -57,10 +55,11 @@ class Ghost(Creature):
         self.start = (self.cell_x, self.cell_y)
         self.rect.center = self._cell_center(None)
 
-    def get_eaten(self) -> None:
+    def get_eaten(self, _finder: Pathfinder) -> None:
+        self.eaten = True
         self._sprite_id = f"eyes-{self._direction}"
         self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
-        Behaviour.a_star(self.map, self.start, (self.cell_x, self.cell_y))
+        _finder.build_path(self, None, True)
 
     def fear_paccie(self) -> None:
         self.pussy_mod = True
@@ -71,9 +70,18 @@ class Ghost(Creature):
         self._update_pic()
 
     def _update_pic(self) -> None:
-        self._sprite_id: str = (f"{self.name}-{self._direction}"
-                                if not self.pussy_mod
-                                else "frightened-blue")
+        start_x, start_y = self.start
+        if self.cell_x == start_x and self.cell_y == start_y:
+            self.rect.center = self._cell_center(self.start)
+            self.eaten = False
+            self.pussy_mod = False
+            self.path = []
+        if self.eaten:
+            self._sprite_id = f"eyes-{self._direction}"
+        else:
+            self._sprite_id = (f"{self.name}-{self._direction}"
+                               if not self.pussy_mod
+                               else "frightened-blue")
 
         self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
 
@@ -112,7 +120,8 @@ class Ghost(Creature):
             return True
         return False
 
-    def check(self, pacman: Pacman | None, extra: str = "") -> bool:
+    def check(self, pacman: Pacman | None,
+              _finder: Pathfinder | None, extra: str = "") -> bool:
         def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
             def one(v: int) -> int:
                 if v == 0:
@@ -160,11 +169,14 @@ class Ghost(Creature):
                 return True
             else:
                 pacman.points += self.config.points_per_ghost
-                self.get_eaten()
+                self.get_eaten(_finder)
         cx, cy = self.rect.center
         tx, ty = self._destination
 
-        speed: int = SPEED - 1 if not self.pussy_mod else SPEED//2
+        speed: float = (SPEEDS["ghost"]
+                        if not self.pussy_mod else SPEEDS["ghost_coward"])
+        if self.eaten:
+            speed = SPEEDS["ghost_eaten"]
         step_x = max(-speed, min(speed, tx - cx))
         step_y = max(-speed, min(speed, ty - cy))
         self.rect.move_ip(step_x, step_y)

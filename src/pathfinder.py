@@ -71,7 +71,8 @@ class Pathfinder():
     def __init__(self, map: Map) -> None:
         self.map: Map = map
 
-    def build_path(self, ghost: Creature, pacman: Creature) -> None:
+    def build_path(self, ghost: Creature,
+                   pacman: Creature, retreat: bool = False) -> None:
         def get_neighbours(
                 cell: Cell, map: list[list[Cell]]
                 ) -> list[tuple[tuple[int, int], Cell]]:
@@ -106,19 +107,21 @@ class Pathfinder():
             return result
 
         # now we need to start getting neighbours in general dir
-        for row in self.map.map:
-            for c in row:
-                # x = c.position[0]
-                # y = c.position[1]
-                if ghost.rect.colliderect(c.rect):
-                    start_cell = c
-                if pacman.rect.colliderect(c.rect):
-                    target_cell = c
+        if retreat:
+            start_x, start_y = ghost.start
+            start_cell = self.map.get_cel_by_coords(ghost.cell_x, ghost.cell_y)
+            target_cell = self.map.get_cel_by_coords(start_x, start_y)
+        else:
+            for row in self.map.map:
+                for c in row:
+                    if ghost.rect.colliderect(c.rect):
+                        start_cell = c
+                    if pacman.rect.colliderect(c.rect):
+                        target_cell = c
         queue = deque([start_cell])
         came_from = {start_cell: None}
         visited = set()
-        if ghost.name == "Pinky" or ghost.name == "Blinky":
-
+        if ghost.name == "Pinky" or ghost.name == "Blinky" or retreat:
             while queue and target_cell not in came_from:  # without " and target_cell not in came_from" it gives different behavior
                 current_c = queue.popleft()
                 if current_c not in visited:
@@ -142,6 +145,9 @@ class Pathfinder():
                             if n[1] == target_cell:
                                 break
                             queue.append(n[1])
+        if target_cell not in came_from:
+            ghost.path = []
+            return
         path = []
         step: Cell | None = target_cell
         while step is not None:

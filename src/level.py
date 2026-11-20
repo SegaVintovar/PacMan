@@ -104,10 +104,14 @@ class Level():
         for ghost in self.creatures:
             # ghost is scared or it is chasing
             if ghost._at_destination():
-                self.pathfinder.build_path(ghost, pacman)
+                if not ghost.eaten:
+                    self.pathfinder.build_path(ghost, pacman)
+                else:
+                    self.pathfinder.build_path(ghost, pacman, True)
                 ...
             # make ghost follow the path
-            if ghost.check(pacman):
+            if ghost.check(pacman, _finder=self.pathfinder):
+                ghost.disrespect_paccie()
                 self._reset_ghosts()
             ghost.spawn(screen)
             if (self.pussy_timer.time_since_start() == self.pussy_time
@@ -127,6 +131,7 @@ class Level():
 
     def _reset_ghosts(self) -> None:
         for g in self.creatures:
+            g.disrespect_paccie()
             g.measure_spawn()
             self.path = []
             g._destination = g._cell_center(None)

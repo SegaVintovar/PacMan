@@ -3,6 +3,12 @@ from .paths import ASSETS_DIR
 # info = pygame.display.Info()
 # WINDOW_SIZE = (info.current_w, info.current_h)
 SPEED: int = 3
+SPEEDS: dict[str, float] = {
+    "pacman": 2.6,
+    "ghost": 2.9,
+    "ghost_coward": 1.5,
+    "ghost_eaten": 5.5
+}
 WINDOW_SIZE = (1400, 1200)
 
 TILE = 64  # cell size

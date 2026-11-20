@@ -4,7 +4,7 @@ from .cell import Cell
 from .map import Map
 from .creature import Creature
 from .spriteBank import SpriteBank
-from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE, SPEED
+from .constants import TILE, KEY_DIRECTIONS, SPRIE_SIZE, SPEEDS
 from typing import Optional
 from .paths import ASSETS_DIR
 
@@ -28,7 +28,9 @@ class Pacman(Creature):
         self._destination: tuple[int, int] = self._cell_center(None)
         self._origin: tuple[int, int] = self.rect.center
         self._pixel_moved: int = 0
-        self.munch_sound: pygame.mixer.Sound = pygame.mixer.Sound(ASSETS_DIR / "sounds" / "pacman_chomp.wav")
+        self.munch_sound: pygame.mixer.Sound = pygame.mixer.Sound(ASSETS_DIR /
+                                                                  "sounds" /
+                                                                  "pacman_chomp.wav")
 
     """Creating an escapable point for pac-man.
        in case of an odd amount it is a right spawn
@@ -38,6 +40,7 @@ class Pacman(Creature):
         row_mid: int = int(self.map.width / 2)
         col_mid: int = int(self.map.height / 2)
         self.cell_x, self.cell_y = col_mid, row_mid
+        self.start = (col_mid, row_mid)
         self.rect.center = self._cell_center(None)
         self._destination = self.rect.center
 
@@ -75,9 +78,9 @@ class Pacman(Creature):
 
     def _pass_pixel(self) -> None:
         if self._pixel_moved >= TILE:
-            self._pixel_moved = SPEED
+            self._pixel_moved = SPEEDS["pacman"]
         else:
-            self._pixel_moved += SPEED
+            self._pixel_moved += SPEEDS["pacman"]
 
     def check(self, pacman: "Pacman" = None) -> bool:
         if self._at_destination():
@@ -90,9 +93,19 @@ class Pacman(Creature):
         tx, ty = self._destination
         self._pass_pixel()
         self._update_pic()
-        step_x = max(-2, min(2, tx - cx))
+        step_x = max(-SPEEDS["pacman"], min(SPEEDS["pacman"], tx - cx))
         step_y = max(-2, min(2, ty - cy))
         self.rect.move_ip(step_x, step_y)
+
+    def _next_possible(self) -> bool:
+        if self._next_direction is None:
+            return False
+        col, row = KEY_DIRECTIONS[self._next_direction]
+        cx, cy = self.cell_x, self.cell_x
+        current_cell: Cell = self.map.get_cel_by_coords(cx, cy)
+        cell: Cell = self.map.get_cel_by_coords((cx + col, cy + row))
+        _rect: pygame.Rect = cell.rect
+
 
     def die(self) -> None:
         self.lives -= 1

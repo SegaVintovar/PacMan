@@ -13,6 +13,7 @@ class Creature(ABC):
         self.cell_x: int = -1
         self.cell_y: int = -1
         self.sprite: pygame.Surface
+        self.start: tuple[int, int]
         self.rect: pygame.Rect
         self._destination: tuple[int, int] | None = None
         self._direction: str | None = None
