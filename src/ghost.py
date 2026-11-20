@@ -62,6 +62,7 @@ class Ghost(Creature):
 
     def fear_paccie(self) -> None:
         self.pussy_mod = True
+        # save the time when the ghost is not scared
         self._update_pic()
 
     def disrespect_paccie(self) -> None:
@@ -149,7 +150,7 @@ class Ghost(Creature):
             self._update_pic()
             if self._bounce(None):
                 return False
-        if self.rect.colliderect(pacman.rect):
+        if self.rect.colliderect(pacman.rect) and not pacman.invincible:
             if not self.pussy_mod:
                 pacman.die()
                 self.measure_spawn()

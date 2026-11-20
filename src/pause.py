@@ -45,8 +45,7 @@ class Pause(Module):
                 if event.key == pygame.K_s:
                     self.selected_button += 1
                 if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
-                    gs.next_module = 0
-                    gs.running = False
+                    gs.gs_update(2)
                     return gs
                 if event.key == pygame.K_RETURN:
                     selected_button = self.buttons[

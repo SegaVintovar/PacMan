@@ -1,7 +1,7 @@
 from .config import GameConfig
 from .pacman import Pacman
 import pygame
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, FONT_PATH, ASSETS_DIR
+from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, FONT_PATH, ASSETS_DIR, CYAN
 from .level import Level
 from .game_state import GameState
 import random
@@ -57,7 +57,7 @@ class Footer():
             FONT_PATH, FONT_SIZE)
 
     # what if here we will take a time to display as an argument
-    def _current_lives_n_timer(self, time: int, lives: int) -> None:
+    def _current_lives_n_timer(self, time: int, lives: int, invincible: bool) -> None:
         self.image.blit(
             self.font.render(f"Lives left: {lives}", True, (255, 0, 0)
                              ),
@@ -72,11 +72,19 @@ class Footer():
                 ),
             dest=(int(WINDOW_SIZE[0]) - 300, 30)
         )
+        if invincible:
+            self.image.blit(
+                self.font.render(
+                    "Invincible",
+                    True, CYAN
+                ),
+                dest=((WINDOW_SIZE[0]//2 - FONT_SIZE * 5), 30)
+            )
 
     def show_me(self,
                 screen: pygame.Surface, time: int, pacman: Pacman) -> None:
         self.image.fill("black")
-        self._current_lives_n_timer(time, pacman.lives)
+        self._current_lives_n_timer(time, pacman.lives, pacman.invincible)
         screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
 
 
@@ -146,6 +154,8 @@ class Game(Module):
                     self.pacman.update_direction(ch.upper())
                 elif ch == "1":
                     self.pacman.lives += 1
+                elif ch == "2":
+                    self.pacman.invincible = not self.pacman.invincible
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
                         event.key == pygame.K_ESCAPE):

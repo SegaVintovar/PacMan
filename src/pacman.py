@@ -29,6 +29,7 @@ class Pacman(Creature):
         self._origin: tuple[int, int] = self.rect.center
         self._pixel_moved: int = 0
         self.munch_sound: pygame.mixer.Sound = pygame.mixer.Sound(ASSETS_DIR / "sounds" / "pacman_chomp.wav")
+        self.invincible = False
 
     """Creating an escapable point for pac-man.
        in case of an odd amount it is a right spawn
