@@ -156,6 +156,12 @@ class Game(Module):
                     self.pacman.lives += 1
                 elif ch == "2":
                     self.pacman.invincible = not self.pacman.invincible
+                elif ch == "3":
+                    self.current_lvl_id += 1
+                    if self.current_lvl_id >= len(self.levels):
+                        game_state.gs_update(6, self.pacman.points, True)
+                        return game_state
+                    self.current_lvl = self.levels[self.current_lvl_id]
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
                         event.key == pygame.K_ESCAPE):

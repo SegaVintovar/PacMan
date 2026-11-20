@@ -111,37 +111,37 @@ class Ghost(Creature):
             return True
         return False
 
-    def check(self, pacman: Pacman | None, extra: str = "") -> bool:
-        def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
-            def one(v: int) -> int:
-                if v == 0:
-                    return 0
-                elif v > 0:
-                    return 1
-                else:
-                    return -1
-            curr = cell.grid_coord
-            target = next_cell.grid_coord
-            delta_x = target[0] - curr[0]
-            delta_y = target[1] - curr[1]
-            if abs(one(delta_x)) == abs(one(delta_y)):
-                delta_x = 0
-            return (one(delta_x), one(delta_y))
+    @staticmethod
+    def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
+        def one(v: int) -> int:
+            if v == 0:
+                return 0
+            elif v > 0:
+                return 1
+            else:
+                return -1
+        curr = cell.grid_coord
+        target = next_cell.grid_coord
+        delta_x = target[0] - curr[0]
+        delta_y = target[1] - curr[1]
+        if abs(one(delta_x)) == abs(one(delta_y)):
+            delta_x = 0
+        return (one(delta_x), one(delta_y))
 
+    def check(self, pacman: Pacman | None, extra: str = "") -> bool:
         directions: dict[int, str] = {
             (0, -1): "up",
             (1, 0): "right",
             (0, 1): "down",
             (-1, 0): "left"
         }
-
         if self._at_destination():
             if not extra:
                 if not self.path:
                     return False
 
                 next_cell = self.path.pop(0)
-                picked = pick_dir(
+                picked = self.pick_dir(
                     self.map.map[self.cell_y][self.cell_x], next_cell)
                 self._direction = directions[picked]
                 self._set_destination()

@@ -17,8 +17,8 @@ class GameState():
     def gs_update(self,
                   next_module: int,
                   extra: int = 0,
-                  win: bool = False,
-                  player_name: str = "") -> None:
+                  win: bool = False
+                  ) -> None:
         if next_module == 0:
             self.running = False
         # cond when we need to init the game again
@@ -27,16 +27,11 @@ class GameState():
                                  self.next_module == 6):
             print("Reload the game!")
             self.reload = True
-        # if next_module == 6 and self.next_module == 1 and extra:
-
-        # if next_module == 3 and self.next_module != 3:
-        #     # we need to upload scores
         self.previous = self.next_module
         self.next_module = next_module
+        self.win = win
         if extra:
             self.extra = extra
-            if win:
-                self.win = True
 
     def quit(self) -> None:
         self.running = False

@@ -71,40 +71,43 @@ class Pathfinder():
     def __init__(self, map: Map) -> None:
         self.map: Map = map
 
-    def build_path(self, ghost: Creature, pacman: Creature) -> None:
-        def get_neighbours(
-                cell: Cell, map: list[list[Cell]]
-                ) -> list[tuple[tuple[int, int], Cell]]:
+    def get_neighbours(self, cell: Cell
+                       ) -> list[tuple[tuple[int, int], Cell]]:
+        """
+        Returns a list of neighbours where we can go.
+        """
+        def wall_opened(direction: tuple[int, int], cell: Cell) -> bool:
+            if direction[0] and direction[0] > 0:
+                return not cell.e
+            if direction[0] and direction[0] < 0:
+                return not cell.w
+            if direction[1] and direction[1] > 0:
+                return not cell.s
+            if direction[1] and direction[1] < 0:
+                return not cell.n
+            return False
 
-            def wall_opened(direction: tuple[int, int], cell: Cell) -> bool:
-                if direction[0] and direction[0] > 0:
-                    return not cell.e
-                if direction[0] and direction[0] < 0:
-                    return not cell.w
-                if direction[1] and direction[1] > 0:
-                    return not cell.s
-                if direction[1] and direction[1] < 0:
-                    return not cell.n
-                return False
+        directions = [
+            (1, 0), (0, 1), (-1, 0), (0, -1)
+        ]
+        pos = (cell.position[0] // TILE, cell.position[1] // TILE)
+        result = []
+        for d in directions:
+            # if not off grid
+            if (pos[0] + d[0] < 0) or (pos[1] + d[1] < 0) or \
+                (pos[0] + d[0] >= len(self.map.map[0])) or \
+                    (pos[1] + d[1] >= len(self.map.map)):
+                continue
+            #
+            if wall_opened(d, cell):
+                new_pos = (pos[0] + d[0],
+                           pos[1] + d[1])
+                result.append((d, self.map.map[new_pos[1]][new_pos[0]]))
+        return result
 
-            directions = [
-                (1, 0), (0, 1), (-1, 0), (0, -1)
-            ]
-            pos = (cell.position[0] // TILE, cell.position[1] // TILE)
-            result = []
-            for d in directions:
-                # if not off grid
-                if (pos[0] + d[0] < 0) or (pos[1] + d[1] < 0) or \
-                    (pos[0] + d[0] >= len(map[0])) or \
-                        (pos[1] + d[1] >= len(map)):
-                    continue
-                #
-                if wall_opened(d, cell):
-                    new_pos = (pos[0] + d[0],
-                               pos[1] + d[1])
-                    result.append((d, map[new_pos[1]][new_pos[0]]))
-            return result
-
+    def build_path(self,
+                   ghost: Creature, pacman: Creature
+                   ) -> None:
         # now we need to start getting neighbours in general dir
         for row in self.map.map:
             for c in row:
@@ -113,17 +116,19 @@ class Pathfinder():
                 if ghost.rect.colliderect(c.rect):
                     start_cell = c
                 if pacman.rect.colliderect(c.rect):
-                    target_cell = c
+                    # if not ghost.pussy_mod:
+                    pacman_cell = c
+        target_cell = pacman_cell if not ghost.pussy_mod else self.run_away(
+            start_cell, pacman_cell)
         queue = deque([start_cell])
         came_from = {start_cell: None}
         visited = set()
         if ghost.name == "Pinky" or ghost.name == "Blinky":
-
             while queue and target_cell not in came_from: # without " and target_cell not in came_from" it gives different behavior
                 current_c = queue.popleft()
                 if current_c not in visited:
                     visited.add(current_c)
-                    neighbours = get_neighbours(current_c, self.map.map)
+                    neighbours = self.get_neighbours(current_c)
                     for n in neighbours:
                         if n[1] not in visited:
                             came_from[n[1]] = current_c
@@ -135,7 +140,7 @@ class Pathfinder():
                 current_c = queue.popleft()
                 if current_c not in visited:
                     visited.add(current_c)
-                    neighbours = get_neighbours(current_c, self.map.map)
+                    neighbours = self.get_neighbours(current_c)
                     for n in neighbours:
                         if n[1] not in visited:
                             came_from[n[1]] = current_c
@@ -150,13 +155,37 @@ class Pathfinder():
         path.reverse()
         ghost.path = path[1:]
 
-    def run_away(self, ghost: Creature, pacman: Creature) -> None:
+    def run_away(self, ghost_cell: Cell, pacman_cell: Cell) -> Cell:
+        def one(v: int) -> int:
+            if v == 0:
+                return 0
+            elif v > 0:
+                return 1
+            else:
+                return -1
         opposite_dir = {
             (1, 0): (-1, 0),
             (0, 1): (0, -1),
             (-1, 0): (1, 0),
-            (0, -1): (0, 1)
+            (0, -1): (0, 1),
+            (0, 0): (0, 0)
         }
         # 1. in with dir pacman is
         # 2. choose opposite direction
-        
+        # nb = self.get_neighbours(ghost_cell)
+        pac_coord = (pacman_cell.position[0]//TILE,
+                     pacman_cell.position[1]//TILE)
+        ghost_coord = (ghost_cell.position[0]//TILE,
+                       ghost_cell.position[1]//TILE)
+        d_x = one(pac_coord[0] - ghost_coord[0])
+        d_y = one(pac_coord[1] - ghost_coord[1])
+        if abs(d_x) == abs(d_y) and d_x != 0 and d_y != 0:
+            d_x = 0
+        pac_dir = (d_x, d_y)
+        run_there = opposite_dir[pac_dir]
+        res_c = (ghost_coord[0] + run_there[0],
+                 ghost_coord[1] + run_there[1])
+        if not self.map.off_grid(*res_c):
+            return self.map.map[res_c[1]][res_c[0]]
+        else:
+            return ghost_cell
