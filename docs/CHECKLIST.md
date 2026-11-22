@@ -56,8 +56,8 @@ progresses and keep it in the project management folder.
 ## Cheat mode
 
 - [ ] Activation method (config flag or key) and mention on instructions screen
-- [ ] Invincibility
-- [ ] Skip level
+- [x] Invincibility
+- [x] Skip level
 - [ ] Freeze ghosts
 - [x] Extra lives - key "1"
 - [ ] Speed boost
@@ -70,13 +70,13 @@ progresses and keep it in the project management folder.
 
 ## Robustness
 
-- [ ] Load Pacman sprites once instead of every frame
-- [ ] Asset paths independent of the working directory (needed for packaging) - Path.resolve() handled this
+- [x] Load Pacman sprites once instead of every frame
+- [x] Asset paths independent of the working directory (needed for packaging) - Path.resolve() handled this
 - [ ] Edge cases: empty name, Escape in name entry, closing the window in every state
 
 ## Linting and code quality
 
-- [x] flake8 clean
+- [ ] flake8 clean
 - [ ] mypy clean (`lint` flags), try `--strict`
 - [ ] Type hints everywhere, PEP 257 docstrings
 - [ ] Remove dead code (`if __name__` block in `game.py`, unused imports, stubs)
@@ -91,7 +91,7 @@ progresses and keep it in the project management folder.
 
 ## Project management folder
 
-- [ ] Task list (this file)
+- [x] Task list (this file)
 - [ ] Timeline and progress versus plan
 - [ ] Risk analysis
 - [ ] Team organisation (who did what, decisions, issues)
@@ -99,7 +99,7 @@ progresses and keep it in the project management folder.
 - [ ] Blocking points and conflicts
 
 ## Packaging and itch.io
-for Val
+for Val - tested building a package, worked out
 - [ ] Packaging script/spec at repo root
 - [ ] Linux build and Windows build (Windows machine or GitHub Actions)
 - [ ] In-package instructions (controls, options, config) and default config

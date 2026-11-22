@@ -26,9 +26,12 @@ class GameConfig(BaseModel):
 
     model_config = {"extra": "ignore"}
 
-    def __init__(self, config_file_path: str) -> None:
-        data = self._read_file(config_file_path)
-        super().__init__(**data)
+    def __init__(self, config_file_path: str | None = None) -> None:
+        if config_file_path:
+            data = self._read_file(config_file_path)
+            super().__init__(**data)
+        else:
+            super().__init__()
 
     @staticmethod
     def _read_file(config_file_path: Path) -> Any:

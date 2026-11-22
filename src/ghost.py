@@ -23,7 +23,8 @@ class behavior(Enum):
 
 class Ghost(Creature):
     def __init__(self, name: str, map: Map, config: GameConfig) -> None:
-        self.name: str = name
+        # self.name = name
+        super().__init__(name, (0, 0))
         self.map = map
         self.config = config
         self._direction: str = "left"
@@ -64,7 +65,10 @@ class Ghost(Creature):
         self.eaten = True
         self._sprite_id = f"eyes-{self._direction}"
         self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
-        _finder.build_path(self, None, True)
+        sx, sy = self.start
+        self.path = _finder.build_path(
+                           _finder.map.map[self.cell_y][self.cell_x],
+                           _finder.map.map[sy][sx])
 
     def fear_paccie(self) -> None:
         self.being_coward = True
@@ -126,6 +130,10 @@ class Ghost(Creature):
 
     def _bounce(self, char: Optional[str]) -> bool:
         # def _bounce(self) -> bool:
+        dir_update: tuple[int, int] = GHOST_DIRECTIONS[self._direction]
+        ux, uy = dir_update
+        if self.map.off_grid(self.cell_x + ux, self.cell_y + uy):
+            return True
         cell: Cell = self.map.get_cel_by_coords(self.cell_x, self.cell_y)
         if not cell:
             return True
@@ -139,24 +147,58 @@ class Ghost(Creature):
             return True
         return False
 
-    def check(self, pacman: Pacman | None,
-              _finder: Pathfinder | None, extra: str = "") -> bool:
-        def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
-            def one(v: int) -> int:
-                if v == 0:
-                    return 0
-                elif v > 0:
-                    return 1
-                else:
-                    return -1
-            curr = cell.grid_coord
-            target = next_cell.grid_coord
-            delta_x = target[0] - curr[0]
-            delta_y = target[1] - curr[1]
-            if abs(one(delta_x)) == abs(one(delta_y)):
-                delta_x = 0
-            return (one(delta_x), one(delta_y))
+    # @staticmethod
+    # def pick_dir(cell: Cell, next_cell: Cell) -> tuple[int, int]:
+    #     def one(v: int) -> int:
+    #         if v == 0:
+    #             return 0
+    #         elif v > 0:
+    #             return 1
+    #         else:
+    #             return -1
+    #     curr = cell.grid_coord
+    #     target = next_cell.grid_coord
+    #     delta_x = target[0] - curr[0]
+    #     delta_y = target[1] - curr[1]
+    #     if abs(one(delta_x)) == abs(one(delta_y)):
+    #         if delta_y != 0:
+    #             delta_x = 0
+    #         else:
+    #             if delta_x == 0:
+    #                 delta_x == 1
+    #     return (one(delta_x), one(delta_y))
+    @staticmethod
+    def pick_dir(cell: Cell, next_cell: Cell,
+                 fallback: str = "left") -> tuple[int, int]:
+        """Return a unit step (dx, dy) leading from cell towards next_cell.
 
+        The result is always one of the four valid directions:
+        (0, -1) up, (1, 0) right, (0, 1) down, (-1, 0) left.
+        If both cells are the same (nothing to move towards), the step of
+        the fallback direction is returned instead.
+        """
+        def sign(v: int) -> int:
+            """Return -1, 0 or 1 depending on the sign of v."""
+            if v == 0:
+                return 0
+            return 1 if v > 0 else -1
+
+        delta_x = next_cell.grid_coord[0] - cell.grid_coord[0]
+        delta_y = next_cell.grid_coord[1] - cell.grid_coord[1]
+
+        if delta_x == 0 and delta_y == 0:
+            # same cell: there is no direction to pick, keep going as before
+            return GHOST_DIRECTIONS.get(fallback, GHOST_DIRECTIONS["left"])
+        if delta_y != 0:
+            # vertical wins on diagonals, so we never return (1, 1)
+            return (0, sign(delta_y))
+        return (sign(delta_x), 0)
+
+    def check(self,
+              pacman: Pacman | None,
+              finder: Pathfinder,
+              extra: str = ""
+              ) -> bool:
         directions: dict[int, str] = {
             (0, -1): "up",
             (1, 0): "right",
@@ -173,8 +215,10 @@ class Ghost(Creature):
                     return False
 
                 next_cell = self.path.pop(0)
-                picked = pick_dir(
-                    self.map.map[self.cell_y][self.cell_x], next_cell)
+                picked = self.pick_dir(
+                    self.map.map[self.cell_y][self.cell_x],
+                    next_cell,
+                    self._direction)
                 self._direction = directions[picked]
                 self._set_destination()
             else:
@@ -183,7 +227,8 @@ class Ghost(Creature):
             if self._bounce(None):
                 return False
         if self.rect.colliderect(pacman.rect):
-            if not self.being_coward:
+            # normal packie and normal ghost
+            if not self.being_coward and not pacman.invincible:
                 pacman.die()
                 self.pussy_timer.reset()
                 self.disrespect_paccie()
@@ -191,9 +236,11 @@ class Ghost(Creature):
                 self.path = []
                 self._destination = self._cell_center(None)
                 return True
+            elif not self.frighten and pacman.invincible:
+                self._pick_random_dest()
             else:
                 pacman.points += self.config.points_per_ghost
-                self.get_eaten(_finder)
+                self.get_eaten(finder)
         cx, cy = self.rect.center
         tx, ty = self._destination
 

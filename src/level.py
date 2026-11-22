@@ -103,14 +103,26 @@ class Level():
                           ) -> None:
         for ghost in self.creatures:
             # ghost is scared or it is chasing
+            # if ghost_time_to_find_a_path < pygame.time.get_ticks()
             if ghost._at_destination():
-                if not ghost.eaten:
-                    self.pathfinder.build_path(ghost, pacman)
+                # bastiaan
+                if ghost.eaten:
+                    self.pathfinder.retreat(ghost)
+                    # self.pathfinder.build_path(ghost, pacman, True)
+                # valentyn
+                # regen the path
+                if not ghost.being_coward:
+                    if not pacman.invincible:
+                        self.pathfinder.follow_pacman(ghost, pacman)
+                        # follow pacman
+                    else:
+                        ghost._pick_random_dest()
                 else:
-                    self.pathfinder.build_path(ghost, pacman, True)
-                ...
+                    self.pathfinder.run_away(ghost, pacman)
+                    ...
+                # self.pathfinder.build_path(ghost, pacman)
             # make ghost follow the path
-            if ghost.check(pacman, _finder=self.pathfinder):
+            if ghost.check(pacman, self.pathfinder):
                 ghost.disrespect_paccie()
                 self._reset_ghosts()
             ghost.spawn(screen)
