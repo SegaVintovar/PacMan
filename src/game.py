@@ -162,6 +162,7 @@ class Game(Module):
                         game_state.gs_update(6, self.pacman.points, True)
                         return game_state
                     self.current_lvl = self.levels[self.current_lvl_id]
+                    self.start_current_lvl()
                 elif (event.key == pygame.K_SPACE or
                         event.key == pygame.K_q or
                         event.key == pygame.K_ESCAPE):
@@ -231,6 +232,7 @@ class Game(Module):
         print("amount of lvls", len(self.levels))
         self.current_lvl = self.levels[self.current_lvl_id]
         self.current_lvl.timer.start_time = pygame.time.get_ticks()
+        self.pacman.map = self.current_lvl.map
         self.pacman.go_to_next_level(self.current_lvl.map)
 
     def packie_still_alive(self) -> bool:

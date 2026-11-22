@@ -40,7 +40,7 @@ class WinLoose(Module):
         score = gs.extra
         win = gs.win
         if win:
-            header = "Congratulations!", "You won!"
+            header = "Congratulations!\nYou won!"
         else:
             if gs.previous == 1:
                 header = "You lost."
