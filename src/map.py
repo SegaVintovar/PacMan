@@ -69,7 +69,11 @@ class Map:
     # def isCell(self, coord: tuple[])
 
     def get_cel_by_coords(self, x: int, y: int) -> Cell:
-        return self.map[y][x]
+
+        if not self.off_grid(x, y):
+            return self.map[y][x]
+        else:
+            return self.map[0][0]
 
     def off_grid(self, x: int, y: int) -> bool:
         return x < 0 or x >= self.width or y < 0 or y >= self.height

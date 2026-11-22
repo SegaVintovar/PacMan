@@ -5,6 +5,7 @@ from .map import Map
 from .cell import Cell
 from collections import deque
 from .constants import TILE
+from pydantic_extra_types.coordinate import Coordinate
 
 
 # from claude
@@ -105,7 +106,13 @@ class Pathfinder():
                 result.append((d, self.map.map[new_pos[1]][new_pos[0]]))
         return result
 
-    def build_path(self,
+    def build_path(self, start_cell: Cell, target_cell: Cell) -> list[Cell]:
+        path = []
+
+        return path
+
+    # used to be build
+    def follow_pacman(self,
                    ghost: Creature, pacman: Creature
                    ) -> None:
         # now we need to start getting neighbours in general dir
@@ -116,76 +123,108 @@ class Pathfinder():
                 if ghost.rect.colliderect(c.rect):
                     start_cell = c
                 if pacman.rect.colliderect(c.rect):
-                    # if not ghost.pussy_mod:
                     pacman_cell = c
-        target_cell = pacman_cell if not ghost.pussy_mod else self.run_away(
-            start_cell, pacman_cell)
+        target_cell = pacman_cell
         queue = deque([start_cell])
         came_from = {start_cell: None}
         visited = set()
-        if ghost.name == "Pinky" or ghost.name == "Blinky":
-            while queue and target_cell not in came_from: # without " and target_cell not in came_from" it gives different behavior
-                current_c = queue.popleft()
-                if current_c not in visited:
-                    visited.add(current_c)
-                    neighbours = self.get_neighbours(current_c)
-                    for n in neighbours:
-                        if n[1] not in visited:
-                            came_from[n[1]] = current_c
-                            if n[1] == target_cell:
-                                break
-                            queue.append(n[1])
-        else:
-            while queue:  # without " and target_cell not in came_from" it gives different behavior
-                current_c = queue.popleft()
-                if current_c not in visited:
-                    visited.add(current_c)
-                    neighbours = self.get_neighbours(current_c)
-                    for n in neighbours:
-                        if n[1] not in visited:
-                            came_from[n[1]] = current_c
-                            if n[1] == target_cell:
-                                break
-                            queue.append(n[1])
+        # if ghost.name == "Pinky" or ghost.name == "Blinky":
+        while queue and target_cell not in came_from: # without " and target_cell not in came_from" it gives different behavior
+            current_c = queue.popleft()
+            if current_c not in visited:
+                visited.add(current_c)
+                neighbours = self.get_neighbours(current_c)
+                for n in neighbours:
+                    if n[1] not in visited:
+                        came_from[n[1]] = current_c
+                        if n[1] == target_cell:
+                            break
+                        queue.append(n[1])
+        # else:
+        #     while queue:  # without " and target_cell not in came_from" it gives different behavior
+        #         current_c = queue.popleft()
+        #         if current_c not in visited:
+        #             visited.add(current_c)
+        #             neighbours = self.get_neighbours(current_c)
+        #             for n in neighbours:
+        #                 if n[1] not in visited:
+        #                     came_from[n[1]] = current_c
+        #                     if n[1] == target_cell:
+        #                         break
+        #                     queue.append(n[1])
         path = []
         step: Cell | None = target_cell
         while step is not None:
             path.append(step)
             step = came_from[step]
         path.reverse()
-        ghost.path = path[1:]
+        if ghost.name == "Inky":
+            ghost.path = path[1:]
+        elif ghost.name == "Clyde":
+            ghost.path = path[1:2]
+        elif ghost.name == "Blinky":
+            ghost.path = path[1:3]
+        else:
+            ghost.path = path[1:4]
 
-    def run_away(self, ghost_cell: Cell, pacman_cell: Cell) -> Cell:
-        def one(v: int) -> int:
+    # def run_away(self, ghost: Creature, pacman: Creature) -> Cell:
+    #     def one(v: int) -> int:
+    #         if v == 0:
+    #             return 0
+    #         elif v > 0:
+    #             return 1
+    #         else:
+    #             return -1
+    #     opposite_dir = {
+    #         (1, 0): (-1, 0),
+    #         (0, 1): (0, -1),
+    #         (-1, 0): (1, 0),
+    #         (0, -1): (0, 1),
+    #         (0, 0): (0, 0)
+    #     }
+    #     # 1. in with dir pacman is
+    #     # 2. choose opposite direction
+    #     # nb = self.get_neighbours(ghost_cell)
+
+    #     ghost_cell: Coordinate = ghost.position
+    #     pacman_cell: Coordinate = pacman.position 
+    #     pac_coord = (pacman_cell[0]//TILE,
+    #                  pacman_cell[1]//TILE)
+    #     ghost_coord = (ghost_cell[0]//TILE,
+    #                    ghost_cell[1]//TILE)
+    #     d_x = one(pac_coord[0] - ghost_coord[0])
+    #     d_y = one(pac_coord[1] - ghost_coord[1])
+    #     if abs(d_x) == abs(d_y) and d_x != 0 and d_y != 0:
+    #         d_x = 0
+    #     pac_dir = (d_x, d_y)
+    #     run_there = opposite_dir[pac_dir]
+    #     res_c = (ghost_coord[0] + run_there[0],
+    #              ghost_coord[1] + run_there[1])
+    #     if not self.map.off_grid(*res_c):
+    #         ghost.path = [self.map.map[res_c[1]][res_c[0]]]
+    #         # return self.map.map[res_c[1]][res_c[0]]
+    #     else:
+    #         ghost.path = [ghost_cell]
+
+    # from claude
+    def run_away(self, ghost: Creature, pacman: Creature) -> None:
+        """Set ghost.path to one step in the direction away from pacman."""
+        def sign(v: int) -> int:
+            """Return -1, 0 or 1 depending on the sign of v."""
             if v == 0:
                 return 0
-            elif v > 0:
-                return 1
-            else:
-                return -1
-        opposite_dir = {
-            (1, 0): (-1, 0),
-            (0, 1): (0, -1),
-            (-1, 0): (1, 0),
-            (0, -1): (0, 1),
-            (0, 0): (0, 0)
-        }
-        # 1. in with dir pacman is
-        # 2. choose opposite direction
-        # nb = self.get_neighbours(ghost_cell)
-        pac_coord = (pacman_cell.position[0]//TILE,
-                     pacman_cell.position[1]//TILE)
-        ghost_coord = (ghost_cell.position[0]//TILE,
-                       ghost_cell.position[1]//TILE)
-        d_x = one(pac_coord[0] - ghost_coord[0])
-        d_y = one(pac_coord[1] - ghost_coord[1])
-        if abs(d_x) == abs(d_y) and d_x != 0 and d_y != 0:
+            return 1 if v > 0 else -1
+
+        # creatures track their grid cell in cell_x / cell_y
+        d_x = sign(pacman.cell_x - ghost.cell_x)
+        d_y = sign(pacman.cell_y - ghost.cell_y)
+        # diagonal: keep only one axis so we move in a single direction
+        if d_x != 0 and d_y != 0:
             d_x = 0
-        pac_dir = (d_x, d_y)
-        run_there = opposite_dir[pac_dir]
-        res_c = (ghost_coord[0] + run_there[0],
-                 ghost_coord[1] + run_there[1])
-        if not self.map.off_grid(*res_c):
-            return self.map.map[res_c[1]][res_c[0]]
-        else:
-            return ghost_cell
+        # go the opposite way from pacman
+        target_x = ghost.cell_x - d_x
+        target_y = ghost.cell_y - d_y
+        if self.map.off_grid(target_x, target_y):
+            ghost.path = []
+            return
+        ghost.path = [self.map.map[target_y][target_x]]
