@@ -2,14 +2,15 @@ from .creature import Creature
 import pygame
 import random
 from .cell import Cell
-from .constants import GHOSTS, SPEEDS, GHOST_DIRECTIONS
+from .constants import GHOSTS, SPEEDS, GHOST_DIRECTIONS, GHOST_COWARD_TIME
 from .config import GameConfig
 from .map import Map
 from .pacman import Pacman
 from .spriteBank import SpriteBank
+from .timer import Timer
 from enum import Enum
 from typing import Optional
-from .paths import ASSETS_DIR
+# from .paths import ASSETS_DIR
 from .pathfinder import Pathfinder
 
 
@@ -27,7 +28,11 @@ class Ghost(Creature):
         self.config = config
         self._direction: str = "left"
         self.eaten: bool = False
-        self.pussy_mod: bool = False
+        self.being_coward: bool = False
+        pussy_timer: Timer = Timer(GHOST_COWARD_TIME)
+        self.pussy_timer: Timer = pussy_timer
+        self._coward_switch: int = 0
+        self._coward_color: str = "blue"
         self._sprite_id: str = f"{self.name}-{self._direction}"
         self.rect: pygame.Rect = self._create_rect()
         self.rect.center = self._cell_center(None)
@@ -62,27 +67,41 @@ class Ghost(Creature):
         _finder.build_path(self, None, True)
 
     def fear_paccie(self) -> None:
-        self.pussy_mod = True
+        self.being_coward = True
+        self.pussy_timer.start_timer()
         self._update_pic()
 
     def disrespect_paccie(self) -> None:
-        self.pussy_mod = False
+        self.being_coward = False
         self._update_pic()
+        self.pussy_timer.reset()
+
+    def _switch_coward_color(self) -> str:
+        if not self.being_coward:
+            return ""
+        if self.pussy_timer.time_since_start() >= (GHOST_COWARD_TIME / 3) * 2:
+            self._coward_switch += 1
+            if self._coward_switch % 2 == 1:
+                return "white"
+            else:
+                return "blue"
+        return "blue"
 
     def _update_pic(self) -> None:
         start_x, start_y = self.start
         if self.cell_x == start_x and self.cell_y == start_y:
             self.rect.center = self._cell_center(self.start)
             self.eaten = False
-            self.pussy_mod = False
+            self.being_coward = False
             self.path = []
         if self.eaten:
             self._sprite_id = f"eyes-{self._direction}"
         else:
             self._sprite_id = (f"{self.name}-{self._direction}"
-                               if not self.pussy_mod
-                               else "frightened-blue")
-
+                               if not self.being_coward
+                               else
+                               f"frightened-{self._switch_coward_color()}")
+        print(f"current sprite_id: {self._sprite_id}")
         self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
 
     def _create_rect(self) -> pygame.Rect:
@@ -144,6 +163,9 @@ class Ghost(Creature):
             (0, 1): "down",
             (-1, 0): "left"
         }
+        if self.pussy_timer.time_since_start() == GHOST_COWARD_TIME:
+            self.being_coward = False
+            self.disrespect_paccie()
 
         if self._at_destination():
             if not extra:
@@ -161,8 +183,10 @@ class Ghost(Creature):
             if self._bounce(None):
                 return False
         if self.rect.colliderect(pacman.rect):
-            if not self.pussy_mod:
+            if not self.being_coward:
                 pacman.die()
+                self.pussy_timer.reset()
+                self.disrespect_paccie()
                 self.measure_spawn()
                 self.path = []
                 self._destination = self._cell_center(None)
@@ -174,7 +198,7 @@ class Ghost(Creature):
         tx, ty = self._destination
 
         speed: float = (SPEEDS["ghost"]
-                        if not self.pussy_mod else SPEEDS["ghost_coward"])
+                        if not self.being_coward else SPEEDS["ghost_coward"])
         if self.eaten:
             speed = SPEEDS["ghost_eaten"]
         step_x = max(-speed, min(speed, tx - cx))

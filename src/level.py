@@ -115,7 +115,7 @@ class Level():
                 self._reset_ghosts()
             ghost.spawn(screen)
             if (self.pussy_timer.time_since_start() == self.pussy_time
-               and ghost.pussy_mod):
+               and ghost.being_coward):
                 ghost.disrespect_paccie()
         pacman.check()
         pacman.spawn(screen)

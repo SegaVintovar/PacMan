@@ -38,6 +38,8 @@ GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {
     "Pinky": ("pink", ('right', 'bottom'))
 }
 
+GHOST_COWARD_TIME: int = 8
+
 # FONT_SIZE = int(WINDOW_SIZE[0] * WINDOW_SIZE[1] / 18000)
 FONT_SIZE = 30
 # colors for the menu
