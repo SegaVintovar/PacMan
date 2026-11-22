@@ -72,6 +72,9 @@ class Ghost(Creature):
 
     def fear_paccie(self) -> None:
         self.being_coward = True
+        # start_timer() does nothing when the timer already runs,
+        # so reset first: a second super-pacgum gives a full new period
+        self.pussy_timer.reset()
         self.pussy_timer.start_timer()
         self._update_pic()
 
@@ -93,7 +96,9 @@ class Ghost(Creature):
 
     def _update_pic(self) -> None:
         start_x, start_y = self.start
-        if self.cell_x == start_x and self.cell_y == start_y:
+        at_home = self.cell_x == start_x and self.cell_y == start_y
+        if self.eaten and at_home:
+            # an eaten ghost (only eyes) made it back: it is normal again
             self.rect.center = self._cell_center(self.start)
             self.eaten = False
             self.being_coward = False
@@ -105,7 +110,6 @@ class Ghost(Creature):
                                if not self.being_coward
                                else
                                f"frightened-{self._switch_coward_color()}")
-        print(f"current sprite_id: {self._sprite_id}")
         self.sprite = SpriteBank.get_sprite("ghost", self._sprite_id)
 
     def _create_rect(self) -> pygame.Rect:
@@ -205,15 +209,18 @@ class Ghost(Creature):
             (0, 1): "down",
             (-1, 0): "left"
         }
-        if self.pussy_timer.time_since_start() == GHOST_COWARD_TIME:
-            self.being_coward = False
+        # the timer of a ghost that is not scared was never started, then
+        # time_since_start() is the uptime of the whole program: only
+        # look at it while the ghost is really scared
+        if (self.being_coward and
+                self.pussy_timer.time_since_start() >= GHOST_COWARD_TIME):
             self.disrespect_paccie()
 
         if self._at_destination():
-            if not extra:
-                if not self.path:
-                    return False
-
+            if extra:
+                self._pick_random_dest()
+            elif self.path:
+                # path[0] is the next cell (the own cell is not in there)
                 next_cell = self.path.pop(0)
                 picked = self.pick_dir(
                     self.map.map[self.cell_y][self.cell_x],
@@ -221,14 +228,20 @@ class Ghost(Creature):
                     self._direction)
                 self._direction = directions[picked]
                 self._set_destination()
-            else:
-                self._pick_random_dest()
+            # always refresh the picture: this is also where an eaten
+            # ghost notices it is back home and becomes normal again
             self._update_pic()
-            if self._bounce(None):
-                return False
         if self.rect.colliderect(pacman.rect):
-            # normal packie and normal ghost
-            if not self.being_coward and not pacman.invincible:
+            if self.eaten:
+                # only the eyes are left, they pass through pacman
+                pass
+            elif self.being_coward:
+                pacman.points += self.config.points_per_ghost
+                self.get_eaten(finder)
+            elif pacman.invincible:
+                # cheat mode: ghost touches pacman, nothing happens
+                pass
+            else:
                 pacman.die()
                 self.pussy_timer.reset()
                 self.disrespect_paccie()
@@ -236,11 +249,6 @@ class Ghost(Creature):
                 self.path = []
                 self._destination = self._cell_center(None)
                 return True
-            elif not self.frighten and pacman.invincible:
-                self._pick_random_dest()
-            else:
-                pacman.points += self.config.points_per_ghost
-                self.get_eaten(finder)
         cx, cy = self.rect.center
         tx, ty = self._destination
 

@@ -72,42 +72,66 @@ class Pathfinder():
     def __init__(self, map: Map) -> None:
         self.map: Map = map
 
+    # def get_neighbours(self, cell: Cell
+    #                    ) -> list[tuple[tuple[int, int], Cell]]:
+    #     """
+    #     Returns a list of neighbours where we can go.
+    #     """
+    #     def wall_opened(direction: tuple[int, int], cell: Cell) -> bool:
+    #         if self.map.off_grid(*direction):
+    #             return False
+    #         if direction[0] and direction[0] > 0:
+    #             return not cell.e
+    #         if direction[0] and direction[0] < 0:
+    #             return not cell.w
+    #         if direction[1] and direction[1] > 0:
+    #             return not cell.s
+    #         if direction[1] and direction[1] < 0:
+    #             return not cell.n
+    #         return False
+
+    #     directions = [
+    #         (1, 0), (0, 1), (-1, 0), (0, -1)
+    #     ]
+    #     pos = (cell.position[0] // TILE, cell.position[1] // TILE)
+    #     result = []
+    #     for d in directions:
+    #         # if not off grid
+    #         if (pos[0] + d[0] < 0) or (pos[1] + d[1] < 0) or \
+    #             (pos[0] + d[0] >= len(self.map.map[0])) or \
+    #                 (pos[1] + d[1] >= len(self.map.map)):
+    #             continue
+    #         #
+    #         if wall_opened(d, cell):
+    #             new_pos = (pos[0] + d[0],
+    #                        pos[1] + d[1])
+    #             result.append((d, self.map.map[new_pos[1]][new_pos[0]]))
+    #     return result
+
+    # from claude
     def get_neighbours(self, cell: Cell
                        ) -> list[tuple[tuple[int, int], Cell]]:
-        """
-        Returns a list of neighbours where we can go.
-        """
-        def wall_opened(direction: tuple[int, int], cell: Cell) -> bool:
-            if self.map.off_grid(*direction):
-                return False
-            if direction[0] and direction[0] > 0:
-                return not cell.e
-            if direction[0] and direction[0] < 0:
-                return not cell.w
-            if direction[1] and direction[1] > 0:
-                return not cell.s
-            if direction[1] and direction[1] < 0:
-                return not cell.n
-            return False
+        """Return the neighbours of a cell that we can walk to.
 
-        directions = [
-            (1, 0), (0, 1), (-1, 0), (0, -1)
+        Every item is ((dx, dy), neighbour_cell). A neighbour is reachable
+        when it is inside the grid and there is no wall on that side
+        (in Cell, True means "wall").
+        """
+        x, y = cell.grid_coord
+        # (dx, dy, is there a wall on this side of the cell?)
+        sides = [
+            (1, 0, cell.e),
+            (0, 1, cell.s),
+            (-1, 0, cell.w),
+            (0, -1, cell.n),
         ]
-        pos = (cell.position[0] // TILE, cell.position[1] // TILE)
-        result = []
-        for d in directions:
-            # if not off grid
-            if (pos[0] + d[0] < 0) or (pos[1] + d[1] < 0) or \
-                (pos[0] + d[0] >= len(self.map.map[0])) or \
-                    (pos[1] + d[1] >= len(self.map.map)):
+        result: list[tuple[tuple[int, int], Cell]] = []
+        for dx, dy, has_wall in sides:
+            nx, ny = x + dx, y + dy
+            if has_wall or self.map.off_grid(nx, ny):
                 continue
-            #
-            if wall_opened(d, cell):
-                new_pos = (pos[0] + d[0],
-                           pos[1] + d[1])
-                result.append((d, self.map.map[new_pos[1]][new_pos[0]]))
+            result.append(((dx, dy), self.map.map[ny][nx]))
         return result
-
     # def build_path(self, ghost: Creature,
     #                pacman: Creature, retreat: bool = False) -> None:
     #     def get_neighbours(
@@ -154,13 +178,13 @@ class Pathfinder():
             path.append(step)
             step = came_from[step]
         path.reverse()
-        return path
+        return path[1:]
 
     def retreat(self, ghost: Creature) -> None:
         start_x, start_y = ghost.start
         start_cell = self.map.get_cel_by_coords(ghost.cell_x, ghost.cell_y)
         target_cell = self.map.get_cel_by_coords(start_x, start_y)
-        self.ghost.path = self.build_path(start_cell, target_cell)
+        ghost.path = self.build_path(start_cell, target_cell)
 
     # used to be build
     def follow_pacman(
@@ -218,25 +242,18 @@ class Pathfinder():
     #     else:
     #         ghost.path = [ghost_cell]
 
-    # from claude
     def run_away(self, ghost: Creature, pacman: Creature) -> None:
-        """Set ghost.path to one step in the direction away from pacman."""
-        def sign(v: int) -> int:
-            """Return -1, 0 or 1 depending on the sign of v."""
-            if v == 0:
-                return 0
-            return 1 if v > 0 else -1
-
-        # creatures track their grid cell in cell_x / cell_y
-        d_x = sign(pacman.cell_x - ghost.cell_x)
-        d_y = sign(pacman.cell_y - ghost.cell_y)
-        # diagonal: keep only one axis so we move in a single direction
-        if d_x != 0 and d_y != 0:
-            d_x = 0
-        # go the opposite way from pacman
-        target_x = ghost.cell_x - d_x
-        target_y = ghost.cell_y - d_y
-        if self.map.off_grid(target_x, target_y):
+        """Take one step to the open neighbour furthest from pacman."""
+        here = self.map.get_cel_by_coords(ghost.cell_x, ghost.cell_y)
+        options = self.get_neighbours(here)
+        if not options:
             ghost.path = []
             return
-        ghost.path = [self.map.map[target_y][target_x]]
+
+        def distance_to_pacman(option: tuple[tuple[int, int], Cell]) -> int:
+            """Manhattan distance between the option and pacman."""
+            col, row = option[1].grid_coord
+            return abs(col - pacman.cell_x) + abs(row - pacman.cell_y)
+
+        best = max(options, key=distance_to_pacman)
+        ghost.path = [best[1]]

@@ -90,12 +90,16 @@ class Level():
                 if g.type == "super":
                     for ghost in self.creatures:
                         ghost.fear_paccie()
+                    # same here: restart, otherwise the second
+                    # super-pacgum would use the old start time
+                    self.pussy_timer.reset()
                     self.pussy_timer.start_timer()
                 self.gums.remove(g)
             else:
                 screen.blit(g.image, dest=g.rect)
         for g in to_remove:
             self.gums.remove(g)
+
 
     def _render_creatures(self,
                           screen: pygame.Surface,
@@ -105,32 +109,61 @@ class Level():
             # ghost is scared or it is chasing
             # if ghost_time_to_find_a_path < pygame.time.get_ticks()
             if ghost._at_destination():
-                # bastiaan
+                # decide where to go next, order matters:
+                # an eaten ghost goes home even if it is still "scared"
                 if ghost.eaten:
                     self.pathfinder.retreat(ghost)
-                    # self.pathfinder.build_path(ghost, pacman, True)
-                # valentyn
-                # regen the path
-                if not ghost.being_coward:
-                    if not pacman.invincible:
-                        self.pathfinder.follow_pacman(ghost, pacman)
-                        # follow pacman
-                    else:
-                        ghost._pick_random_dest()
-                else:
+                elif ghost.being_coward:
                     self.pathfinder.run_away(ghost, pacman)
-                    ...
-                # self.pathfinder.build_path(ghost, pacman)
+                elif pacman.invincible:
+                    ghost._pick_random_dest()
+                else:
+                    self.pathfinder.follow_pacman(ghost, pacman)
             # make ghost follow the path
             if ghost.check(pacman, self.pathfinder):
                 ghost.disrespect_paccie()
                 self._reset_ghosts()
             ghost.spawn(screen)
-            if (self.pussy_timer.time_since_start() == self.pussy_time
+            if (self.pussy_timer.time_since_start() >= self.pussy_time
                and ghost.being_coward):
                 ghost.disrespect_paccie()
         pacman.check()
         pacman.spawn(screen)
+
+    # def _render_creatures(self,
+    #                       screen: pygame.Surface,
+    #                       pacman: Pacman
+    #                       ) -> None:
+    #     for ghost in self.creatures:
+    #         # ghost is scared or it is chasing
+    #         # if ghost_time_to_find_a_path < pygame.time.get_ticks()
+    #         if ghost._at_destination():
+    #             # bastiaan
+    #             if ghost.eaten:
+    #                 self.pathfinder.retreat(ghost)
+    #                 # self.pathfinder.build_path(ghost, pacman, True)
+    #             # valentyn
+    #             # regen the path
+    #             if not ghost.being_coward:
+    #                 if not pacman.invincible:
+    #                     self.pathfinder.follow_pacman(ghost, pacman)
+    #                     # follow pacman
+    #                 else:
+    #                     ghost._pick_random_dest()
+    #             else:
+    #                 self.pathfinder.run_away(ghost, pacman)
+    #                 ...
+    #             # self.pathfinder.build_path(ghost, pacman)
+    #         # make ghost follow the path
+    #         if ghost.check(pacman, self.pathfinder):
+    #             ghost.disrespect_paccie()
+    #             self._reset_ghosts()
+    #         ghost.spawn(screen)
+    #         if (self.pussy_timer.time_since_start() == self.pussy_time
+    #            and ghost.being_coward):
+    #             ghost.disrespect_paccie()
+    #     pacman.check()
+    #     pacman.spawn(screen)
 
     def _awake_ghosts(self) -> None:
         for name in GHOSTS:

@@ -37,12 +37,14 @@ class Pacman(Creature):
        within the center unless the cell represents
        as a 42-grid."""
     def measure_spawn(self) -> None:
-        row_mid: int = int(self.map.width / 2)
-        col_mid: int = int(self.map.height / 2)
-        self.cell_x, self.cell_y = col_mid, row_mid
-        self.start = (col_mid, row_mid)
+        # cell_x is a column (width), cell_y is a row (height)
+        self.cell_x = self.map.width // 2
+        self.cell_y = self.map.height // 2
+        self.start = (self.cell_x, self.cell_y)
         self.rect.center = self._cell_center(None)
         self._destination = self.rect.center
+        # forget the old wishes of the player (matters after dying)
+        self._next_direction = ''
 
     def go_to_next_level(self, map: Map) -> None:
         self.map = map
@@ -64,12 +66,6 @@ class Pacman(Creature):
         self._sprite_id = f"{self._direction}-{self._opening}"
         self.sprite = SpriteBank.get_sprite("pacman", self._sprite_id)
 
-    def _try_next(self) -> bool:
-        if self._bounce(None):
-            return False
-        self._set_destination()
-        return True
-
     def _in_linear(self, new: str) -> bool:
         return (True if self._direction == 'W' and new == 'S'
                 or self._direction == 'S' and new == 'W'
@@ -82,30 +78,43 @@ class Pacman(Creature):
         else:
             self._pixel_moved += SPEEDS["pacman"]
 
-    def check(self, pacman: "Pacman" = None) -> bool:
+    def _start_walking(self, direction: str) -> None:
+        """Start walking one cell in the given direction.
+
+        cell_x / cell_y always point to the cell we are walking to
+        (or standing in), so we move them exactly ONE step here.
+        """
+        dx, dy = KEY_DIRECTIONS[direction]
+        self._direction = direction
+        self.cell_x += dx
+        self.cell_y += dy
+        self._destination = self._cell_center(None)
+
+    def check(self, pacman: "Pacman | None" = None) -> bool:
+        """Move pacman one frame. Called every frame by the level."""
         if self._at_destination():
-            if not self._next_direction == '':
-                self._change_direction()
-            self._origin = (self.rect.x, self.rect.y)
-            if not self._try_next():
-                return
+            # we are standing in the middle of a cell: choose what to do.
+            # 1. the turn the player asked for, if there is no wall there
+            wanted = self._next_direction
+            self._next_direction = ''
+            if wanted and not self._bounce(wanted):
+                self._start_walking(wanted)
+            # 2. otherwise keep going straight, if there is no wall there
+            elif not self._bounce(self._direction):
+                self._start_walking(self._direction)
+            # 3. wall in front of us: stand still
+            else:
+                return False
+        speed = int(SPEEDS["pacman"])  # rect works with whole pixels
         cx, cy = self.rect.center
         tx, ty = self._destination
         self._pass_pixel()
         self._update_pic()
-        step_x = max(-SPEEDS["pacman"], min(SPEEDS["pacman"], tx - cx))
-        step_y = max(-2, min(2, ty - cy))
+        # never step further than what is left to the destination
+        step_x = max(-speed, min(speed, tx - cx))
+        step_y = max(-speed, min(speed, ty - cy))
         self.rect.move_ip(step_x, step_y)
-
-    def _next_possible(self) -> bool:
-        if self._next_direction is None:
-            return False
-        col, row = KEY_DIRECTIONS[self._next_direction]
-        cx, cy = self.cell_x, self.cell_x
-        current_cell: Cell = self.map.get_cel_by_coords(cx, cy)
-        cell: Cell = self.map.get_cel_by_coords((cx + col, cy + row))
-        _rect: pygame.Rect = cell.rect
-
+        return False
 
     def die(self) -> None:
         self.lives -= 1
@@ -142,14 +151,6 @@ class Pacman(Creature):
             else:
                 return False
 
-    def _change_direction(self) -> None:
-        dx, dy = KEY_DIRECTIONS[self._next_direction]
-        self._direction = self._next_direction
-        self._next_direction = ''
-        self.cell_x += dx
-        self.cell_y += dy
-        self._destination = self._cell_center(None)
-
     def _set_destination(self) -> None:
         if self._direction not in KEY_DIRECTIONS:
             print(f"skipping '{self._direction}'")
@@ -162,13 +163,13 @@ class Pacman(Creature):
         self._destination = (destx, desty)
 
     def update_direction(self, char: str) -> None:
-        if self._bounce(char):
-            return
-        if (self._at_destination()
-           or not self._at_destination() and self._in_linear(char)):
-            if self._next_direction == '':
-                self._next_direction = char
-            self._change_direction()
+        """Handle a key press (W, A, S or D)."""
+        if self._in_linear(char) and not self._at_destination():
+            # turning around between two cells is always possible:
+            # we just walk back to the cell we came from
+            self._start_walking(char)
+            self._next_direction = ''
         else:
+            # remember the wish, check() uses it as soon as we are
+            # standing in the middle of a cell
             self._next_direction = char
-        self._update_pic()
