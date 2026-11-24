@@ -42,6 +42,12 @@ class Ghost(Creature):
         self._destination: tuple[int, int] = self._cell_center(None)
         self.path: list[Cell] = []
 
+    def pause_timer(self) -> None:
+        self.pussy_timer.pause()
+
+    def resume_timer(self) -> None:
+        self.pussy_timer.resume()
+
     def _set_destination(self) -> None:
         if self._direction not in GHOST_DIRECTIONS:
             print(f"skipping '{self._direction}'")

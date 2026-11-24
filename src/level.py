@@ -94,7 +94,8 @@ class Level():
                     # super-pacgum would use the old start time
                     self.pussy_timer.reset()
                     self.pussy_timer.start_timer()
-                self.gums.remove(g)
+                # self.gums.remove(g)
+                to_remove.append(g)
             else:
                 screen.blit(g.image, dest=g.rect)
         for g in to_remove:
@@ -178,5 +179,5 @@ class Level():
         for g in self.creatures:
             g.disrespect_paccie()
             g.measure_spawn()
-            self.path = []
+            g.path = []
             g._destination = g._cell_center(None)

@@ -40,7 +40,7 @@ class WinLoose(Module):
         score = gs.extra
         win = gs.win
         if win:
-            header = "Congratulations!\nYou won!"
+            header = "Congratulations!"
         else:
             if gs.previous == 1:
                 header = "You lost."
@@ -57,6 +57,7 @@ class WinLoose(Module):
                     self.name += ch
                 if event.key == pygame.K_RETURN:
                     self._save_score(gs.extra, self.name)
+                    self.name = ""
                     gs.gs_update(2)
                     return gs
                 if event.key == pygame.K_BACKSPACE:
@@ -109,5 +110,8 @@ class WinLoose(Module):
         name = "Player" if not name else name
         scores.append({"score": score, "name": name})
         scores.sort(key=lambda s: s["score"], reverse=True)
-        with open(self.config.highscore_filename, "w") as file:
-            json.dump(scores[:10], file, indent=4)
+        try:
+            with open(self.config.highscore_filename, "w") as file:
+                json.dump(scores[:10], file, indent=4)
+        except Exception as e:
+            print("Could not save scores: ", str(e))

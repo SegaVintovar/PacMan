@@ -15,7 +15,7 @@ clean:
 	@rm -rf .venv
 
 debug:
-	uv run python -m pdb pac-man.py
+	uv run python -m pdb pac-man.py config.json
 
 build:
 	pyinstaller pac-man.py --name pacman --onedir --noconfirm \

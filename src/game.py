@@ -141,6 +141,8 @@ class Game(Module):
         #     return game_state
         if self.paused:
             self.current_lvl.timer.resume()
+            for ghost in self.current_lvl.creatures:
+                ghost.pussy_timer.resume()
             self.paused = False
 
         # check if the pacman is still alive
@@ -167,6 +169,8 @@ class Game(Module):
                         event.key == pygame.K_q or
                         event.key == pygame.K_ESCAPE):
                     self.current_lvl.timer.pause()
+                    for ghost in self.current_lvl.creatures:
+                        ghost.pussy_timer.pause()
                     self.paused = True
                     game_state.gs_update(5, self.pacman.points)
                     return game_state

@@ -9,7 +9,7 @@ SPEEDS: dict[str, float] = {
     "ghost_coward": 1.5,
     "ghost_eaten": 5.5
 }
-WINDOW_SIZE = (1400, 1200)
+WINDOW_SIZE = (1100, 750)
 
 TILE = 64  # cell size
 
