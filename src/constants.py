@@ -31,11 +31,11 @@ GHOST_DIRECTIONS: dict[str, tuple[int, int]] = {
     'left': (-1, 0)
 }
 
-GHOSTS: dict[str, tuple[str, tuple[str, str]]] = {
-    "Clyde": ("orange", ('right', 'top')),
-    "Inky": ("cyan", ('left', 'bottom')),
-    "Blinky": ("red", ('left', 'top')),
-    "Pinky": ("pink", ('right', 'bottom'))
+GHOSTS: dict[str, tuple[str, tuple[str, str], float]] = {
+    "Clyde": ("orange", ('right', 'top'), 2),
+    "Inky": ("cyan", ('left', 'bottom'), 2),
+    "Blinky": ("red", ('left', 'top'), 3),
+    "Pinky": ("pink", ('right', 'bottom'), 1)
 }
 
 GHOST_COWARD_TIME: int = 8
