@@ -45,11 +45,8 @@ class Pacman(Creature):
         self.cell_x = x
         self.cell_y = y
         self.start = (self.cell_x, self.cell_y)
-        
-
         self.rect.center = self._cell_center(None)
         self._destination = self.rect.center
-        # forget the old wishes of the player (matters after dying)
         self._next_direction = ''
 
     def go_to_next_level(self, map: Map) -> None:

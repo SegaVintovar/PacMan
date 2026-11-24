@@ -101,7 +101,6 @@ class Level():
         for g in to_remove:
             self.gums.remove(g)
 
-
     def _render_creatures(self,
                           screen: pygame.Surface,
                           pacman: Pacman

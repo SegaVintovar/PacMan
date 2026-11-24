@@ -1,10 +1,7 @@
 from src.app import App
 import pygame
-import os
 import sys
-from src.spriteBank import SpriteBank
 from src.config import GameConfig
-from src.constants import GHOSTS, GHOST_DIRECTIONS
 from src.paths import PROJECT_DIR
 
 default_config = {

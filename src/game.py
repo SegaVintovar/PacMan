@@ -1,12 +1,12 @@
 from .config import GameConfig
 from .pacman import Pacman
 import pygame
-from .constants import WINDOW_SIZE, HEADER_HEIGHT, FONT_SIZE, FONT_PATH, ASSETS_DIR, CYAN
+from .constants import (WINDOW_SIZE, HEADER_HEIGHT,
+                        FONT_SIZE, FONT_PATH, ASSETS_DIR, CYAN)
 from .level import Level
 from .game_state import GameState
 import random
 from .module import Module
-from .pathfinder import Pathfinder
 
 
 class Header():
@@ -57,7 +57,9 @@ class Footer():
             FONT_PATH, FONT_SIZE)
 
     # what if here we will take a time to display as an argument
-    def _current_lives_n_timer(self, time: int, lives: int, invincible: bool) -> None:
+    def _current_lives_n_timer(
+            self, time: int, lives: int, invincible: bool
+            ) -> None:
         self.image.blit(
             self.font.render(f"Lives left: {lives}", True, (255, 0, 0)
                              ),
@@ -219,10 +221,13 @@ class Game(Module):
         """"
         First lvl seed comes form the subject, rest random.
         """
+        rnd = random.Random()
+        int(rnd.random())
         for i in range(len(self.config.level)):
-            seed = self.config.seed if i == 0 else random.randrange(2**31)
+            # seed = self.config.seed if i == 0 else random.randrange(2**31)
+            seed = self.config.seed if i == 0 else int(rnd.random())
             self.levels.append(Level(
-                int(self.config.level[i]),
+                i,
                 self.config.level[i],
                 seed,
                 self.config
@@ -230,8 +235,8 @@ class Game(Module):
         print(f"Game: {len(self.config.level)} levels prepared")
 
     def start_current_lvl(self) -> None:
-        print("lvl_id", self.current_lvl_id)
-        print("amount of lvls", len(self.levels))
+        # print("lvl_id", self.current_lvl_id)
+        # print("amount of lvls", len(self.levels))
         self.current_lvl = self.levels[self.current_lvl_id]
         self.current_lvl.timer.start_time = pygame.time.get_ticks()
         self.pacman.map = self.current_lvl.map
