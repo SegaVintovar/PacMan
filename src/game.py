@@ -134,11 +134,7 @@ class Game(Module):
                 ) -> GameState:
         if game_state.previous == 2:
             self.current_lvl.timer.start_timer()
-        # nothing yet sets this to True
-        # if not self.packie_still_alive():
-        #     # open the page to enter the name of the player
-        #     game_state.gs_update(6, self.pacman.points)
-        #     return game_state
+
         if self.paused:
             self.current_lvl.timer.resume()
             for ghost in self.current_lvl.creatures:
@@ -158,6 +154,8 @@ class Game(Module):
                     self.pacman.lives += 1
                 elif ch == "2":
                     self.pacman.invincible = not self.pacman.invincible
+                    for ghost in self.current_lvl.creatures:
+                        ghost.path = []
                 elif ch == "3":
                     self.current_lvl_id += 1
                     if self.current_lvl_id >= len(self.levels):
