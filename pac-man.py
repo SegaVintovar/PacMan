@@ -4,20 +4,6 @@ import sys
 from src.config import GameConfig
 from src.paths import PROJECT_DIR
 
-default_config = {
-    "highscore_filename": PROJECT_DIR / "scores.json",
-    "level": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
-    "lives": "3",
-    "pacgum": "10",
-    "points_per_pacgum": "10",
-    "points_per_super_pacgum": "50",
-    "points_per_ghost": "200",
-    "width": "12",
-    "height": "12",
-    "seed": "42",
-    "level_max_time": "60"
-}
-
 
 def main() -> None:
     try:
@@ -42,7 +28,7 @@ def main() -> None:
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())
-        mygame.clock.tick(60)
+        mygame.clock.tick(30)
         pygame.display.update()
     pygame.quit()
 

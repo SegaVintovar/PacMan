@@ -215,9 +215,7 @@ class Ghost(Creature):
             (0, 1): "down",
             (-1, 0): "left"
         }
-        # the timer of a ghost that is not scared was never started, then
-        # time_since_start() is the uptime of the whole program: only
-        # look at it while the ghost is really scared
+
         if (self.being_coward and
                 self.pussy_timer.time_since_start() >= GHOST_COWARD_TIME):
             self.disrespect_paccie()
