@@ -15,6 +15,7 @@ from .pause import Pause
 from .spriteBank import SpriteBank
 from .win_loose import WinLoose
 from typing import Any
+from pathlib import Path
 
 
 class App():
@@ -34,7 +35,7 @@ class App():
         self.screen: pygame.Surface = screen
         self.background = make_gradient()
         self.menu_background = make_gradient(extra=True)
-        _sprites: str = ASSETS_DIR / "sprites"
+        _sprites: Path = ASSETS_DIR / "sprites"
         _files: list[str] = [f for f in os.listdir(_sprites)]
         for _f in _files:
             _surf: pygame.Surface = pygame.image.load(
@@ -45,15 +46,15 @@ class App():
                     [c for c in comp
                      if 'W' in c or 'A' in c or 'S' in c or 'D' in c])
                 if _key in ("W", "A", "S", "D"):
-                    name: str = os.path.splitext(f"{_key}-{comp[-1]}")[0]
+                    name = os.path.splitext(f"{_key}-{comp[-1]}")[0]
                     SpriteBank.store(comp[0], name, _surf)
                 else:
                     _death: str = "".join([c for c in comp if c == "death"])
-                    name: str = os.path.splitext(f"{_death}-{comp[-1]}")[0]
+                    name = os.path.splitext(f"{_death}-{comp[-1]}")[0]
                     SpriteBank.store(comp[0], name, _surf)
             elif "ghost" in comp:
                 _direction: str = "".join(os.path.splitext(comp[-1])[0])
-                name: str = "".join(
+                name = "".join(
                     [_name for _name in GHOSTS.keys()
                      if GHOSTS[_name][0] in comp])
                 if name in GHOSTS.keys():
@@ -62,7 +63,7 @@ class App():
                       _direction in GHOST_DIRECTIONS.keys()):
                     SpriteBank.store(comp[0], f"eyes-{_direction}", _surf)
                 else:
-                    _key: str = os.path.splitext(f"frightened-{comp[-1]}")[0]
+                    _key = os.path.splitext(f"frightened-{comp[-1]}")[0]
                     SpriteBank.store(comp[0], _key, _surf)
             else:
                 fruit: str = "".join(os.path.splitext(comp[-1])[0])

@@ -35,27 +35,29 @@ class Instructions(Module):
                 "Move: Arrow keys or W / A / S / D",
                 "Pause: ESC | Q | ",
                 "Menus: Up / Down to navigate, Enter to select",
-                "Name entry: type your name, Enter to confirm, Backspace to delete",
+                "Name entry: type your name, Enter to confirm, Backspace to\
+                      delete",
                 " <<----------->> ",
                 "Rules",
                 "",
                 "You move through corridors only. Walls block you.",
                 "You start each level in the middle of the maze.",
-                "If a ghost touches you, you lose a life and respawn in the middle.",
+                "If a ghost touches you, you lose a life and respawn in the\
+                      middle.",
                 "You lose the game when all lives are gone.",
-                "Each level has a time limit of 90 seconds. When time runs out,",
+                "Each level has a time limit of 90 seconds. When time runs \
+                    out,",
                 "[the level restarts / the game ends].",
                 "Your score and remaining lives carry over between levels.",
                 " <<----------->> ",
                 "Items and scoring",
                 "",
-                f"Pacgum (small dot):    +{self.config.points_per_pacgum}\
+                f"Pacgum (small dot): +{self.config.points_per_pacgum}\
                       points",
                 f"Super-pacgum (big dot in each corner):    \
                       +{self.config.points_per_super_pacgum} points",
                 "and the ghosts become edible for a short time",
-                f"Edible ghost: +{self.config.points_per_ghost
-                                  } points.",
+                f"Edible ghost: +{self.config.points_per_ghost} points.",
                 "An eaten ghost returns to its corner",
                 "and respawns after a few seconds.",
                 "Your score never decreases.",
@@ -67,8 +69,10 @@ class Instructions(Module):
                 "While edible, they run away from you.",
                 " <<----------->> ",
                 "Highscores",
-                "After a win or a loss, enter your name (max 10 characters, letters,",
-                "digits and spaces). The top 10 scores are shown in the main menu.",
+                "After a win or a loss, enter your name (max 10 characters,\
+                      letters,",
+                "digits and spaces). The top 10 scores are shown in the main\
+                      menu.",
                 " <<----------->> ",
                 "Cheat mode (for reviewers)",
                 "Key bindings: '1' = extra life"
