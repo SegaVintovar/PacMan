@@ -7,6 +7,12 @@ from .config import GameConfig
 from typing import Any
 
 
+class ScoreValidationError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
 # enter your name to add the score with a name to the scoreslist
 # how to pass score from here to the
 class WinLoose(Module):
@@ -98,11 +104,24 @@ class WinLoose(Module):
         try:
             with open(self.config.highscore_filename, mode="r") as file:
                 scores: list[dict[str, Any]] = json.load(file)
+                self.validate_scores(scores)
         except (FileNotFoundError, json.JSONDecodeError):
+            print("Could not open scores. Continuing with empty score list")
             scores = []
-        scores.sort(key=lambda s: s["score"], reverse=True)
+        except ScoreValidationError as e:
+            print(str(e))
+
+        if scores:
+            scores.sort(key=lambda s: s["score"], reverse=True)
         print("Scores: ", scores)
         return scores
+
+    def validate_scores(self, scores: list[dict[str, int]]) -> None:
+        for score in scores:
+            if "score" not in score.keys():
+                scores.remove(score)
+                keys: list[str] = list(score.keys())
+                raise ScoreValidationError(f"Invalid key in scores: {keys[0]}")
 
     def _save_score(self, score: int, name: str) -> None:
         scores = self._upload_scores()

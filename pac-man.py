@@ -37,7 +37,11 @@ def main() -> None:
         print("Could not validate given config file", str(e))
         print("Launching the game with default config")
         config = GameConfig()
-    mygame = App(config)
+    try:
+        mygame = App(config)
+    except Exception as e:
+        print("Could not init the App", str(e))
+        sys.exit()
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())

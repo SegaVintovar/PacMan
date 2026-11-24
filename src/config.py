@@ -15,8 +15,8 @@ class GameConfig(BaseModel):
     points_per_pacgum: int = Field(ge=0, default=10)
     points_per_super_pacgum: int = Field(ge=0, default=50)
     points_per_ghost: int = Field(ge=0, default=200)
-    width: int = Field(gt=5, le=40, default=15)
-    height: int = Field(gt=5, le=40, default=15)
+    width: int = Field(gt=5, le=42, default=15)
+    height: int = Field(gt=5, le=42, default=15)
     seed: int = Field(ge=0, default=42)
     level_max_time: int = Field(
         gt=0,
@@ -80,8 +80,8 @@ class GameConfig(BaseModel):
         if self.pacgum >= self.width * self.height:
             raise ValueError(
                 "pacgum count cannot exceed the number of grid cells")
-        if self.width < 10:
-            raise ValueError("map width needs to be at least 10")
-        if self.height < 10:
-            raise ValueError("map height needs to be at least 10")
+        # if self.width < 10:
+        #     raise ValueError("map width needs to be at least 10")
+        # if self.height < 10:
+        #     raise ValueError("map height needs to be at least 10")
         return self

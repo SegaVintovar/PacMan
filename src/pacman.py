@@ -38,9 +38,15 @@ class Pacman(Creature):
        as a 42-grid."""
     def measure_spawn(self) -> None:
         # cell_x is a column (width), cell_y is a row (height)
-        self.cell_x = self.map.width // 2
-        self.cell_y = self.map.height // 2
+        x = self.map.width // 2
+        y = self.map.height // 2
+        if self.map.map[y][x].value == 15:
+            x -= 1
+        self.cell_x = x
+        self.cell_y = y
         self.start = (self.cell_x, self.cell_y)
+        
+
         self.rect.center = self._cell_center(None)
         self._destination = self.rect.center
         # forget the old wishes of the player (matters after dying)
