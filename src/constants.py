@@ -31,7 +31,7 @@ GHOST_DIRECTIONS: dict[str, tuple[int, int]] = {
     'left': (-1, 0)
 }
 
-GHOSTS: dict[str, tuple[str, tuple[str, str], float]] = {
+GHOSTS: dict[str, tuple[str, tuple[str, str], int]] = {
     "Clyde": ("orange", ('right', 'top'), 2),
     "Inky": ("cyan", ('left', 'bottom'), 2),
     "Blinky": ("red", ('left', 'top'), 3),

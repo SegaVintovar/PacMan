@@ -1,5 +1,13 @@
 
+from pathlib import Path
 import pygame
+
+
+class SpriteLoadingError(Exception):
+    def __init__(self, msg: str, file: Path):
+        self.message = msg
+        self.content = file
+        super.__init__(self.message)
 
 
 class SpriteBank:
@@ -12,7 +20,7 @@ class SpriteBank:
         return key in self._content
 
     @classmethod
-    def get_sprites(self, category: str) -> list[pygame.Surface]:
+    def get_sprites(self, category: str) -> dict[str, pygame.Surface]:
         return self._content[category]
 
     @classmethod

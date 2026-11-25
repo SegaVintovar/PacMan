@@ -2,7 +2,6 @@ from src.app import App
 import pygame
 import sys
 from src.config import GameConfig
-from src.paths import PROJECT_DIR
 
 
 def main() -> None:
@@ -28,7 +27,7 @@ def main() -> None:
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())
-        mygame.clock.tick(30)
+        mygame.clock.tick(60)
         pygame.display.update()
     pygame.quit()
 

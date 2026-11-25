@@ -205,11 +205,11 @@ class Ghost(Creature):
         return (sign(delta_x), 0)
 
     def check(self,
-              pacman: Pacman | None,
+              pacman: Pacman,
               finder: Pathfinder,
               extra: str = ""
               ) -> bool:
-        directions: dict[int, str] = {
+        directions: dict[tuple[int, int], str] = {
             (0, -1): "up",
             (1, 0): "right",
             (0, 1): "down",
@@ -256,8 +256,8 @@ class Ghost(Creature):
         cx, cy = self.rect.center
         tx, ty = self._destination
 
-        speed: float = (GHOSTS[self.name][2]
-                        if not self.being_coward else SPEEDS["ghost_coward"])
+        speed: int = (GHOSTS[self.name][2]
+                      if not self.being_coward else SPEEDS["ghost_coward"])
         if self.eaten:
             speed = SPEEDS["ghost_eaten"]
         step_x = max(-speed, min(speed, tx - cx))

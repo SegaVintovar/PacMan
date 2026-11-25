@@ -28,7 +28,7 @@ class GameConfig(BaseModel):
 
     def __init__(self, config_file_path: str | None = None) -> None:
         if config_file_path:
-            data = self._read_file(config_file_path)
+            data = self._read_file(Path(config_file_path))
             super().__init__(**data)
         else:
             super().__init__()
