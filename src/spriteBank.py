@@ -7,7 +7,7 @@ class SpriteLoadingError(Exception):
     def __init__(self, msg: str, file: Path):
         self.message = msg
         self.content = file
-        super.__init__(self.message)
+        super().__init__(self.message)
 
 
 class SpriteBank:

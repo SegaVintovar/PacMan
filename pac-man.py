@@ -22,7 +22,7 @@ def main() -> None:
     try:
         mygame = App(config)
     except Exception as e:
-        print("Could not init the App", str(e))
+        print("Could not init the App", repr(e))
         sys.exit()
     running: bool = True
     while running:

@@ -70,25 +70,21 @@ class App():
                     else:
                         raise NameError("Pacman name must have W | A | S | D")
                 elif "ghost" in comp:
-                    _direction: str = "".join(os.path.splitext(comp[-1])[0])
-                    name = "".join(
-                        [_name for _name in GHOSTS.keys()
-                         if GHOSTS[_name][0] in comp])
-                    if not len(list(GHOSTS.keys())) == 4:
-                        raise SpriteLoadingError(
-                            "Not all ghost names are present", Path(_f))
-                    if comp[1] not in GHOSTS[name][0]:
-                        raise SpriteLoadingError(
-                            f"invalid color of '{comp[1]}'", Path(_f))
-                    if name in GHOSTS.keys():
+                    _direction: str = os.path.splitext(comp[-1])[0]
+                    if comp[1] == "eyes":
+                        SpriteBank.store(comp[0], f"eyes-{_direction}", _surf)
+                    elif comp[1] == "frightened":
+                        SpriteBank.store(
+                            comp[0], f"frightened-{_direction}", _surf)
+                    else:
+                        name = "".join(
+                            [_name for _name in GHOSTS
+                             if GHOSTS[_name][0] == comp[1]])
+                        if not name:
+                            raise SpriteLoadingError(
+                                f"invalid ghost color '{comp[1]}'", Path(_f))
                         SpriteBank.store(comp[0], f"{name}-{_direction}",
                                          _surf)
-                    elif (name not in GHOSTS.keys() and
-                          _direction in GHOST_DIRECTIONS.keys()):
-                        SpriteBank.store(comp[0], f"eyes-{_direction}", _surf)
-                    else:
-                        _key = os.path.splitext(f"frightened-{comp[-1]}")[0]
-                        SpriteBank.store(comp[0], _key, _surf)
                 elif "fruit" in comp:
                     fruit: str = "".join(os.path.splitext(comp[-1])[0])
                     SpriteBank.store(comp[0], fruit, _surf)
