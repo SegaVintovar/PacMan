@@ -106,6 +106,7 @@ class Game(Module):
         # self.done = False
         self.paused: bool = False
         self.wasted: bool = False
+        # try
         original = pygame.image.load(
             ASSETS_DIR / "WASTED_hires.png")
         orig_w, orig_h = original.get_size()
@@ -117,6 +118,7 @@ class Game(Module):
             (WINDOW_SIZE[0] - new_w) // 2,
             (WINDOW_SIZE[1] - new_h) // 2,
             )
+        # try
         original = pygame.image.load(
             ASSETS_DIR / "mission_passed.png")
         orig_w, orig_h = original.get_size()

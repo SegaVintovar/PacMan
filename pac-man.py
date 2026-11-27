@@ -2,6 +2,7 @@ from src.app import App
 import pygame
 import sys
 from src.config import GameConfig
+from src.constants import FPS
 
 
 def main() -> None:
@@ -27,7 +28,7 @@ def main() -> None:
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())
-        mygame.clock.tick(60)
+        mygame.clock.tick(FPS)
         pygame.display.update()
     pygame.quit()
 

@@ -3,7 +3,7 @@ import os
 from .config import GameConfig
 from .constants import (WINDOW_SIZE,
                         HEADER_HEIGHT,
-                        GHOSTS, GHOST_DIRECTIONS, ASSETS_DIR)
+                        GHOSTS, ASSETS_DIR)
 from .game import Game
 from .menu import Menu
 from .scoreboard import ScoreBoard

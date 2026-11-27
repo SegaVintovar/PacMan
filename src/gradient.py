@@ -22,10 +22,7 @@ def _add_palms(surface: pygame.Surface) -> None:
     palm_right = (ASSETS_DIR / "palms" / "palm3.png",
                   (WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.8))
     palms = [palm_left, palm_mid, palm_right]
-    # for i in range(1, 4):
-    #     path = f"src/assets/palms/palm{i}.png"
-    #     palms.append(pygame.image.load(path))
-
+    # try:
     for p in palms:
         surface.blit(pygame.image.load(p[0]),
                      dest=(p[1]))
