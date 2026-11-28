@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from .constants import TILE
 import pygame
 from typing import Optional
-from pathlib import Path
+from .cell import Cell
 
 
 class Creature(ABC):
@@ -15,14 +15,14 @@ class Creature(ABC):
         self.cell_y: int = -1
         self.sprite: pygame.Surface
         self.start: tuple[int, int]
-        self.path: Path
+        self.path: list[Cell]
         self.rect: pygame.Rect
         self._destination: tuple[int, int] | None = None
         self._direction: str | None = None
 
-    @abstractmethod
-    def check(self, pacman: pygame.Rect | None) -> bool:
-        pass
+    # @abstractmethod
+    # def check(self, pacman: pygame.Rect | None) -> bool:
+    #     pass
 
     @abstractmethod
     def measure_spawn(self) -> None:

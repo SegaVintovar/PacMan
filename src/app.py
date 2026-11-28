@@ -2,8 +2,8 @@ import pygame
 import os
 from .config import GameConfig
 from .constants import (WINDOW_SIZE,
-                        HEADER_HEIGHT,
-                        GHOSTS, ASSETS_DIR)
+                        GHOSTS,)
+from .paths import ASSETS_DIR
 from .game import Game
 from .menu import Menu
 from .scoreboard import ScoreBoard
@@ -29,13 +29,76 @@ class App():
     def __init__(self, config: GameConfig) -> None:
         self.config = config
         pygame.init()
-        pygame.mixer.init()
-        screen = pygame.display.set_mode(
-            (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2))
+        info = pygame.display.Info()
+        width, height = (info.current_w, info.current_h)
+        scale_factor = height / WINDOW_SIZE[1]
+        new_size = (int(WINDOW_SIZE[0] * scale_factor),
+                    int(WINDOW_SIZE[1] * scale_factor))
+        self.dest = (((width - WINDOW_SIZE[0]) // 2), 0)
+        print(width, height)
+        self.main_screen = pygame.display.set_mode(
+            (width, height), pygame.FULLSCREEN)
         self.spriteErrors: list[SpriteLoadingError | NameError] = []
-        self.screen: pygame.Surface = screen
-        self.background = make_gradient()
-        self.menu_background = make_gradient(extra=True)
+        self.screen: pygame.Surface = pygame.Surface(WINDOW_SIZE)
+        self.background = make_gradient((width, height))
+        self.menu_background = make_gradient((width, height), extra=True, palms=True)
+        self._fill_sprite_bank()
+        clock = pygame.time.Clock()
+        self.clock: pygame.time.Clock = clock
+        self.app_state = GameState(2, True)
+        # then initializing all modules of the app
+        self.game: Game = Game(config=self.config)
+        self.menu: Menu = Menu(self.menu_background.copy())
+        self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy(),
+                                                 config)
+        self.intructions: Instructions = Instructions(
+            self.background.copy(),
+            config=config)
+        self.pause = Pause(self.background.copy())
+        self.win_loose = WinLoose(self.background.copy(), config)
+        self.dict_modules: dict[int, Any[Module]] = {
+            1: self.game,
+            2: self.menu,
+            3: self.scoreboard,
+            4: self.intructions,
+            5: self.pause,
+            6: self.win_loose,
+            0: None
+        }
+        self.state: Module = self.dict_modules[self.app_state.next_module]
+
+    # if  state returns some value we are checking it and making some decisions
+    # if 1 then self.game
+    # if 2 then self.menu
+    # if 3 then self.scoreboard
+    # if 4 then self.instructions
+    # if 5 then self.pause
+    # if 6 then self.win_loose
+    # if 0 then exit()
+    # for the Module.process() we need:
+    #       1. events
+    #       2. gamestate
+    #       3. main_screen
+    def process(self, evns: list[pygame.event.Event]) -> bool:
+        gs: GameState = self.state.process(evns, self.app_state, self.screen)
+        for e in evns:
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_f:
+                pygame.display.toggle_fullscreen()
+        if gs.reload:
+            self.game = Game(config=self.config)
+            self.dict_modules[1] = self.game
+            self.app_state = GameState(2, True)
+            print("Game reloaded")
+            gs = self.app_state
+        next_module = gs.next_module
+        if next_module == 0:
+            return False
+        self.main_screen.blit(self.background, (0, 0))
+        self.main_screen.blit(self.screen, self.dest)
+        self.state = self.dict_modules[next_module]
+        return True
+
+    def _fill_sprite_bank(self) -> None:
         _sprites: Path = ASSETS_DIR / "sprites"
         _files: list[str] = [f for f in os.listdir(_sprites)]
         name: str = ""
@@ -50,7 +113,7 @@ class App():
                 if not _surf:
                     raise SpriteLoadingError(
                         f"Sprite '{_f}' not found", Path(_f))
-                pieces: str = os.path.splitext(_f)
+                pieces: tuple[str, str] = os.path.splitext(_f)
                 if not pieces[-1] == ".png":
                     raise SpriteLoadingError(
                         "Sprites should be a .png file", Path(_f))
@@ -95,53 +158,3 @@ class App():
             except SpriteLoadingError as err:
                 print("failed loading in the sprites: ", err)
                 self.spriteErrors.append(err)
-        clock = pygame.time.Clock()
-        self.clock: pygame.time.Clock = clock
-        self.app_state = GameState(2, True)
-        # then initializing all modules of the app
-        self.game: Game = Game(config=self.config)
-        self.menu: Menu = Menu(self.menu_background.copy())
-        self.scoreboard: ScoreBoard = ScoreBoard(self.background.copy(),
-                                                 config)
-        self.intructions: Instructions = Instructions(
-            self.background.copy(),
-            config=config)
-        self.pause = Pause(self.background.copy())
-        self.win_loose = WinLoose(self.background.copy(), config)
-        self.dict_modules: dict[int, Any[Module]] = {
-            1: self.game,
-            2: self.menu,
-            3: self.scoreboard,
-            4: self.intructions,
-            5: self.pause,
-            6: self.win_loose,
-            0: None
-        }
-        self.state: Module = self.dict_modules[self.app_state.next_module]
-
-    # if  state returns some value we are checking it and making some decisions
-    # if 1 then self.game
-    # if 2 then self.menu
-    # if 3 then self.scoreboard
-    # if 4 then self.instructions
-    # if 5 then self.pause
-    # if 6 then self.win_loose
-    # if 0 then exit()
-    # for the Module.process() we need:
-    #       1. events
-    #       2. gamestate
-    #       3. main_screen
-    def process(self, evns: list[pygame.event.Event]) -> bool:
-        gs: GameState = self.state.process(evns, self.app_state, self.screen)
-
-        if gs.reload:
-            self.game = Game(config=self.config)
-            self.dict_modules[1] = self.game
-            self.app_state = GameState(2, True)
-            print("Game reloaded")
-            gs = self.app_state
-        next_module = gs.next_module
-        if next_module == 0:
-            return False
-        self.state = self.dict_modules[next_module]
-        return True

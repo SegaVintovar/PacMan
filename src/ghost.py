@@ -256,8 +256,8 @@ class Ghost(Creature):
         cx, cy = self.rect.center
         tx, ty = self._destination
 
-        speed: int = (GHOSTS[self.name][2]
-                      if not self.being_coward else SPEEDS["ghost_coward"])
+        speed: float = (GHOSTS[self.name][2]
+                        if not self.being_coward else SPEEDS["ghost_coward"])
         if self.eaten:
             speed = SPEEDS["ghost_eaten"]
         step_x = max(-speed, min(speed, tx - cx))

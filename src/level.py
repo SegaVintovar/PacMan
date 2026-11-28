@@ -4,7 +4,7 @@ import pygame
 from .timer import Timer
 from .config import GameConfig
 from .pacman import Pacman
-from .constants import GHOSTS
+from .constants import GHOSTS, GHOST_COWARD_TIME
 from .ghost import Ghost
 import random
 from .pathfinder import Pathfinder
@@ -21,9 +21,7 @@ class Level():
         self.config = config
         self.name = name
         self.seed = seed
-        self.pussy_time: int = 8
-        pussy_timer: Timer = Timer(self.pussy_time)
-        self.pussy_timer: Timer = pussy_timer
+        self.coward_timer: Timer =  Timer(GHOST_COWARD_TIME)
         self.map: Map = Map(self.config, self.seed)
         self.creatures: list[Ghost] = []
         self.gums: list[Gum] = []
@@ -92,8 +90,8 @@ class Level():
                         ghost.fear_paccie()
                     # same here: restart, otherwise the second
                     # super-pacgum would use the old start time
-                    self.pussy_timer.reset()
-                    self.pussy_timer.start_timer()
+                    self.coward_timer.reset()
+                    self.coward_timer.start_timer()
                 # self.gums.remove(g)
                 to_remove.append(g)
             else:
@@ -124,46 +122,11 @@ class Level():
                 ghost.disrespect_paccie()
                 self._reset_ghosts()
             ghost.spawn(screen)
-            if (self.pussy_timer.time_since_start() >= self.pussy_time
+            if (self.coward_timer.time_since_start() >= GHOST_COWARD_TIME
                and ghost.being_coward):
                 ghost.disrespect_paccie()
         pacman.check()
         pacman.spawn(screen)
-
-    # def _render_creatures(self,
-    #                       screen: pygame.Surface,
-    #                       pacman: Pacman
-    #                       ) -> None:
-    #     for ghost in self.creatures:
-    #         # ghost is scared or it is chasing
-    #         # if ghost_time_to_find_a_path < pygame.time.get_ticks()
-    #         if ghost._at_destination():
-    #             # bastiaan
-    #             if ghost.eaten:
-    #                 self.pathfinder.retreat(ghost)
-    #                 # self.pathfinder.build_path(ghost, pacman, True)
-    #             # valentyn
-    #             # regen the path
-    #             if not ghost.being_coward:
-    #                 if not pacman.invincible:
-    #                     self.pathfinder.follow_pacman(ghost, pacman)
-    #                     # follow pacman
-    #                 else:
-    #                     ghost._pick_random_dest()
-    #             else:
-    #                 self.pathfinder.run_away(ghost, pacman)
-    #                 ...
-    #             # self.pathfinder.build_path(ghost, pacman)
-    #         # make ghost follow the path
-    #         if ghost.check(pacman, self.pathfinder):
-    #             ghost.disrespect_paccie()
-    #             self._reset_ghosts()
-    #         ghost.spawn(screen)
-    #         if (self.pussy_timer.time_since_start() == self.pussy_time
-    #            and ghost.being_coward):
-    #             ghost.disrespect_paccie()
-    #     pacman.check()
-    #     pacman.spawn(screen)
 
     def _awake_ghosts(self) -> None:
         for name in GHOSTS:

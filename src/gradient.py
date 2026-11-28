@@ -13,14 +13,14 @@ def _lerp_color(a: tuple[int, int, int], b: tuple[int, int, int],
     )
 
 
-def _add_palms(surface: pygame.Surface) -> None:
+def _add_palms(surface: pygame.Surface, size: tuple[int, int]) -> None:
     palms = []
     palm_left = (ASSETS_DIR / "palms" / "palm1.png",
-                 (-10, WINDOW_SIZE[1] * 0.6))
+                 (-30, size[1] * 0.3))
     palm_mid = (ASSETS_DIR / "palms" / "palm2.png",
-                (WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.5))
+                (size[0] * 0.65, size[1] * 0.35))
     palm_right = (ASSETS_DIR / "palms" / "palm3.png",
-                  (WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.8))
+                  (size[0] * 0.65, size[1] * 0.35))
     palms = [palm_left, palm_mid, palm_right]
     # try:
     for p in palms:
@@ -29,11 +29,9 @@ def _add_palms(surface: pygame.Surface) -> None:
 
 
 def make_gradient(
-        size: tuple[int, int] | None = None, extra: bool = False
+        size: tuple[int, int], extra: bool = False, palms: bool = False
         ) -> pygame.Surface:
     """Sunset gradient: dark purple at the top, pink at the bottom."""
-    if not size:
-        size = (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2)
     surface = pygame.Surface(size)
     top = (25, 5, 60)
     bottom = (255, 90, 140)
@@ -42,13 +40,17 @@ def make_gradient(
         pygame.draw.line(surface, color, (0, y), (size[0], y))
     if extra:
         logo_path = ASSETS_DIR / "menu" / "FT_PacMan.png"
-        logo = pygame.image.load(logo_path).convert_alpha()
+        try:
+            logo = pygame.image.load(logo_path).convert_alpha()
+        except (FileNotFoundError, PermissionError) as e:
+            raise e
         surface.blit(
             pygame.transform.scale(
                 logo,
-                (WINDOW_SIZE[0] * 0.4, WINDOW_SIZE[1] * 0.4)
+                (size[0] * 0.4, size[1] * 0.4)
                 ),
-            (WINDOW_SIZE[0] * 0.3, WINDOW_SIZE[1] * 0.02)
+            (size[0] * 0.3, size[1] * 0.02)
         )
-    _add_palms(surface)
+    if palms:
+        _add_palms(surface, size)
     return surface

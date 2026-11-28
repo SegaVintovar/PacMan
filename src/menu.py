@@ -7,10 +7,6 @@ from .module import Module
 
 class Menu(Module):
     def __init__(self, bg: pygame.Surface):
-        # image is a background
-        # self.background = make_gradient(
-        #     (WINDOW_SIZE[0], WINDOW_SIZE[1] + HEADER_HEIGHT * 2),
-        #     True)
         self.background = bg
         self.image: pygame.Surface = self.background.copy()
         self.buttons: list[Button] = []
@@ -26,7 +22,6 @@ class Menu(Module):
         start_position = (int(size[0] * 0.7), int(WINDOW_SIZE[1] * 0.4))
         step = int(WINDOW_SIZE[1] * 0.1)
         start = ("Start", 1)
-        # cntinue = "Continue"
         score_board = ("ScoreBoard", 3)
         instructions = ("Instructions", 4)
         quit = ("Exit", 0)

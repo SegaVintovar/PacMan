@@ -22,9 +22,12 @@ def main() -> None:
         config = GameConfig()
     try:
         mygame = App(config)
+    except FileNotFoundError as e:
+        print("Instantiation of the App failed due to missing file\n", str(e))
+        sys.exit(1)
     except Exception as e:
         print("Could not init the App", repr(e))
-        sys.exit()
+        sys.exit(1)
     running: bool = True
     while running:
         running = mygame.process(pygame.event.get())

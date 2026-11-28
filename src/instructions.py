@@ -1,7 +1,6 @@
 from .config import GameConfig
 import pygame
 from .constants import WINDOW_SIZE, FONT_PATH, FONT_SIZE, CYAN
-# from .gradient import make_gradient
 from .game_state import GameState
 from .button import Button
 from .module import Module

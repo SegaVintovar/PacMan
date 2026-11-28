@@ -39,7 +39,7 @@ class Pathfinder():
         if not start_cell or not target_cell:
             return []
         queue = deque([start_cell])
-        came_from = {start_cell: None}
+        came_from: dict[Cell, Cell | None] = {start_cell: None}
         visited = set()
         while queue and target_cell not in came_from:
             current_c = queue.popleft()
@@ -54,7 +54,7 @@ class Pathfinder():
                         queue.append(n[1])
 
         if target_cell not in came_from:
-            path = []
+            path: list[Cell] = []
             return path
         path = []
         step: Cell | None = target_cell

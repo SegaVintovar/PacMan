@@ -2,13 +2,12 @@ class GameState():
     def __init__(self,
                  next_module: int,
                  running: bool,
-                 extra: int = 0,
                  win: bool = False) -> None:
         # for now extra is a string, but it maybe changed
         self.next_module = next_module
         self.previous: int = 0
         self.running = running
-        self.extra = extra
+        self.extra: int = 0
         self.win = win
         self.reload = False
         self.player_name: str = ""

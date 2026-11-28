@@ -1,11 +1,12 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import Any
 import json
-from .paths import PROJECT_DIR, Path
+from .paths import PROJECT_DIR
+from pathlib import Path
 
 
 class GameConfig(BaseModel):
-    highscore_filename: str = Field(default=PROJECT_DIR / "scores.json")
+    highscore_filename: Path = Field(default=PROJECT_DIR / "scores.json")
     level: list[str] = Field(
         min_length=1,
         default=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]

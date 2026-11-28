@@ -57,3 +57,6 @@ Extras - our ideas that we want to implement
         - multiplayer
     - done:
         - mouse detection in the menu
+
+
+animation of the diying pacman doesnt work

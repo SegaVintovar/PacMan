@@ -17,7 +17,7 @@ class Pacman(Creature):
         self.map = map
         self.lives: int = config.lives
         self.points: int = 0
-        self._direction = 'A'
+        self._direction: str = 'A'
         self._next_direction: str = ''
         self._opening: str = "wide"
         self._sprite_id: str = f"{self._direction}-{self._opening}"
@@ -27,9 +27,7 @@ class Pacman(Creature):
         self.measure_spawn()
         self._destination: tuple[int, int] = self._cell_center(None)
         self._origin: tuple[int, int] = self.rect.center
-        self._pixel_moved: int = 0
-        self.munch_sound: pygame.mixer.Sound = pygame.mixer.Sound(
-            ASSETS_DIR / "sounds" / "pacman_chomp.wav")
+        self._pixel_moved: float = 0
         self.invincible = False
 
     """Creating an escapable point for pac-man.
@@ -52,9 +50,6 @@ class Pacman(Creature):
     def go_to_next_level(self, map: Map) -> None:
         self.map = map
         self.measure_spawn()
-
-    def play_sound(self) -> None:
-        self.munch_sound.play()
 
     def _update_pic(self) -> None:
         if (self._pixel_moved > TILE * 0.5 and

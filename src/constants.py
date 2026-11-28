@@ -1,7 +1,11 @@
 from .paths import ASSETS_DIR
 
-# info = pygame.display.Info()
-# WINDOW_SIZE = (info.current_w, info.current_h)
+WINDOW_SIZE = (1400, 1200)
+
+NEW_SIZE = (1400, 1200)
+DEST = (0, 0)
+
+
 SPEED: int = 3
 SPEEDS: dict[str, float] = {
     "pacman": 2.6,
@@ -9,7 +13,7 @@ SPEEDS: dict[str, float] = {
     "ghost_coward": 1.5,
     "ghost_eaten": 5.5
 }
-WINDOW_SIZE = (1400, 1200)
+
 FPS = 60
 TILE = 64  # cell size
 

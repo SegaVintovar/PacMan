@@ -2,7 +2,8 @@ from .config import GameConfig
 from .pacman import Pacman
 import pygame
 from .constants import (WINDOW_SIZE, HEADER_HEIGHT,
-                        FONT_SIZE, FONT_PATH, ASSETS_DIR, CYAN)
+                        FONT_SIZE, FONT_PATH, CYAN)
+from .paths import ASSETS_DIR
 from .level import Level
 from .game_state import GameState
 import random
@@ -10,11 +11,12 @@ from .module import Module
 
 
 class Header():
-    def __init__(self, config: GameConfig) -> None:
+    def __init__(self, config: GameConfig, size: tuple[int, int]) -> None:
         self.config: GameConfig = config
         self.width = config.width
+        self.screen_size = size
         self.image: pygame.Surface = pygame.Surface(
-            (WINDOW_SIZE[0], HEADER_HEIGHT))
+            (self.screen_size[0], HEADER_HEIGHT))
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
 
@@ -29,13 +31,13 @@ class Header():
             self.font.render(
                 "Packy by vsudak and brogaar", True, (255, 0, 0)
             ),
-            dest=(int((WINDOW_SIZE[0] / 2) - FONT_SIZE * 7), 30)
+            dest=(int((self.screen_size[0] / 2) - FONT_SIZE * 7), 30)
         )
         self.image.blit(
             self.font.render(
                 f"Level: {current_level}", True, (0, 255, 0)
             ),
-            dest=(int((WINDOW_SIZE[0]) - FONT_SIZE * 6), 30)
+            dest=(int((self.screen_size[0]) - FONT_SIZE * 6), 30)
         )
 
     def show_me(self,
@@ -48,11 +50,12 @@ class Header():
 
 
 class Footer():
-    def __init__(self, config: GameConfig) -> None:
+    def __init__(self, config: GameConfig, size: tuple[int, int]) -> None:
         self.config: GameConfig = config
         self.width: int = config.width
+        self.screen_size = size
         self.image: pygame.Surface = pygame.Surface(
-            (WINDOW_SIZE[0], HEADER_HEIGHT))
+            (self.screen_size[0], HEADER_HEIGHT))
         self.font: pygame.font.Font = pygame.font.Font(
             FONT_PATH, FONT_SIZE)
 
@@ -72,7 +75,7 @@ class Footer():
                 f"Time left: {time}",
                 True, (255, 0, 0)
                 ),
-            dest=(int(WINDOW_SIZE[0]) - 300, 30)
+            dest=(int(self.screen_size[0]) - 300, 30)
         )
         if invincible:
             self.image.blit(
@@ -80,14 +83,14 @@ class Footer():
                     "Invincible",
                     True, CYAN
                 ),
-                dest=((WINDOW_SIZE[0]//2 - FONT_SIZE * 5), 30)
+                dest=((self.screen_size[0]//2 - FONT_SIZE * 5), 30)
             )
 
     def show_me(self,
                 screen: pygame.Surface, time: int, pacman: Pacman) -> None:
         self.image.fill("black")
         self._current_lives_n_timer(time, pacman.lives, pacman.invincible)
-        screen.blit(self.image, (0, (WINDOW_SIZE[1] + HEADER_HEIGHT)))
+        screen.blit(self.image, (0, (self.screen_size[1] + HEADER_HEIGHT)))
 
 
 class Game(Module):
@@ -98,9 +101,15 @@ class Game(Module):
         self._prepare_levels()
         self.current_lvl: Level = self.levels[self.current_lvl_id]
         self.pacman: Pacman = Pacman(self.current_lvl.map, config)
-        header = Header(self.config)
+        info = pygame.display.Info()
+        width, height = (info.current_w, info.current_h)
+        scale_factor = height / WINDOW_SIZE[1]
+        self.scale_to = (
+            int(WINDOW_SIZE[0] * scale_factor),
+            int((WINDOW_SIZE[1] - HEADER_HEIGHT * 2) * scale_factor))
+        header = Header(self.config, self.scale_to)
         self.header: Header = header
-        footer = Footer(self.config)
+        footer = Footer(self.config, self.scale_to)
         self.footer: Footer = footer
         # needed???
         # self.done = False
@@ -130,6 +139,13 @@ class Game(Module):
             (WINDOW_SIZE[0] - new_w) // 2,
             (WINDOW_SIZE[1] - new_h) // 2,
             )
+        # info = pygame.display.Info()
+        # width, height = (info.current_w, info.current_h)
+        # scale_factor = height / WINDOW_SIZE[1] * 0.8
+        # self.scale_to = (
+        #     int(WINDOW_SIZE[0] * scale_factor),
+        #     int((WINDOW_SIZE[1] - HEADER_HEIGHT * 2) * scale_factor))
+        # print(self.scale_to)
 
     def process(self,
                 events: list[pygame.event.Event],
@@ -211,7 +227,7 @@ class Game(Module):
     def _display(self,
                  map_image: pygame.Surface, screen: pygame.Surface) -> None:
         scaled_map = pygame.transform.scale(
-            map_image, WINDOW_SIZE)
+            map_image, self.scale_to)
         self.header.show_me(screen, (self.current_lvl_id + 1),
                             self.pacman.points)
         time = (self.config.level_max_time -
@@ -237,8 +253,6 @@ class Game(Module):
         print(f"Game: {len(self.config.level)} levels prepared")
 
     def start_current_lvl(self) -> None:
-        # print("lvl_id", self.current_lvl_id)
-        # print("amount of lvls", len(self.levels))
         self.current_lvl = self.levels[self.current_lvl_id]
         self.current_lvl.timer.start_time = pygame.time.get_ticks()
         self.pacman.map = self.current_lvl.map
